@@ -167,6 +167,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             ['href' => 'sorteos_flash/gestionar_sorteos.php', 'match' => 'sorteos_flash/gestionar_sorteos.php', 'icon' => 'fa-bolt', 'label' => 'Sorteos Flash'],
             ['href' => 'sorteos_flash/sala_mando.php', 'match' => 'sorteos_flash/sala_mando.php', 'icon' => 'fa-satellite-dish', 'label' => 'Sala de Mando'],
             ['href' => 'sorteos_flash/estadisticas.php', 'match' => 'sorteos_flash/estadisticas.php', 'icon' => 'fa-chart-line', 'label' => 'Estadísticas'],
+            ['href' => 'sorteos_flash/votacion_comunidad.php', 'match' => 'sorteos_flash/votacion_comunidad.php', 'icon' => 'fa-check-to-slot', 'label' => 'Votación Comunidad'],
             ['href' => 'sorteos_flash/pase_bienvenida.php', 'match' => 'sorteos_flash/pase_bienvenida.php', 'icon' => 'fa-ticket', 'label' => 'Pase de Bienvenida'],
             ['href' => 'compras_manuales/gestionar_compras.php', 'match' => 'compras_manuales/', 'icon' => 'fa-hand-holding-usd', 'label' => 'Compras Manuales'],
             ['href' => 'sorteos_flash/baneos_expulsados.php', 'match' => 'sorteos_flash/baneos_expulsados.php', 'icon' => 'fa-gavel', 'label' => 'Baneos y Expulsados'],

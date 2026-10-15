@@ -86,6 +86,7 @@ $action_map = [
     // Raffle / Sorteo Flash
     'raffle_status'           => '/api/raffle_status.php',
     'raffle_hub_status'       => '/api/raffle_hub_status.php',
+    'sorteo_votacion'         => '/api/sorteo_votacion.php',
     'raffle_join'             => '/api/raffle_join.php',
     'raffle_gamble'           => '/api/raffle_gamble.php',
     'raffle_prechoice'        => '/api/raffle_prechoice.php',
@@ -145,6 +146,7 @@ $obfuscation_map = [
     // Raffle / Sorteo Flash
     'a8k' => 'raffle_status',
     'u2h' => 'raffle_hub_status',
+    'v7s' => 'sorteo_votacion',
     'o6m' => 'raffle_join',
     'l3p' => 'raffle_gamble',
     'r9k' => 'raffle_prechoice',
