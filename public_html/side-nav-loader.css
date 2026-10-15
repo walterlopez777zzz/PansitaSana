@@ -1,0 +1,26 @@
+/**
+ * Side Navigation Global Loader Styles
+ * 
+ * Provides centered loading spinner for side navigation during skeleton placeholder phase.
+ * Part of MANDATE 1: POLYMORPHIC SKELETON DIVERGENCE implementation.
+ */
+
+.side-nav__global-loader {
+    display: grid;
+    place-items: center;
+    min-height: 120px;
+    width: 100%;
+}
+
+.side-nav__global-loader .spinner-container {
+    opacity: 0.7;
+}
+
+/* Ensure spinner inherits proper colors from side nav context */
+.side-nav__global-loader .spinner-arc {
+    stroke: currentColor;
+}
+
+.side-nav__global-loader .spinner-track {
+    stroke: rgba(255, 255, 255, 0.1);
+}

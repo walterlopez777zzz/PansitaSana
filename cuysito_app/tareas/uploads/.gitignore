@@ -1,0 +1,4 @@
+# Adjuntos subidos en runtime: no se versionan, pero la carpeta sí existe.
+*
+!.gitignore
+!.htaccess

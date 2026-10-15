@@ -1,0 +1,4 @@
+{
+  "mode": "auto",
+  "_comment": "auto = serve LIVE while fresh, else FALLBACK. Override with: live | fallback | maintenance. Managed by the future Admin 'Gestor de Capa de Datos'."
+}

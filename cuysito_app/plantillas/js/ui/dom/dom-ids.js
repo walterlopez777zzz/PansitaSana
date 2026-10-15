@@ -1,0 +1,1 @@
+export const DOM_IDS=Object.freeze({appStatus:"app-status",items:"items",gridMeta:"grid-meta",tabElementos:"tab-elementos",tabDiseno:"tab-diseno",tabImagen:"tab-imagen",tabPanelElementos:"tab-panel-elementos",tabPanelDiseno:"tab-panel-diseno",tabPanelImagen:"tab-panel-imagen"});

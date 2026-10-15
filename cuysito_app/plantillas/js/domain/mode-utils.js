@@ -1,0 +1,1 @@
+export function normalizeMode(o){const n=String(o||"").trim().toLowerCase();return"collage"===n?"collage":"cart"===n?"cart":"coupon"===n?"coupon":"individual"}export function isGridMode(o){const n=normalizeMode(o);return"collage"===n||"cart"===n}export function isCouponMode(o){return"coupon"===normalizeMode(o)}

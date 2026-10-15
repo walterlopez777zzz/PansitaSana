@@ -1,0 +1,1 @@
+import{safeHex as o}from"./color-utils.js";export function isValidHex6(r){return!!o(r)}

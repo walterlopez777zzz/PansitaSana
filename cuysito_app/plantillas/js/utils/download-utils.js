@@ -1,0 +1,1 @@
+export function downloadBlob(e,o){const c=URL.createObjectURL(e),t=document.createElement("a");t.href=c,t.download=o,document.body.appendChild(t),t.click(),t.remove(),URL.revokeObjectURL(c)}

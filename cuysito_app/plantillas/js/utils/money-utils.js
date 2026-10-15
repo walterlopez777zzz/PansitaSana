@@ -1,0 +1,1 @@
+export function roundSoles(r){const e=Number(r);return Number.isFinite(e)?Math.round(10*e)/10:0}export function formatSoles(r){const e=roundSoles(r);return`S/ ${Number.isInteger(e)?String(e):e.toFixed(1)}`}

@@ -1,0 +1,1499 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   sf-dialog — diálogos nativos del Sorteo Flash
+   (retiro / suspensión · ya participas · premios en juego)
+
+   Mismo lenguaje que el hub de juegos (gh-dialog), el carrito y el modal de
+   filtros: panel oscuro translúcido con blur, HeadingNow itálica en
+   mayúsculas para títulos y CTAs, radios 0.5 / 0.75 / 1 rem, CTA amarillo de
+   3.25 rem y controles secundarios sobre blanco al 15 %. El velo lo pinta
+   #backdrop (window.Backdrop); el ::backdrop nativo sólo captura el clic
+   fuera del panel.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+    --sfd-surface: rgba(0, 0, 0, 0.6);
+    --sfd-surface-2: rgba(255, 255, 255, 0.1);
+    --sfd-surface-2-hover: rgba(255, 255, 255, 0.16);
+    --sfd-line: rgba(255, 255, 255, 0.12);
+    --sfd-text: #fff;
+    --sfd-text-2: #a1a1aa;
+
+    --sfd-tone-neutral: rgba(255, 255, 255, 0.18);
+    --sfd-tone-success: #4ade80;
+    --sfd-tone-warning: #fbbf24;
+    --sfd-tone-danger: #f87171;
+    --sfd-tone-accent: #f7ff19;
+
+    --sfd-cta: #f7ff19;
+    --sfd-cta-ink: rgb(21, 23, 24);
+    --sfd-cta-2: rgba(255, 255, 255, 0.15);
+    --sfd-cta-2-hover: rgba(255, 255, 255, 0.24);
+
+    --sfd-radius: 0.75rem;
+    --sfd-radius-sm: 0.5rem;
+    --sfd-radius-cta: 1rem;
+
+    --sfd-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --sfd-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --sfd-blur: blur(12px);
+
+    --sfd-font-regular: 'HeadingNowVariable', 'Barlow Condensed', system-ui, sans-serif;
+    --sfd-font-medium: 'HeadingNowVariable', 'Barlow Condensed', system-ui, sans-serif;
+    --sfd-font-bold: 'HeadingNowVariable', 'Barlow Condensed', system-ui, sans-serif;
+    --sfd-fvs-regular: "wdth" 668, "wght" 400;
+    --sfd-fvs-medium: "wdth" 668, "wght" 500;
+    --sfd-fvs-bold: "wdth" 825, "wght" 700;
+
+    --z-backdrop: 10000;
+}
+
+/* ───────────────────────────── velo global ───────────────────────────── */
+
+#backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: var(--z-backdrop);
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    transition: opacity 0.2s ease-in-out;
+    will-change: opacity;
+}
+
+#backdrop.backdrop--active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ──────────────────────────── contenedor ─────────────────────────────── */
+
+.sf-dialog {
+    width: min(100% - 2rem, 30rem);
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--sfd-radius);
+    background: transparent;
+    color: var(--sfd-text);
+    overflow: visible;
+}
+
+.sf-dialog,
+.sf-dialog *,
+.sf-dialog *::before,
+.sf-dialog *::after {
+    box-sizing: border-box;
+}
+
+.sf-dialog--showcase {
+    width: min(100% - 2rem, 36rem);
+}
+
+/* Un solo premio fijo: mismo diálogo, ancho más recogido alrededor de la
+   tarjeta protagonista centrada. */
+.sf-dialog--showcase.sf-dialog--showcase-single {
+    width: min(100% - 2rem, 26rem);
+}
+
+.sf-dialog::backdrop {
+    background: transparent;
+}
+
+.sf-dialog[open] .sf-dialog__panel {
+    animation: sf-dialog-in 0.2s var(--sfd-ease);
+}
+
+.sf-dialog[data-phase="closing"] .sf-dialog__panel {
+    animation: sf-dialog-out 0.16s var(--sfd-ease) forwards;
+}
+
+/* ─────────────────────────────── panel ───────────────────────────────── */
+
+.sf-dialog__panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 2rem);
+    border-radius: var(--sfd-radius);
+    background-color: var(--sfd-surface);
+    -webkit-backdrop-filter: var(--sfd-blur);
+    backdrop-filter: var(--sfd-blur);
+    font-family: var(--sfd-font-regular);
+    font-variation-settings: var(--sfd-fvs-regular);
+    overflow: hidden;
+    will-change: transform, opacity;
+}
+
+/* ─────────────────────────── cabecera ─────────────────────────────────── */
+
+/* Variante centrada (avisos): glifo → badge → título → texto, como gh-dialog. */
+.sf-dialog__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 0.625rem;
+    padding: 2rem 1.5rem 0;
+    text-align: center;
+}
+
+/* Variante barra (vitrina): glifo · título+resumen · cerrar, como el carrito. */
+.sf-dialog__header--bar {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1.25rem 1.25rem 0.875rem;
+    border-bottom: 1px solid var(--sfd-line);
+    text-align: left;
+}
+
+.sf-dialog__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.sf-dialog__title {
+    margin: 0;
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.375rem;
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+.sf-dialog__header--bar .sf-dialog__title {
+    font-size: 1.5rem;
+    line-height: 1;
+    text-wrap: initial;
+}
+
+.sf-dialog__text {
+    margin: 0;
+    max-width: 24rem;
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+    color: var(--sfd-text-2);
+    text-wrap: pretty;
+}
+
+.sf-dialog__summary {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    color: var(--sfd-text-2);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Botón cerrar: disco sobre blanco al 15 % (carrito / gh-dialog). */
+.sf-dialog__close {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--sfd-cta-2);
+    color: var(--sfd-text);
+    cursor: pointer;
+    transition: background-color 0.15s var(--sfd-ease);
+}
+
+.sf-dialog--notice .sf-dialog__close {
+    position: absolute;
+    top: 0.625rem;
+    right: 0.625rem;
+    z-index: 1;
+}
+
+.sf-dialog__header--bar .sf-dialog__close {
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: -0.375rem -0.375rem -0.375rem 0;
+}
+
+.sf-dialog__close svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.sf-dialog__close:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+@media (hover: hover) {
+    .sf-dialog__close:hover {
+        background-color: var(--sfd-cta-2-hover);
+    }
+}
+
+/* Glifo de estado: disco 3.5 rem con tono semántico. */
+.sf-dialog__glyph {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background-color: var(--sfd-surface-2);
+    color: var(--sfd-text);
+}
+
+.sf-dialog__glyph svg {
+    width: 1.75rem;
+    height: 1.75rem;
+}
+
+.sf-dialog__glyph--sm {
+    width: 2.75rem;
+    height: 2.75rem;
+}
+
+.sf-dialog__glyph--sm svg {
+    width: 1.375rem;
+    height: 1.375rem;
+}
+
+.sf-dialog__glyph[data-tone="success"] { color: var(--sfd-tone-success); }
+.sf-dialog__glyph[data-tone="warning"] { color: var(--sfd-tone-warning); }
+.sf-dialog__glyph[data-tone="danger"]  { color: var(--sfd-tone-danger); }
+.sf-dialog__glyph[data-tone="accent"]  { color: var(--sfd-tone-accent); }
+
+/* ─────────────────────────────── badge ───────────────────────────────── */
+
+.sf-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 1.5rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--sfd-text);
+    background-color: var(--sfd-tone-neutral);
+}
+
+.sf-badge[data-tone="success"] { background-color: var(--sfd-tone-success); color: var(--sfd-cta-ink); }
+.sf-badge[data-tone="warning"] { background-color: var(--sfd-tone-warning); color: var(--sfd-cta-ink); }
+.sf-badge[data-tone="danger"]  { background-color: var(--sfd-tone-danger);  color: var(--sfd-cta-ink); }
+.sf-badge[data-tone="accent"]  { background-color: var(--sfd-tone-accent);  color: var(--sfd-cta-ink); }
+
+/* ─────────────────────────────── cuerpo ──────────────────────────────── */
+
+.sf-dialog__body {
+    padding: 1.25rem 1.5rem 0;
+}
+
+/* Cuerpo desplazable de la vitrina (mismo scroller que el carrito). */
+.sf-dialog__body--scroll {
+    flex: 1 1 auto;
+    min-height: 6rem;
+    padding: 1rem 1.25rem 1.25rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Aviso de soporte: icono + texto sobre superficie secundaria. */
+.sf-notice {
+    display: grid;
+    grid-template-columns: 1.25rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: var(--sfd-radius-sm);
+    background-color: var(--sfd-surface-2);
+    text-align: left;
+}
+
+.sf-notice__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.0625rem;
+    color: var(--sfd-text-2);
+}
+
+.sf-notice__text {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.1667rem;
+    color: var(--sfd-text-2);
+}
+
+.sf-notice__text strong {
+    display: block;
+    font-family: var(--sfd-font-medium);
+    font-variation-settings: var(--sfd-fvs-medium);
+    color: var(--sfd-text);
+}
+
+/* Estadísticas del sorteo: rejilla <dl> de 3 celdas (gh-dialog__stats). */
+.sf-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0;
+}
+
+.sf-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.625rem 0.5rem;
+    border-radius: var(--sfd-radius-sm);
+    background-color: var(--sfd-surface-2);
+    text-align: center;
+}
+
+.sf-stat dt {
+    font-family: var(--sfd-font-medium);
+    font-variation-settings: var(--sfd-fvs-medium);
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--sfd-text-2);
+}
+
+.sf-stat dd {
+    margin: 0;
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: 1.0625rem;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+/* ─────────────────────────── pestañas (puestos) ──────────────────────── */
+
+/* Pista con indicador de estado, como el site-nav de la tienda. */
+.sf-tabs {
+    display: flex;
+    flex-shrink: 0;
+    gap: 2px;
+    margin: 0.875rem 1.25rem 0;
+    padding: 3px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgba(255, 255, 255, 0.05);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.sf-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.sf-tabs[hidden] {
+    display: none;
+}
+
+.sf-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    flex: 1 1 0%;
+    min-width: 0;
+    min-height: 2.25rem;
+    padding: 0.4rem 0.75rem;
+    border: 0;
+    border-radius: 8px;
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.55);
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        color 180ms var(--sfd-ease),
+        background-color 180ms var(--sfd-ease);
+}
+
+.sf-tab svg {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    opacity: 0.7;
+}
+
+.sf-tab[aria-selected="true"] {
+    background-color: var(--sfd-cta);
+    color: var(--sfd-cta-ink);
+}
+
+.sf-tab[aria-selected="true"] svg {
+    opacity: 1;
+}
+
+.sf-tab:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+
+@media (hover: hover) {
+    .sf-tab:not([aria-selected="true"]):hover {
+        color: rgba(255, 255, 255, 0.85);
+        background-color: rgba(255, 255, 255, 0.06);
+    }
+}
+
+/* ───────────────────────── vitrina de premios ────────────────────────── */
+
+.sf-prize-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.sf-prize-panel[hidden] {
+    display: none;
+}
+
+.sf-prize-panel:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.4);
+    outline-offset: 0.25rem;
+    border-radius: var(--sfd-radius-sm);
+}
+
+.sf-prize-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Título de sección: icono + texto + badge de conteo (item-page__included). */
+.sf-prize-group__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.sf-prize-group__title svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: 0 0 auto;
+    color: var(--sfd-tone-accent);
+}
+
+.sf-prize-group__title span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sf-prize-group__title .sf-badge {
+    margin-left: auto;
+}
+
+/* Rejilla de tarjetas: 2 columnas en móvil, 3 desde 640 px (item-page). */
+.sf-prize-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 640px) {
+    .sf-prize-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+    }
+}
+
+/* Un solo premio: tarjeta protagonista centrada con ancho de héroe. */
+.sf-prize-grid--single {
+    grid-template-columns: minmax(0, 14rem);
+    justify-content: center;
+}
+
+.sf-prize-grid > li,
+.sf-prize-grid > .sf-pick-card {
+    min-width: 0;
+}
+
+/* ─────────────────────────────── pie ─────────────────────────────────── */
+
+.sf-dialog__footer {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 0.625rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.sf-dialog--showcase .sf-dialog__footer,
+.sf-dialog--flow .sf-dialog__footer {
+    padding: 0.875rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--sfd-line);
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* CTA: mismo botón que el hub de juegos / carrito (3.25 rem, itálica, contorno
+   que "se acerca" al hover y foco visible blanco). */
+.sf-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 3.25rem;
+    margin: 0;
+    padding: 0.75rem 1.5rem;
+    border: 0;
+    border-radius: var(--sfd-radius-cta);
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    text-wrap: balance;
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.1875rem;
+    line-height: 1;
+    background-color: var(--sfd-cta);
+    color: var(--sfd-cta-ink);
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition:
+        outline-color 0.15s var(--sfd-ease),
+        outline-offset 0.15s var(--sfd-ease),
+        filter 0.1s var(--sfd-ease);
+}
+
+.sf-cta--secondary {
+    background-color: var(--sfd-cta-2);
+    color: var(--sfd-text);
+}
+
+.sf-cta[hidden] {
+    display: none;
+}
+
+.sf-cta:active {
+    filter: brightness(0.8);
+}
+
+.sf-cta:focus-visible {
+    outline-color: #fff;
+    outline-offset: 4px;
+}
+
+@media (hover: hover) {
+    .sf-cta:hover {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+/* ────────────────────────── inscripción confirmada ───────────────────── */
+
+/* Rejilla de 2 o 3 celdas según los datos disponibles (ticket / entrada / recompensa). */
+.sf-stats--auto[data-count="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sf-stat__coins {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.sf-stat__coins img {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: 0 0 auto;
+}
+
+.sf-dialog--notice .sf-dialog__body > .sf-notice {
+    margin-top: 0.75rem;
+}
+
+.sf-notice[hidden] {
+    display: none;
+}
+
+/* ─────────────────────── flujo por pasos (pre-elección) ──────────────── */
+
+.sf-dialog--flow {
+    max-width: 32rem;
+}
+
+.sf-dialog--flow .sf-dialog__body--scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 1.25rem;
+}
+
+/* Riel de pasos: dos tonos (alcanzado = blanco, pendiente = gris).
+   Cada item pinta índice, etiqueta y su conector de entrada con la misma
+   tinta; el paso actual se distingue solo por el disco relleno. */
+.sf-steps {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.875rem 1.25rem 0;
+    list-style: none;
+}
+
+.sf-steps__item {
+    --sf-step-ink: var(--sfd-text-2);
+    --sf-step-line: var(--sfd-line);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+    min-width: 0;
+    font-family: var(--sfd-font-medium);
+    font-variation-settings: var(--sfd-fvs-medium);
+    font-size: 0.75rem;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sf-step-ink);
+    transition: color 0.15s var(--sfd-ease);
+}
+
+.sf-steps__item[data-state="done"],
+.sf-steps__item[data-state="current"] {
+    --sf-step-ink: var(--sfd-text);
+    --sf-step-line: var(--sfd-text);
+}
+
+.sf-steps__item + .sf-steps__item {
+    flex: 1 1 0%;
+}
+
+.sf-steps__item + .sf-steps__item::before {
+    content: '';
+    flex: 1 1 0%;
+    height: 1px;
+    background-color: var(--sf-step-line);
+    transition: background-color 0.15s var(--sfd-ease);
+}
+
+.sf-steps__index {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background-color: transparent;
+    color: inherit;
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    transition: background-color 0.15s var(--sfd-ease), color 0.15s var(--sfd-ease);
+}
+
+.sf-steps__item[data-state="current"] .sf-steps__index {
+    background-color: var(--sfd-text);
+    color: var(--sfd-cta-ink);
+}
+
+.sf-steps__label {
+    white-space: nowrap;
+}
+
+/* Pantallas estrechas: solo el paso actual muestra su etiqueta; las demás
+   quedan para lectores de pantalla (la ruta es dinámica y puede crecer). */
+@media (max-width: 26rem) {
+    .sf-steps__item:not([data-state="current"]) .sf-steps__label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+}
+
+/* Grupo de radios nativo sin cromo de <fieldset>; leyenda solo para lectores. */
+.sf-options,
+.sf-tiles,
+.sf-pick-grid {
+    min-inline-size: 0;
+    border: 0;
+}
+
+.sf-legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* Checkbox del modal de filtros (public_html/style.css .custom-checkbox),
+   portado tal cual: input invisible + .checkbox-visual con el CheckmarkIcon. */
+.custom-checkbox {
+    cursor: pointer;
+}
+
+.custom-checkbox input[type="checkbox"],
+.custom-checkbox input[type="radio"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    margin: 0;
+    opacity: 0;
+}
+
+.custom-checkbox .checkbox-visual {
+    width: 32px;
+    height: 32px;
+    border: 2px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s,
+        outline-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+}
+
+.custom-checkbox input:focus-visible + .checkbox-visual {
+    outline-color: #ffffff;
+    outline-offset: 4px;
+}
+
+.custom-checkbox .checkbox-visual svg {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.custom-checkbox input:checked + .checkbox-visual {
+    border-width: 0;
+    background-color: transparent;
+}
+
+.custom-checkbox input:checked + .checkbox-visual svg {
+    display: block;
+}
+
+@media (hover: hover) {
+    .custom-checkbox:hover input:not(:checked) + .checkbox-visual {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+/* Opciones: fila checkbox · miniatura · texto, como cart-line. */
+.sf-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 0;
+}
+
+.sf-option {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2rem 3.25rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.875rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem;
+    border: 1px solid var(--sfd-line);
+    border-radius: var(--sfd-radius);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--sfd-text);
+    font: inherit;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        border-color 0.15s var(--sfd-ease),
+        background-color 0.15s var(--sfd-ease);
+}
+
+.sf-option:has(input:checked) {
+    border-color: var(--sfd-cta);
+    background-color: var(--sfd-surface-2);
+}
+
+.sf-option:active {
+    filter: brightness(0.9);
+}
+
+/* Miniatura: degradado de la tarjeta de tienda (--sf-store-c1 → c2). */
+.sf-option__thumb {
+    --sf-store-c1: #41414b;
+    --sf-store-c2: var(--sf-store-c1);
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--sfd-radius-sm);
+    background-image: linear-gradient(180deg, var(--sf-store-c1) 0%, var(--sf-store-c2) 100%);
+    overflow: hidden;
+}
+
+.sf-option__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.sf-option__thumb svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--sfd-text);
+}
+
+.sf-option__thumb--asset,
+.sf-option__thumb--dice {
+    background-image: none;
+    background-color: var(--sfd-surface-2);
+}
+
+/* El dado global usa currentColor: aquí, y solo aquí, va en blanco puro. */
+.sf-option__thumb--dice svg {
+    width: 2rem;
+    height: 2rem;
+    color: #fff;
+}
+
+.sf-option__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.sf-option__title {
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1rem;
+    line-height: 1.1;
+}
+
+.sf-option__text {
+    font-size: 0.8125rem;
+    line-height: 1.1667rem;
+    color: var(--sfd-text-2);
+    text-wrap: pretty;
+}
+
+.sf-option__text strong {
+    font-family: var(--sfd-font-medium);
+    font-variation-settings: var(--sfd-fvs-medium);
+    color: var(--sfd-text);
+}
+
+.sf-option__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-top: 0.125rem;
+}
+
+/* Losetas (modo de juego, cara/sello, rojo/negro): 2 o 3 columnas. */
+.sf-tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+}
+
+.sf-tiles--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.sf-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 8.5rem;
+    margin: 0;
+    padding: 1.25rem 0.75rem 1rem;
+    border: 1px solid var(--sfd-line);
+    border-radius: var(--sfd-radius);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--sfd-text);
+    font: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        border-color 0.15s var(--sfd-ease),
+        background-color 0.15s var(--sfd-ease);
+}
+
+.sf-tile:has(input:checked) {
+    border-color: var(--sfd-cta);
+    background-color: var(--sfd-surface-2);
+}
+
+.sf-tile:active {
+    filter: brightness(0.9);
+}
+
+.sf-tile > .checkbox-visual {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.sf-tile__visual {
+    display: grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+}
+
+.sf-tile__visual img,
+.sf-tile__visual svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.sf-tile__label {
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1rem;
+    line-height: 1;
+    max-width: 100%;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+/* Ficha de ruleta: misma paleta que la mesa del modal del ganador en vivo. */
+.sf-tile__chip {
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: 4px dashed rgba(255, 255, 255, 0.85);
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.25);
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.sf-tile__chip--red {
+    background: radial-gradient(circle at 35% 30%, #e8455c 0%, #d3223a 55%, #8f1425 100%);
+}
+
+.sf-tile__chip--black {
+    background: radial-gradient(circle at 35% 30%, #34343f 0%, #17171f 60%, #060609 100%);
+    border-color: rgba(212, 175, 55, 0.9);
+    color: #f5e6c8;
+}
+
+/* Tarjeta de tienda seleccionable (vitrina): el checkbox flota sobre el arte. */
+.sf-tabs--flush {
+    margin: 0;
+}
+
+.sf-pick-card {
+    font: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sf-pick-card > .checkbox-visual {
+    position: absolute;
+    top: calc(15% + 0.375rem);
+    right: 0.375rem;
+    z-index: 3;
+}
+
+/* Resumen de la decisión: filas término · detalle separadas por líneas. */
+.sf-summary {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    border-top: 1px solid var(--sfd-line);
+}
+
+.sf-summary__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--sfd-line);
+}
+
+.sf-summary dt {
+    flex: 0 0 auto;
+    font-family: var(--sfd-font-medium);
+    font-variation-settings: var(--sfd-fvs-medium);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sfd-text-2);
+}
+
+.sf-summary dd {
+    margin: 0;
+    min-width: 0;
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: 0.9375rem;
+    line-height: 1.2;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.sf-summary__hint {
+    font-family: var(--sfd-font-regular);
+    font-variation-settings: var(--sfd-fvs-regular);
+    color: var(--sfd-text-2);
+}
+
+.sf-notice[data-tone="warning"] .sf-notice__icon {
+    color: var(--sfd-tone-warning);
+}
+
+/* Error de persistencia (role=alert) sobre el CTA. */
+.sf-dialog__alert {
+    margin: 0;
+    font-family: var(--sfd-font-medium);
+    font-variation-settings: var(--sfd-fvs-medium);
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--sfd-tone-danger);
+}
+
+.sf-dialog__alert[hidden] {
+    display: none;
+}
+
+/* CTA persistiendo: pulso de opacidad (cart-skeleton) y cursor de progreso. */
+.sf-cta.is-busy {
+    cursor: progress;
+    animation: sf-pulse 1.4s ease-in-out infinite;
+}
+
+.sf-cta:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.sf-cta.is-busy:disabled {
+    opacity: 1;
+}
+
+/* Retorno contextual: enlace neutro con flecha, como item-page__back. */
+.sf-dialog__back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    align-self: center;
+    min-height: 2.75rem;
+    margin: -0.25rem 0 0;
+    padding: 0 0.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--sfd-text);
+    font-family: var(--sfd-font-medium);
+    font-variation-settings: var(--sfd-fvs-medium);
+    font-size: 0.875rem;
+    line-height: 1.3334;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: var(--sfd-radius-sm);
+    transition: opacity 0.15s var(--sfd-ease);
+}
+
+.sf-dialog__back svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 auto;
+}
+
+.sf-dialog__back[hidden] {
+    display: none;
+}
+
+.sf-dialog__back:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.sf-dialog__back:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+@media (hover: hover) {
+    .sf-dialog__back:not(:disabled):hover {
+        opacity: 0.75;
+    }
+}
+
+/* ─────────────────────────── animaciones ─────────────────────────────── */
+
+@keyframes sf-pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+}
+
+@keyframes sf-dialog-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes sf-dialog-out {
+    from {
+        opacity: 1;
+        transform: none;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+}
+
+/* ─────────────────────────── móvil estrecho ──────────────────────────── */
+
+@media (max-width: 400px) {
+    .sf-dialog__header {
+        padding: 1.75rem 1.25rem 0;
+    }
+
+    .sf-dialog__body,
+    .sf-dialog__footer {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+
+    .sf-stats {
+        gap: 0.375rem;
+    }
+
+    .sf-stat dd {
+        font-size: 0.9375rem;
+    }
+
+    .sf-cta {
+        font-size: 1.0625rem;
+    }
+}
+
+/* ────────────────── flujo por pasos en teléfono (hoja completa) ─────────
+   Todo el viewport es área útil: cabecera de una sola barra (sin glifo),
+   riel y cuerpo más densos, pie pegado al borde inferior respetando la zona
+   segura. Las tarjetas comunican la selección con su propio borde y un
+   micro-indicador que no ocupa columna. El breakpoint es el mismo que
+   COMPACT_MEDIA en sf-prechoice.js. */
+
+@media (max-width: 40em) {
+    .sf-dialog--flow {
+        width: 100%;
+        max-width: none;
+        height: 100vh;
+        height: 100dvh;
+        max-height: none;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .sf-dialog--flow .sf-dialog__panel {
+        height: 100%;
+        max-height: none;
+        border-radius: 0;
+    }
+
+    /* Cabecera: el título lleva el mensaje; el glifo decorativo cede su columna. */
+    .sf-dialog--flow .sf-dialog__header--bar {
+        gap: 0.75rem;
+        padding: calc(0.875rem + env(safe-area-inset-top, 0px)) 1rem 0.75rem;
+    }
+
+    .sf-dialog--flow .sf-dialog__glyph {
+        display: none;
+    }
+
+    .sf-dialog--flow .sf-dialog__header--bar .sf-dialog__title {
+        font-size: clamp(1rem, 5vw, 1.25rem);
+        line-height: 1.05;
+        text-wrap: balance;
+    }
+
+    .sf-dialog--flow .sf-dialog__summary {
+        line-height: 1.25;
+        text-wrap: pretty;
+    }
+
+    .sf-dialog--flow .sf-dialog__header--bar .sf-dialog__close {
+        margin-right: -0.5rem;
+    }
+
+    /* Riel: cada paso parte de su propio contenido y los conectores se
+       reparten el resto a partes iguales, así la etiqueta del paso actual
+       nunca queda recortada aunque la ruta tenga cuatro pasos. */
+    .sf-dialog--flow .sf-steps {
+        padding: 0.75rem 1rem 0;
+    }
+
+    .sf-dialog--flow .sf-steps__item + .sf-steps__item {
+        flex: 1 1 auto;
+    }
+
+    .sf-dialog--flow .sf-dialog__body--scroll {
+        gap: 0.75rem;
+        padding: 0.875rem 1rem 1rem;
+    }
+
+    /* Pie: CTA de 3 rem con cuerpo fluido; secundario y retorno más bajos. */
+    .sf-dialog--flow .sf-dialog__footer {
+        gap: 0.5rem;
+        padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .sf-dialog--flow .sf-cta {
+        min-height: 3rem;
+        padding: 0.625rem 0.75rem;
+        font-size: clamp(0.9375rem, 4.6vw, 1.125rem);
+    }
+
+    .sf-dialog--flow .sf-cta--secondary {
+        min-height: 2.75rem;
+    }
+
+    .sf-dialog--flow .sf-dialog__back {
+        min-height: 2.5rem;
+        margin-top: -0.125rem;
+        font-size: 0.8125rem;
+    }
+
+    .sf-dialog--flow .sf-dialog__alert {
+        font-size: 0.75rem;
+    }
+
+    /* Micro-indicador: el mismo CheckmarkIcon a 1.125 rem; la tarjeta marca la
+       selección con su borde y un halo. */
+    .sf-option > .checkbox-visual,
+    .sf-tile > .checkbox-visual {
+        width: 1.125rem;
+        height: 1.125rem;
+        border-width: 1.5px;
+        border-color: rgba(255, 255, 255, 0.55);
+        border-radius: 0.3125rem;
+    }
+
+    .sf-option > input:focus-visible + .checkbox-visual,
+    .sf-tile > input:focus-visible + .checkbox-visual {
+        outline-width: 2px;
+        outline-offset: 3px;
+    }
+
+    .sf-option:has(input:checked),
+    .sf-tile:has(input:checked) {
+        box-shadow:
+            0 0 0 1px var(--sfd-cta),
+            0 0 1.25rem rgba(247, 255, 25, 0.16);
+    }
+
+    /* Opciones: miniatura · texto · indicador. El texto recupera la columna
+       del checkbox y los títulos caben en una línea desde 320 px. */
+    .sf-options {
+        gap: 0.5rem;
+    }
+
+    .sf-option {
+        grid-template-columns: 2.5rem minmax(0, 1fr) 1.125rem;
+        gap: 0.625rem;
+        padding: 0.625rem;
+    }
+
+    .sf-option > .checkbox-visual {
+        order: 3;
+    }
+
+    .sf-option__thumb {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .sf-option__thumb--dice svg {
+        width: 1.625rem;
+        height: 1.625rem;
+    }
+
+    .sf-option__thumb--asset img {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .sf-option__body {
+        gap: 0.1875rem;
+    }
+
+    /* Cuerpo fluido: "Premio original" entra en una línea desde 320 px. */
+    .sf-option__title {
+        font-size: clamp(0.875rem, 4.4vw, 1rem);
+    }
+
+    .sf-option__text {
+        font-size: 0.78125rem;
+        line-height: 1.125rem;
+    }
+
+    /* Losetas de dos (cara/sello, rojo/negro): más bajas, indicador en la esquina. */
+    .sf-tiles {
+        gap: 0.625rem;
+    }
+
+    .sf-tile {
+        gap: 0.625rem;
+        min-height: 7.25rem;
+        padding: 0.875rem 0.5rem 0.75rem;
+    }
+
+    .sf-tile__visual {
+        width: 3.75rem;
+        height: 3.75rem;
+    }
+
+    .sf-tile__chip {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+
+    /* Losetas de tres (modo de juego): una fila por modo — icono · nombre ·
+       indicador — para que "Tragamonedas" disponga del ancho completo y las
+       tres tarjetas compartan proporciones idénticas. */
+    .sf-tiles--3 {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.5rem;
+    }
+
+    .sf-tiles--3 .sf-tile {
+        flex-direction: row;
+        gap: 0.75rem;
+        min-height: 3.75rem;
+        padding: 0.5rem 0.875rem 0.5rem 0.625rem;
+    }
+
+    .sf-tiles--3 .sf-tile > .checkbox-visual {
+        position: static;
+        order: 3;
+    }
+
+    .sf-tiles--3 .sf-tile__visual {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    .sf-tiles--3 .sf-tile__label {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: clamp(0.875rem, 4.4vw, 1rem);
+        text-align: left;
+        white-space: nowrap;
+        overflow-wrap: normal;
+    }
+
+    /* Resumen: término sobre detalle, alineados a la izquierda; los valores
+       largos (premio + bonus) se leen de corrido en vez de partirse a la
+       derecha con una palabra huérfana. */
+    .sf-dialog--flow .sf-summary__row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+        padding: 0.625rem 0;
+    }
+
+    .sf-dialog--flow .sf-summary dd {
+        text-align: left;
+        overflow-wrap: normal;
+    }
+
+    .sf-dialog--flow .sf-notice {
+        padding: 0.75rem 0.875rem;
+    }
+}
+
+/* ─────────────────────────── reduced motion ──────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    #backdrop,
+    .sf-option,
+    .sf-tile,
+    .sf-dialog__close,
+    .sf-tab,
+    .sf-cta {
+        transition: none;
+    }
+
+    .sf-dialog[open] .sf-dialog__panel,
+    .sf-dialog[data-phase="closing"] .sf-dialog__panel {
+        animation: none;
+    }
+}

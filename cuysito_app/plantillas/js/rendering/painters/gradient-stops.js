@@ -1,0 +1,1 @@
+import{safeHex as r,isFullyTransparent as t}from"../../utils/color-utils.js";export function computeGradientStops(t,e){const n=Array.isArray(t)?t.map(r).filter(Boolean):[],o=Array.isArray(e)?e:[],a=n.filter((r,t)=>!o[t]);return 0===a.length?[]:1===a.length?[a[0],a[0]]:a}export function areAllStopsTransparent(r){return!(!Array.isArray(r)||0===r.length)&&r.every(t)}

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banano Store — En Mantenimiento</title>
+    <meta name="description" content="Banano Store está en mantenimiento. Volveremos pronto.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-deep: #06070b;
+            --text-primary: #e8ecf4;
+            --text-secondary: rgba(255, 255, 255, 0.50);
+            --accent: #fde68a;
+            --accent-dim: rgba(253, 230, 138, 0.15);
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+        }
+
+        /* ============================================================
+           INTERACTIVE CANVAS BACKGROUND
+           ============================================================ */
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Grain overlay for texture */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.35;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+        }
+
+
+
+
+
+        /* ============================================================
+           CONTENT
+           ============================================================ */
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 2rem;
+            text-align: center;
+            gap: 2.1rem;
+        }
+
+        /* Header image — large but not background-sized */
+        .header-icon {
+            width: clamp(350px, 50vw, 595px);
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 50px rgba(253, 230, 138, 0.12));
+            animation: float 4s ease-in-out infinite;
+            border-radius: 24px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-14px); }
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: clamp(2.6rem, 7vw, 4.4rem);
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+        }
+
+        h1 .accent { color: var(--accent); }
+        h1 .mobile-break { display: inline; }
+
+        .subtitle {
+            max-width: 800px;
+            font-size: clamp(1.65rem, 3.5vw, 1.9rem);
+            font-weight: 400;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* ---- IMAGE SLOT ---- */
+        .image-slot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 630px;
+            max-height: 490px;
+        }
+
+        .image-slot img {
+            max-width: 100%;
+            max-height: 490px;
+            object-fit: contain;
+            border-radius: 24px;
+            filter: drop-shadow(0 0 70px rgba(253, 230, 138, 0.10));
+        }
+
+        /* ---- PILL BADGE ---- */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.85rem 2rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(14px);
+            font-size: 1.47rem;
+            color: var(--text-secondary);
+        }
+
+        .badge .dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { box-shadow: 0 0 0 0 var(--accent-dim); }
+            50%      { box-shadow: 0 0 0 10px transparent; }
+        }
+
+        @media (max-height: 560px) {
+            .header-icon { width: clamp(220px, 40vw, 380px); }
+            .content { gap: 1rem; }
+            .image-slot { max-height: 200px; }
+            .image-slot img { max-height: 200px; }
+        }
+
+        /* Mobile: only title above image, forced line break */
+        @media (max-width: 640px) {
+            .content h1 {
+                order: -1;
+                font-size: 2.4rem;
+            }
+            .content h1 .mobile-break {
+                display: block;
+            }
+            .header-icon {
+                width: clamp(220px, 65vw, 400px);
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            .badge {
+                font-size: 1rem;
+                padding: 0.6rem 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Interactive abstract canvas -->
+    <canvas id="bgCanvas"></canvas>
+    <div class="grain"></div>
+
+
+    <!-- Main content -->
+    <div class="content">
+
+        <img class="header-icon"
+             src="https://res.cloudinary.com/dq3xsjgwi/image/upload/v1780972441/mantenimiento_sojiic.png"
+             alt="Banano Store">
+
+        <h1>Estamos en<span class="mobile-break"> </span><span class="accent">mantenimiento</span></h1>
+
+        <!-- IMAGE SLOT: coloca tu imagen en /assets/maintenance.png -->
+        <div class="image-slot">
+            <img src="/assets/maintenance.png" alt="Mantenimiento Banano Store"
+                 onerror="this.parentElement.style.display='none'">
+        </div>
+
+        <div class="badge">
+            <span class="dot"></span>
+            Volvemos en un rato
+        </div>
+    </div>
+
+    <script>
+    (() => {
+        // ============================================================
+        // INTERACTIVE CANVAS BACKGROUND
+        // ============================================================
+        const canvas = document.getElementById('bgCanvas');
+        const ctx    = canvas.getContext('2d');
+
+        let W, H;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        function resize() {
+            W = window.innerWidth;
+            H = window.innerHeight;
+            canvas.width  = W * dpr;
+            canvas.height = H * dpr;
+            canvas.style.width  = W + 'px';
+            canvas.style.height = H + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // --- Mouse tracking (smooth lerp) ---
+        let mouseTarget = { x: W / 2, y: H / 2 };
+        let mouseSmooth = { x: W / 2, y: H / 2 };
+
+        document.addEventListener('mousemove', e => {
+            mouseTarget.x = e.clientX;
+            mouseTarget.y = e.clientY;
+        });
+        document.addEventListener('mouseleave', () => {
+            mouseTarget.x = W / 2;
+            mouseTarget.y = H / 2;
+        });
+        document.addEventListener('touchmove', e => {
+            const t = e.touches[0];
+            mouseTarget.x = t.clientX;
+            mouseTarget.y = t.clientY;
+        }, { passive: true });
+
+        // --- Orbs: wider variety ---
+        const COLORS = [
+            { r: 253, g: 230, b: 138 },  // pastel yellow
+            { r: 129, g: 140, b: 248 },  // indigo
+            { r: 244, g: 114, b: 182 },  // pink
+            { r: 56,  g: 189, b: 248 },  // sky
+            { r: 251, g: 191, b: 36  },  // amber
+            { r: 167, g: 139, b: 250 },  // violet
+            { r: 52,  g: 211, b: 153 },  // teal
+            { r: 251, g: 146, b: 60  },  // coral
+        ];
+
+        class Orb {
+            constructor() { this.reset(); }
+
+            reset() {
+                const c = COLORS[Math.floor(Math.random() * COLORS.length)];
+                this.color = c;
+                this.baseX = Math.random() * W;
+                this.baseY = Math.random() * H;
+                this.x = this.baseX;
+                this.y = this.baseY;
+                this.radius = 80 + Math.random() * 370;
+                this.opacity = 0.04 + Math.random() * 0.14;
+                this.driftAmpX = 20 + Math.random() * 100;
+                this.driftAmpY = 20 + Math.random() * 80;
+                this.driftSpeedX = 0.00015 + Math.random() * 0.0005;
+                this.driftSpeedY = 0.00015 + Math.random() * 0.0005;
+                this.phaseX = Math.random() * Math.PI * 2;
+                this.phaseY = Math.random() * Math.PI * 2;
+                this.mouseInfluence = 0.02 + Math.random() * 0.07;
+            }
+
+            update(t) {
+                const driftX = Math.sin(t * this.driftSpeedX + this.phaseX) * this.driftAmpX;
+                const driftY = Math.cos(t * this.driftSpeedY + this.phaseY) * this.driftAmpY;
+                const targetX = this.baseX + driftX + (mouseSmooth.x - W / 2) * this.mouseInfluence;
+                const targetY = this.baseY + driftY + (mouseSmooth.y - H / 2) * this.mouseInfluence;
+                this.x += (targetX - this.x) * 0.02;
+                this.y += (targetY - this.y) * 0.02;
+            }
+
+            draw() {
+                const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+                grad.addColorStop(0, `rgba(${this.color.r},${this.color.g},${this.color.b},${this.opacity})`);
+                grad.addColorStop(0.5, `rgba(${this.color.r},${this.color.g},${this.color.b},${this.opacity * 0.35})`);
+                grad.addColorStop(1, `rgba(${this.color.r},${this.color.g},${this.color.b},0)`);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // --- Filament nodes ---
+        class FilamentNode {
+            constructor() {
+                this.x = Math.random() * W;
+                this.y = Math.random() * H;
+                this.vx = (Math.random() - 0.5) * 0.35;
+                this.vy = (Math.random() - 0.5) * 0.35;
+                this.mouseInfluence = 0.01 + Math.random() * 0.04;
+            }
+
+            update() {
+                const dx = mouseSmooth.x - this.x;
+                const dy = mouseSmooth.y - this.y;
+                this.x += this.vx + dx * this.mouseInfluence * 0.012;
+                this.y += this.vy + dy * this.mouseInfluence * 0.012;
+                if (this.x < -20) this.x = W + 20;
+                if (this.x > W + 20) this.x = -20;
+                if (this.y < -20) this.y = H + 20;
+                if (this.y > H + 20) this.y = -20;
+            }
+        }
+
+        const isMobile = W < 640;
+        const orbCount = isMobile ? 5 : 10;
+        const nodeCount = isMobile ? 15 : 55;
+        const orbs = Array.from({ length: orbCount }, () => new Orb());
+        let nodes = Array.from({ length: nodeCount }, () => new FilamentNode());
+        const CONNECT_DIST = isMobile ? 140 : 190;
+
+        // --- Animation loop ---
+        function frame(t) {
+            ctx.clearRect(0, 0, W, H);
+
+            mouseSmooth.x += (mouseTarget.x - mouseSmooth.x) * 0.04;
+            mouseSmooth.y += (mouseTarget.y - mouseSmooth.y) * 0.04;
+
+            // Orbs
+            for (const orb of orbs) { orb.update(t); orb.draw(); }
+
+            // Filament nodes
+            for (const n of nodes) n.update();
+
+            // Filament connections (more visible)
+            ctx.lineWidth = 0.8;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < CONNECT_DIST) {
+                        const alpha = (1 - dist / CONNECT_DIST) * 0.16;
+                        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.stroke();
+                    }
+                }
+                // Mouse connections (brighter)
+                const mdx = mouseSmooth.x - nodes[i].x;
+                const mdy = mouseSmooth.y - nodes[i].y;
+                const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+                if (mdist < CONNECT_DIST * 1.6) {
+                    const alpha = (1 - mdist / (CONNECT_DIST * 1.6)) * 0.25;
+                    ctx.strokeStyle = `rgba(253,230,138,${alpha})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(mouseSmooth.x, mouseSmooth.y);
+                    ctx.stroke();
+                    ctx.lineWidth = 0.8;
+                }
+            }
+
+            // Node dots (larger, brighter)
+            for (const n of nodes) {
+                ctx.fillStyle = 'rgba(255,255,255,0.22)';
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Cursor glow
+            const cursorGrad = ctx.createRadialGradient(mouseSmooth.x, mouseSmooth.y, 0, mouseSmooth.x, mouseSmooth.y, 220);
+            cursorGrad.addColorStop(0, 'rgba(253,230,138,0.06)');
+            cursorGrad.addColorStop(1, 'rgba(253,230,138,0)');
+            ctx.fillStyle = cursorGrad;
+            ctx.beginPath();
+            ctx.arc(mouseSmooth.x, mouseSmooth.y, 220, 0, Math.PI * 2);
+            ctx.fill();
+
+            requestAnimationFrame(frame);
+        }
+
+        requestAnimationFrame(frame);
+
+        window.addEventListener('resize', () => {
+            resize();
+            const nowMobile = W < 640;
+            const newNodeCount = nowMobile ? 15 : 55;
+            orbs.forEach(o => o.reset());
+            nodes = Array.from({ length: newNodeCount }, () => new FilamentNode());
+        });
+    })();
+    </script>
+</body>
+</html>

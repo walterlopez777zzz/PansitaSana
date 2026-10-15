@@ -1,0 +1,85 @@
+/* ═══════════════════════════════════════════════════════════
+   Cart Recipients — Panel controls & entries
+   ═══════════════════════════════════════════════════════════ */
+
+.cart-recipients-section {
+  margin-top: 2px;
+}
+
+.cart-recipients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cart-recipient-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--border, rgba(255,255,255,0.08));
+  background: var(--control-bg, rgba(255,255,255,0.04));
+  transition: border-color 0.15s;
+}
+
+.cart-recipient-entry:hover {
+  border-color: var(--control-border-hover, rgba(255,255,255,0.14));
+}
+
+.cart-recipient-entry__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cart-recipient-entry__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--muted, rgba(203,213,225,0.6));
+}
+
+.cart-recipient-entry__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.cart-recipient-entry__label {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--text, #e2e8f0);
+  user-select: none;
+}
+
+.cart-recipient-entry__input {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 8px;
+}
+
+.cart-recipient-entry__delete {
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.cart-recipient-entry:hover .cart-recipient-entry__delete,
+.cart-recipient-entry__delete:focus-visible {
+  opacity: 1;
+}
+
+.cart-recipient-entry__count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted, rgba(203,213,225,0.5));
+  padding-left: 26px;
+  letter-spacing: 0.01em;
+}

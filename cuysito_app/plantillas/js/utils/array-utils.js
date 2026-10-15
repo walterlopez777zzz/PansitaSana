@@ -1,0 +1,1 @@
+export function moveArrayItem(r,t,e){const n=Array.isArray(r)?[...r]:[];if(t<0||t>=n.length)return n;const a=Math.max(0,Math.min(n.length-1,e)),[i]=n.splice(t,1);return n.splice(a,0,i),n}

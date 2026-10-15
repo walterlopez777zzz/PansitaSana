@@ -1,0 +1,244 @@
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] ================== NUEVO PEDIDO (Log a prueba de fallos activado) ==================
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Sesión iniciada.
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Dependencias (BD y Lógica de Cupón) incluidas.
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] JSON decodificado con éxito.
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Datos crudos de productos recibidos: Array
+(
+    [0] => Array
+        (
+            [id] => v2:/b5ef7522fc5a0f90d6adf209929fdedee5dee1dd344718bb285913d13c9c6561
+            [name] => Pomni
+            [img] => https://fortnite-api.com/images/cosmetics/br/newdisplayassets/54ef0d67a0ad0b49/renderimage_0.png
+            [type] => Lote
+            [is_static] => 
+            [price] => 21
+            [price_base] => 21
+            [price_offer] => 0
+            [has_offer] => 
+            [rarity] => Epic
+            [vbucks] => 1500
+            [colors] => Array
+                (
+                    [color1] => 44464aff
+                    [color2] => 0c0c0dff
+                    [color3] => 2f3033ff
+                    [textBackgroundColor] => 0c0c0dff
+                )
+
+            [section_name] => El asombroso circo digital
+            [store_rank] => 199
+            [backgroundStyle] => --fn-color-1: #44464a; --fn-color-2: #2f3033; --fn-color-3: #0c0c0d;
+            [activar_tutorial] => 
+            [mensaje_tutorial] => 
+            [modo_reserva] => 
+            [mensaje_reserva] => 
+            [quantity] => 1
+            [assignments] => Array
+                (
+                )
+
+            [permitir_canje] => 1
+            [requiere_nickname] => 0
+        )
+
+)
+
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Iniciando transacción de base de datos.
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Extrayendo y sanitizando datos...
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] [VALIDACIÓN FINAL] Análisis de Payload: ¿Requiere Nickname? -> SÍ
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Iniciando validación de expiración de productos...
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Validación de expiración superada. Ningún producto ha caducado.
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] PASO 3: Iniciando cálculo final y autoritativo de precios.
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Totales sin cupón calculados: Subtotal Base=S/21, Total con Ofertas=S/21
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Cálculos finales y unificados: Subtotal Base=S/21, Descuento Total=S/0, Total Final=S/21
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Reserva inteligente: reserva_min=1440, expiracion_oferta=2026-06-22 23:54:59
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Pedido principal insertado con ID: 1159
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Insertando detalles del pedido con precios seguros...
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] PASO DE GUARDADO: Iniciando bucle para 1 productos.
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] GUARDADO: No se encontraron 'productos_afectados' en la respuesta del Cerebro Visual o no es un array.
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Transacción confirmada (commit).
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] Sesión del carrito limpiada con unset().
+[14-Jun-2026 02:35:51 UTC] [CHECKOUT_DEBUG] ¡ÉXITO! El pedido se guardó. Devolviendo respuesta JSON.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] ================== NUEVO PEDIDO (Log a prueba de fallos activado) ==================
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Sesión iniciada.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Dependencias (BD y Lógica de Cupón) incluidas.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] JSON decodificado con éxito.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Datos crudos de productos recibidos: Array
+(
+    [0] => Array
+        (
+            [id] => v2:/8815964226468ce6943cd2b9575f3846f6b8a7ab2858c96803a869f4eb63dd58
+            [name] => Boca bruñida brutal
+            [img] => https://fortnite-api.com/images/cosmetics/br/character_infernaltrooper/icon.png
+            [type] => Atuendo
+            [is_static] => 
+            [price] => 11.2
+            [price_base] => 11.2
+            [price_offer] => 0
+            [has_offer] => 
+            [rarity] => Serie de Lava
+            [vbucks] => 800
+            [colors] => Array
+                (
+                    [color1] => 004e66ff
+                    [color2] => 000a2eff
+                    [color3] => 00253dff
+                    [textBackgroundColor] => 000a2eff
+                )
+
+            [section_name] => Listo para el combate
+            [store_rank] => 189
+            [backgroundStyle] => --fn-color-1: #004e66; --fn-color-2: #00253d; --fn-color-3: #000a2e;
+            [activar_tutorial] => 
+            [mensaje_tutorial] => 
+            [modo_reserva] => 
+            [mensaje_reserva] => 
+            [quantity] => 1
+            [assignments] => Array
+                (
+                )
+
+            [permitir_canje] => 1
+            [requiere_nickname] => 0
+        )
+
+)
+
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Iniciando transacción de base de datos.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Extrayendo y sanitizando datos...
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] [VALIDACIÓN FINAL] Análisis de Payload: ¿Requiere Nickname? -> SÍ
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Iniciando validación de expiración de productos...
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Validación de expiración superada. Ningún producto ha caducado.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] PASO 3: Iniciando cálculo final y autoritativo de precios.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Totales sin cupón calculados: Subtotal Base=S/11.2, Total con Ofertas=S/11.2
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Cálculos finales y unificados: Subtotal Base=S/11.2, Descuento Total=S/0, Total Final=S/11.2
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Reserva inteligente: reserva_min=1440, expiracion_oferta=2026-06-14 23:54:59
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Pedido principal insertado con ID: 1160
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Insertando detalles del pedido con precios seguros...
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] PASO DE GUARDADO: Iniciando bucle para 1 productos.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] GUARDADO: No se encontraron 'productos_afectados' en la respuesta del Cerebro Visual o no es un array.
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Transacción confirmada (commit).
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] Sesión del carrito limpiada con unset().
+[14-Jun-2026 02:37:37 UTC] [CHECKOUT_DEBUG] ¡ÉXITO! El pedido se guardó. Devolviendo respuesta JSON.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] ================== NUEVO PEDIDO (Log a prueba de fallos activado) ==================
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Sesión iniciada.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Dependencias (BD y Lógica de Cupón) incluidas.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] JSON decodificado con éxito.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Datos crudos de productos recibidos: Array
+(
+    [0] => Array
+        (
+            [id] => v2:/7a583383c57d01d751e8c9fae35584b504a3e25d0e09a07ed279f82ce30c0233
+            [name] => All The Stars - Kendrick Lamar ft. SZA
+            [img] => https://cdn.fortnite-api.com/tracks/9355953c94d6dc99.jpg
+            [type] => Pista de Improvisación
+            [is_static] => 
+            [price] => 6.5
+            [price_base] => 6.5
+            [price_offer] => 0
+            [has_offer] => 
+            [rarity] => Common
+            [vbucks] => 500
+            [colors] => Array
+                (
+                    [color1] => 3a306cff
+                    [color3] => 5e40ceff
+                    [textBackgroundColor] => 694fc3ff
+                )
+
+            [section_name] => Pistas de improvisación
+            [store_rank] => 182
+            [backgroundStyle] => --fn-color-1: #3a306c; --fn-color-2: #5e40ce;
+            [activar_tutorial] => 
+            [mensaje_tutorial] => 
+            [modo_reserva] => 
+            [mensaje_reserva] => 
+            [quantity] => 1
+            [assignments] => Array
+                (
+                )
+
+            [permitir_canje] => 1
+            [requiere_nickname] => 0
+        )
+
+)
+
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Iniciando transacción de base de datos.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Extrayendo y sanitizando datos...
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] [VALIDACIÓN FINAL] Análisis de Payload: ¿Requiere Nickname? -> SÍ
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Modo Final Decidido: self (Verif: 1, Cashback: verificado 5%)
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Iniciando validación de expiración de productos...
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Validación de expiración superada. Ningún producto ha caducado.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] PASO 3: Iniciando cálculo final y autoritativo de precios.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Totales sin cupón calculados: Subtotal Base=S/6.5, Total con Ofertas=S/6.5
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Cálculos finales y unificados: Subtotal Base=S/6.5, Descuento Total=S/0, Total Final=S/6.5
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Reserva inteligente: reserva_min=1440, expiracion_oferta=2026-09-17 23:54:59
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Cashback: S/0.33 -> 25.38 monedas (rate: 0.05, tasa: S/1.3/100 monedas)
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Pedido principal insertado con ID: 1216
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Insertando detalles del pedido con precios seguros...
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] PASO DE GUARDADO: Iniciando bucle para 1 productos.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] GUARDADO: No se encontraron 'productos_afectados' en la respuesta del Cerebro Visual o no es un array.
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Transacción confirmada (commit).
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] Sesión del carrito limpiada con unset().
+[12-Sep-2026 22:15:21 UTC] [CHECKOUT_DEBUG] ¡ÉXITO! El pedido se guardó. Devolviendo respuesta JSON.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] ================== NUEVO PEDIDO (Log a prueba de fallos activado) ==================
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Sesión iniciada.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Dependencias (BD y Lógica de Cupón) incluidas.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] JSON decodificado con éxito.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Datos crudos de productos recibidos: Array
+(
+    [0] => Array
+        (
+            [id] => v2:/e2ae4b6c24e881e126b35ed2cea5638da78d63c58c59324f999d692fcbf43596
+            [name] => Adam Smasher
+            [img] => https://fortnite-api.com/images/cosmetics/br/character_gatemouse/featured.png
+            [type] => Atuendo
+            [is_static] => 
+            [price] => 19.5
+            [price_base] => 19.5
+            [price_offer] => 0
+            [has_offer] => 
+            [rarity] => Leyendas de videojuegos
+            [vbucks] => 1500
+            [colors] => Array
+                (
+                    [color1] => ffff65ff
+                    [color3] => 939300ff
+                    [textBackgroundColor] => 000000ff
+                )
+
+            [section_name] => Cyberpunk
+            [store_rank] => 193
+            [backgroundStyle] => --fn-color-1: #ffff65; --fn-color-2: #939300;
+            [activar_tutorial] => 
+            [mensaje_tutorial] => 
+            [modo_reserva] => 
+            [mensaje_reserva] => 
+            [quantity] => 1
+            [assignments] => Array
+                (
+                )
+
+            [permitir_canje] => 1
+            [requiere_nickname] => 0
+        )
+
+)
+
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Iniciando transacción de base de datos.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Extrayendo y sanitizando datos...
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] [VALIDACIÓN FINAL] Análisis de Payload: ¿Requiere Nickname? -> SÍ
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Iniciando validación de expiración de productos...
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Validación de expiración superada. Ningún producto ha caducado.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] PASO 3: Iniciando cálculo final y autoritativo de precios.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Totales sin cupón calculados: Subtotal Base=S/19.5, Total con Ofertas=S/19.5
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Cálculos finales y unificados: Subtotal Base=S/19.5, Descuento Total=S/0, Total Final=S/19.5
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Reserva inteligente: reserva_min=1440, expiracion_oferta=2026-09-26 23:54:59
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Pedido principal insertado con ID: 1225
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Insertando detalles del pedido con precios seguros...
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] PASO DE GUARDADO: Iniciando bucle para 1 productos.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] GUARDADO: No se encontraron 'productos_afectados' en la respuesta del Cerebro Visual o no es un array.
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Transacción confirmada (commit).
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] Sesión del carrito limpiada con unset().
+[22-Sep-2026 06:07:49 UTC] [CHECKOUT_DEBUG] ¡ÉXITO! El pedido se guardó. Devolviendo respuesta JSON.

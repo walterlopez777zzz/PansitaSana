@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Card Manager">
+  <style>
+    .bg { fill: #1d1d1f; }
+    .fg { fill: #ffffff; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #f5f5f7; }
+      .fg { fill: #1d1d1f; }
+    }
+  </style>
+  <rect class="bg" width="32" height="32" rx="7"/>
+  <rect class="fg" x="6" y="9.5" width="20" height="13" rx="2.5"/>
+  <rect class="bg" x="6" y="12.5" width="20" height="3"/>
+  <rect class="bg" x="9" y="18" width="9" height="1.8" rx="0.9"/>
+</svg>

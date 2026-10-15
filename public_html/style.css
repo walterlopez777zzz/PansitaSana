@@ -1,0 +1,7300 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@800;900&display=swap');
+
+/* HeadingNowVariable — la fuente variable oficial de fortnite.com/item-shop
+   (ejes wdth + wght). Cada peso oficial se selecciona vía
+   font-variation-settings, replicando las variables font-heading-now-*. */
+@font-face {
+    font-family: 'HeadingNowVariable';
+    font-style: normal;
+    font-stretch: normal;
+    font-display: swap;
+    src: url('/assets/fonts/HeadingNowVariable.woff2') format('woff2');
+}
+
+:root {
+    --font-heading-now-regular: 'HeadingNowVariable', 'Barlow', sans-serif;
+    --font-heading-now-medium: 'HeadingNowVariable', 'Barlow', sans-serif;
+    --font-heading-now-bold: 'HeadingNowVariable', 'Barlow', sans-serif;
+    --font-heading-now-heavy: 'HeadingNowVariable', 'Barlow', sans-serif;
+    --font-heading-now-regular--font-variation-settings: "wdth" 668, "wght" 400;
+    --font-heading-now-medium--font-variation-settings: "wdth" 668, "wght" 500;
+    --font-heading-now-bold--font-variation-settings: "wdth" 825, "wght" 700;
+    --font-heading-now-heavy--font-variation-settings: "wdth" 825, "wght" 800;
+}
+
+/* --- SISTEMA DE ICONOS SVG ---
+   Glifos inline servidos desde el sprite <svg id="icons"> (ver index.php) y
+   referenciados con <use href="#icon-...">. Se dimensionan con `font-size`
+   (1em) y heredan el color vía `currentColor`, igual que un icono de fuente,
+   por lo que las utilidades de Tailwind (text-xl, text-red-500, etc.) siguen
+   funcionando. El color/relleno lo define cada símbolo (fill/stroke =
+   currentColor); aquí solo se controla el tamaño y la alineación para no
+   pisar los símbolos de trazo (fill:none). */
+.svg-icon {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.125em;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.svg-icon--spin {
+    animation: spin 0.8s linear infinite;
+    transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .svg-icon--spin {
+        animation-duration: 1.6s;
+    }
+}
+
+:root {
+    --color-primary-amber: #f59e0b;
+    --color-primary-amber-darker: #d97706;
+    --color-success-green: #10B981;
+    --color-success-green-hover: #059669;
+    --color-text-light: #e4e4e7;
+    /* Precio final en soles con descuento (tarjetas, páginas de objeto y carrito) */
+    --price-discount-color: #00f56c;
+    /* Precio original tachado (tarjetas y páginas de objeto) */
+    --price-strikethrough-color: rgba(229, 231, 235, 0.72);
+    --color-text-muted: #71717a;
+    --color-text-dark: #18181b;
+    --background-main: #0a0a0b;
+    --background-card: #1a1a1e;
+    --background-section-header: #27272a;
+    --border-color-medium: #3f3f46;
+    --border-color-light: #3f3f46;
+    --header-bg: #111113;
+    --header-border: rgba(255, 255, 255, 0.06);
+    --carousel-gap: 1rem;
+    /* Tokens del grid fluido, en :root (fuente única) para que los hereden
+       tanto las secciones grid (.section-items-container) como el carrusel
+       (.shop-carousel__track) y compartan EXACTAMENTE el mismo ancho de
+       tarjeta de 1 tile. */
+    /* Column tracks tuned to the official item-shop breakpoints:
+       ~2 cols on mobile, 3 cols ≥640px, 4 cols on desktop. */
+    --grid-min: clamp(150px, 22vw, 300px);
+    --grid-gap: clamp(0.5rem, 1.8vw, 1.25rem);
+    --carousel-safe-padding-x: 12px;
+    --carousel-safe-padding-y: 12px;
+    --carousel-hover-bleed: 5px;
+    --price-track-active: var(--color-primary-amber);
+    --price-track-inactive: #3f3f46;
+
+    /* Shared FAB size for floating action buttons (search-trigger & back-to-top).
+       Scales fluidly with vw — no breakpoint jumps. */
+    --fab-size: clamp(40px, 2.2vw + 34px, 48px);
+
+    /* Shared FAB positioning — both buttons sit at the same bottom-right corner */
+    --fab-right: clamp(1rem, 4vw, 2rem);
+    --fab-bottom: clamp(1rem, 4vw, 2rem);
+    --fab-gap: 10px;
+
+    /* Modal & Filter Token Engine */
+    --bg-modal: #18181b;
+    --bg-filter-panel: rgba(0, 0, 0, 0.55);
+    --modal-bg-secondary: #27272a;
+    --border-modal: #3f3f46;
+    --text-modal-primary: #e4e4e7;
+    --text-modal-secondary: #a1a1aa;
+    --text-modal-disabled: #71717a;
+    --bg-modal-hover: rgba(255, 255, 255, 0.06);
+    --btn-bg-secondary: #27272a;
+    --btn-bg-secondary-hover: #3f3f46;
+    --btn-bg-secondary-active: #52525b;
+    
+/* --- GLOBAL SYNCHRONIZED BOUNDING BOX ARCHITECTURE --- */
+    --content-max-width: 1400px;
+    --content-padding-x: 2.5%;
+    --navshelf-height: 52px;
+    --navshelf-border: 1px solid rgba(255, 255, 255, 0.08);
+
+/* --- IMMUTABLE Z-INDEX CSS MATRIX --- */
+    --z-base: 1;
+    --z-dropdown: 20;
+    --z-nav: 30;
+    --z-backdrop: 40;
+    --z-modal: 120;
+    --z-header: 100;
+}
+
+@media (min-width: 1024px) {
+    :root {
+        --carousel-gap: 1.25rem;
+    }
+}
+
+/* --- POLYMORPHIC NAVIGATION STATE ARCHITECTURE --- */
+body[data-view="viaregalo"] {
+    --nav-accent-bg: #f7ff19;
+    --nav-accent-text: #000000;
+}
+
+body[data-view="viacuenta"] {
+    --nav-accent-bg: #40ebff;
+    --nav-accent-text: #000000;
+}
+
+body[data-view="games"] {
+    --nav-accent-bg: #8460fc;
+    --nav-accent-text: #ffffff;
+}
+
+body[data-view="item"] {
+    --nav-accent-bg: #f7ff19;
+    --nav-accent-text: #000000;
+}
+
+body[data-view="producto"] {
+    --nav-accent-bg: #40ebff;
+    --nav-accent-text: #000000;
+}
+/* Widget de redes sociales (FAB abajo-izquierda).
+   Posición y visibilidad responsivas en un único lugar, con selector de ID
+   (no depende de utilidades de Tailwind del CDN). Aparece en todas las vistas
+   de la tienda — es hermano de <main>, así que el cambio de vista no lo afecta.
+   También está duplicado en el critical-CSS inline de index.php para que se
+   muestre antes de que cargue esta hoja. */
+#social-container {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 20;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    #social-container {
+        display: flex;
+    }
+}
+.social-icon:hover {
+    transform: translateY(-2px);
+    background-color: rgba(250, 204, 21, 0.1);
+    border-color: rgba(250, 204, 21, 0.3);
+}
+html,
+body {
+    overflow-x: clip;
+}
+
+/* --- CSS Grid Sticky Footer --- */
+body {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+
+    min-height: 100dvh;
+
+}
+
+#desktop-clear-filter-widget p,
+#mobile-clear-filter-widget p {
+    font-size: 1rem;
+}
+
+/* --- LAYOUT-BOUND UTILITY CLASS --- */
+.layout-bound {
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--content-padding-x);
+}
+
+/* --- PREMIUM HEADER & NAVIGATION SYSTEM (v5 — Refactored Two-Bar) --- */
+
+/* --- Site Header Shell --- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    overflow: visible;
+}
+
+/* --- Search-active overlay: expands from center to cover header content --- */
+.site-header__navshelf,
+.site-header__utilbar {
+    position: relative;
+}
+
+.site-header__navshelf::after,
+.site-header__utilbar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: inherit;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+    clip-path: inset(0 calc(50% - clamp(126px, 40.5vw, 270px)) 0 calc(50% - clamp(126px, 40.5vw, 270px)));
+    transition: clip-path 0.35s ease,
+                opacity 0.2s ease 0.15s;
+}
+
+body.search-active .site-header__navshelf::after,
+body.search-active .site-header__utilbar::after {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transition: clip-path var(--_expand-duration) cubic-bezier(0.12, 0.4, 0.25, 1),
+                opacity 0s;
+}
+
+
+/* Unpinned: header returns to normal flow when section-dropdown is visible */
+.site-header--unpinned {
+    position: relative;
+}
+
+/* --- BAR 1 (TOP): Nav Shelf --- */
+.site-header__navshelf {
+    display: none;
+    background-color: var(--header-bg, #111113);
+    border-bottom: var(--navshelf-border);
+}
+@media (min-width: 768px) {
+    .site-header__navshelf {
+        display: block;
+    }
+}
+
+.site-header__navshelf-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--navshelf-height);
+    min-width: 0;
+}
+
+/* --- BAR 2 (BOTTOM): Utility Shelf --- */
+.site-header__utilbar {
+    display: none;
+    background-color: var(--header-bg, #111113);
+    border-bottom: 1px solid var(--header-border, rgba(255, 255, 255, 0.06));
+}
+
+@media (min-width: 768px) {
+    .site-header__utilbar {
+        display: block;
+    }
+
+    .site-header__mobile-bar {
+        display: none !important;
+    }
+}
+
+/* Flexbox architecture: LEFT(nav tabs) | RIGHT(actions)
+   Login relocated to top bar, timer in action cluster. */
+.site-header__utilbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(0.25rem, calc(3vw - 0.75rem), 1.5rem);
+    height: 40px;
+    min-width: 0;
+}
+
+/* --- TIMER-PILL — Static informational countdown timer --- */
+.timer-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    gap: 0.4rem;
+    padding: 0 10px;
+    min-width: 110px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.875rem;
+
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    cursor: default;
+}
+
+/* Icon: clock glyph */
+.timer-pill__icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    opacity: 1;
+}
+
+/* --- Animated clock hands (shared by timer-pill & item-timer) --- */
+@keyframes clock-hand-spin {
+    to { transform: rotate(360deg); }
+}
+
+.clock-hand {
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+}
+
+.clock-hand--hour {
+    animation: clock-hand-spin 43200s linear infinite;
+}
+
+.clock-hand--minute {
+    animation: clock-hand-spin 3600s linear infinite;
+}
+
+.clock-hand--second {
+    animation: clock-hand-spin 60s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .clock-hand {
+        animation: none;
+    }
+}
+
+/* Countdown text */
+.timer-pill__text {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+    line-height: 1;
+}
+
+/* Unit labels (h, m, s) — high visibility */
+.timer-pill__unit {
+    opacity: 1;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-left: 0.06em;
+}
+/* Separator dots between segments */
+.timer-pill__sep {
+    opacity: 0.35;
+    font-weight: 400;
+    margin: 0 0.1em;
+}
+
+/* "Updated" state text */
+.timer-pill__updated {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.75em;
+}
+
+/* --- Loading spinner (shown before data arrives) --- */
+.timer-pill__spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-top-color: rgba(255, 255, 255, 0.45);
+    border-radius: 50%;
+    animation: chrono-spin 0.7s linear infinite;
+}
+@keyframes chrono-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- Compact variant (mobile) --- */
+.timer-pill--compact {
+    min-height: 26px;
+    padding: 2px 8px;
+    font-size: 0.6875rem;
+
+    gap: 0.3rem;
+    min-width: 85px;
+}
+
+.timer-pill--compact .timer-pill__icon {
+    width: 11px;
+    height: 11px;
+}
+
+.timer-pill--compact .timer-pill__spinner {
+    width: 12px;
+    height: 12px;
+    border-width: 1.5px;
+}
+
+/* --- Logo (strict monochromatic, anchored to inline-start) --- */
+.site-header__logo {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-decoration: none;
+    flex-shrink: 0;
+    color: #ffffff;
+    transition: opacity 0.15s ease;
+}
+.site-header__logo:hover {
+    opacity: 0.75;
+}
+
+.site-header__logo:active {
+    opacity: 0.6;
+    transform: scale(0.97);
+}
+
+.site-header__logo-mark {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    color: inherit;
+}
+
+.site-header__wordmark {
+    font-family: 'Outfit', 'Barlow', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: uppercase;
+    color: inherit;
+}
+
+/* --- Segmented Tab Control (left-aligned in utilbar, natural flex start) --- */
+.site-nav {
+    display: flex;
+    align-items: center;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.site-nav__track {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    min-width: 0;
+    overflow: hidden;
+}
+/* --- Sliding Indicator (GPU-composited) --- */
+.site-nav__indicator {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    height: calc(100% - 6px);
+    border-radius: 8px;
+    background-color: var(--nav-accent-bg);
+    box-shadow: none;
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Suppress indicator transition on first paint */
+.site-nav__indicator[data-no-transition] {
+    transition: none !important;
+}
+.site-nav__track:has(.site-nav__tab.active:hover) .site-nav__indicator {
+    background-color: color-mix(in srgb, var(--nav-accent-bg) 85%, #000000);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-nav__indicator {
+        transition: none !important;
+    }
+}
+
+.site-nav__tab {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.2rem, 0.5vw, 0.4rem);
+    padding: 0.4rem clamp(0.3rem, 1.2vw, 1rem);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.38);
+    border-radius: 8px;
+    background-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+        transform 100ms ease;
+}
+
+.site-nav__tab>span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+.site-nav__tab:hover {
+    color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.04);
+}
+.site-nav__tab:active {
+    transform: scale(0.96);
+    transition-duration: 60ms;
+}
+
+.site-nav__tab:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-primary-amber);
+    color: rgba(255, 255, 255, 0.85);
+}
+/* Active tab: WCAG AAA contrast enforcement — polymorphic text color */
+.site-nav__tab.active {
+    color: var(--nav-accent-text) !important;
+    font-weight: 700;
+}
+
+.site-nav__tab.active .site-nav__icon {
+    color: var(--nav-accent-text) !important;
+}
+.site-nav__icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    opacity: 0.7;
+    transition: opacity 180ms ease;
+}
+
+.site-nav__tab.active .site-nav__icon {
+    opacity: 1;
+}
+
+.site-nav__icon--games {
+    width: 1.05rem;
+    height: 1.05rem;
+}
+
+/* --- Actions Cluster (right side of utilbar) --- */
+.site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.15rem, calc(1vw - 0.2rem), 0.5rem);
+    flex-shrink: 1;
+    min-width: 0;
+    justify-self: end;
+    overflow: visible;
+}
+
+/* --- PROGRESSIVE DISCLOSURE — Responsive Collapse Tiers --- */
+
+/* --- Tier 1 (~1150px): Login CTA text collapses to icon-only --- */
+@media (max-width: 1150px) {
+
+    .header-action-btn.header-action-btn--cta {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 9999px;
+    }
+}
+
+/* --- Tier 2 (~960px): Nav tab labels collapse to icon-only --- */
+@media (max-width: 960px) {
+    .site-nav__tab>span {
+        display: none;
+    }
+
+    .site-nav__tab {
+        padding: 0.4rem 0.55rem;
+        gap: 0;
+        flex-shrink: 0;
+    }
+
+    .site-nav__icon {
+        width: 1.15rem;
+        height: 1.15rem;
+    }
+
+    .site-nav__icon--games {
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+}
+
+/* --- Mobile Top Bar --- */
+.site-header__mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    height: 48px;
+    background-color: var(--header-bg, #111113);
+    border-bottom: 1px solid var(--header-border, rgba(255, 255, 255, 0.06));
+}
+
+@media (min-width: 768px) {
+    .site-header__mobile-bar {
+        display: none !important;
+    }
+}
+
+.site-header__logo--mobile .site-header__logo-mark {
+    width: 22px;
+    height: 22px;
+}
+
+.site-header__logo--mobile .site-header__wordmark {
+    font-size: 1rem;
+}
+
+.site-header__mobile-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+/* --- Date Bar (hidden data holder) --- */
+.date-bar {
+    display: none;
+}
+
+/* --- Account flyout (mectrl) --- */
+header[role="banner"] .mectrl_flyout .mectrl_commands {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+}
+
+header[role="banner"] .mectrl_flyout {
+    margin-top: calc(0.5rem + 4px);
+}
+
+header[role="banner"] .mectrl_flyout .mectrl_commands .mectrl_link {
+    flex: 1 1 0%;
+    width: auto;
+    justify-content: center;
+}
+
+header[role="banner"] .mectrl_topHeader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 34px;
+    padding: 4px 14px;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+    text-decoration: none;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 100ms ease;
+}
+header[role="banner"] .mectrl_topHeader:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.02);
+}
+header[role="banner"] .mectrl_topHeader:active {
+    transform: scale(0.97);
+    transition-duration: 60ms;
+}
+
+header[role="banner"] .mectrl_topHeader .mectrl_header_text {
+    height: auto;
+    padding-left: 0;
+    padding-right: 0;
+    color: inherit;
+}
+
+header[role="banner"] .mectrl_topHeader .mectrl_profilepic {
+    margin: 0;
+    width: 26px;
+    height: 26px;
+}
+
+/* --- z-index layer assignments --- */
+#main-nav {
+    position: relative;
+    z-index: var(--z-nav);
+}
+
+/* Dimming solo del contenido principal cuando hay un modal abierto */
+#main-content {
+    position: relative;
+
+}
+
+/* --- GLOBAL DIALOG BACKDROP ARCHITECTURE --- */
+#backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: var(--z-backdrop);
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    transition: opacity 0.2s ease-in-out;
+    will-change: opacity;
+}
+
+#backdrop.backdrop--active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Capa de un cliente de Backdrop: ocupa el viewport pero no recibe eventos,
+   de modo que los clics fuera del panel llegan a #backdrop (click-outside
+   centralizado). Sólo su hijo directo —el panel— es interactivo. El velo,
+   el scroll-lock y el inert del contenido los gestiona window.Backdrop. */
+.backdrop-layer {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+    pointer-events: none;
+}
+
+.backdrop-layer > * {
+    pointer-events: auto;
+}
+
+/* Cuando hay un modal abierto, deshabilitamos la interacción del resto de UI fija
+   excepto la cabecera, la navegación superior, la barra de fecha y el propio modal */
+body.modal-open #side-nav-wrapper,
+body.modal-open #social-container,
+body.modal-open #chat-links,
+body.modal-open #page-corner-actions,
+body.modal-open #back-to-top,
+body.modal-open #mobile-nav,
+body.modal-open #filter-overlay:not(.is-visible),
+/* Música y video: deshabilitar controles y contenedor emergente */
+body.modal-open #music-control-bar,
+body.modal-open #mobile-music-controller,
+body.modal-open #music-video-container {
+    pointer-events: none !important;
+}
+
+#view-viaregalo,
+#view-viacuenta,
+#view-juegos {
+    display: none;
+}
+
+body[data-view="viaregalo"] #view-viaregalo,
+body[data-view="viacuenta"] #view-viacuenta {
+    display: block;
+}
+
+/* Games view: hide chrome */
+body[data-view="games"] > #site-footer,
+body[data-view="games"] > aside,
+body[data-view="games"] > #search {
+    display: none !important;
+}
+
+/* Games view: keep mobile nav always visible (prevent scroll-hide) */
+body[data-view="games"] #mobile-nav.mobile-nav-hidden {
+    transform: none !important;
+}
+
+/* Games view: the #view-juegos layout lives in /juegos/juegos-hub.css. */
+
+/* Definitive containment boundary — prevents ANY descendant
+   horizontal overflow from propagating to <body> and triggering
+   a viewport-wide scrollbar. overflow-x: clip is used instead
+   of hidden to avoid creating a new scroll context. */
+#view-viaregalo,
+#view-viacuenta {
+    overflow-x: clip;
+}
+
+/* --- HYPER-FLUID GRID ARCHITECTURE (v2 — auto-fit + clamp) --- */
+
+/* ── Grid container ── */
+/* --grid-min / --grid-gap se heredan de :root (fuente única). */
+.section-items-container {
+    display: grid;
+    /* Official shop grid: fixed column counts per breakpoint
+       (grid-cols-2 / sm:grid-cols-3 / md:grid-cols-4) so tiles keep a
+       stable, bounded size instead of stretching to fill leftover space. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--grid-gap);
+
+    /* Densification: pack smaller items into gaps left by
+       multi-span cards (2×1, 3×1, 4×1) to guarantee a flush UI. */
+    grid-auto-flow: dense;
+}
+
+@media (min-width: 640px) {
+    .section-items-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .section-items-container {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* ── Grid children: anti min-content trap ── */
+.section-items-container>* {
+    min-width: 0;
+    min-height: 0;
+}
+
+/* ── Large tile spanning via explicit utility classes ──
+   JS adds .span-card-2 / .span-card-3 / .span-card-4 to the
+   wrapper div.  No attribute selectors — bulletproof enforcement. */
+.section-items-container>.span-card-2 {
+    grid-column: span 2;
+}
+
+.section-items-container>.span-card-3 {
+    grid-column: span 3;
+}
+
+.section-items-container>.span-card-4 {
+    grid-column: span 4;
+}
+
+/* --- FRACTIONAL TRACK EXPANSION SUPPRESSION (v2 — CORRECTED) --- */
+.section-items-container > .span-card-2,
+.section-items-container > .span-card-3,
+.section-items-container > .span-card-4 {
+    /* Removed: justify-self: start — this was causing collapse */
+    width: 100%;
+    /* Ensure wrapper fills its allocated grid columns */
+}
+
+/* ── Mobile guardrail: NOTHING exceeds span 2 below 768px ── */
+@media (max-width: 767px) {
+
+    .section-items-container>.span-card-3,
+    .section-items-container>.span-card-4 {
+        grid-column: span 2;
+    }
+}
+
+/* --- GRID ITEM CONTAINMENT — Break the CSS Grid min-content trap. --- */
+.item-card-wrapper {
+    min-width: 0;
+}
+
+/* Internal flex rows that establish min-content floors */
+.card-footer-pricing {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.price-container {
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+/* ── Inner card elasticity: anti-blowout truncation ── */
+.item-card-content {
+    min-width: 0;
+}
+
+.item-card-content h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.item-card-content .item-meta {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.item-card-content .item-meta__rarity,
+.item-card-content .item-meta__type {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.card-footer-pricing .vbucks-price,
+.card-footer-pricing .price-block {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+/* --- CONTEXTUAL 1×1 ENFORCEMENT — Bestsellers & Random Offer Sections ---
+   "Lo más vendido" (carrusel) y "Ofertas random del día" (grid) son secciones
+   duplicadas: sus tarjetas SIEMPRE se muestran a exactamente 1 tile de ancho,
+   sin importar cuántas haya y sin que una dependa del ancho de la otra. El
+   tileSize original de la API solo se respeta en las secciones de origen. */
+
+/* Force all card wrappers in these sections to span exactly 1 column.
+   OJO: en bestsellers las tarjetas viven dentro de .shop-carousel__track;
+   el hijo directo de .section-items-container es .shop-carousel y
+   NO debe limitarse a 1 columna (ocupa la fila completa del grid). */
+#section-bestsellers-carousel .shop-carousel__track > *,
+#section-random-offer .section-items-container > * {
+    grid-column: span 1 !important;
+}
+
+/* El carrusel completo ocupa todo el ancho de la sección */
+#section-bestsellers-carousel .section-items-container > .shop-carousel {
+    grid-column: 1 / -1;
+}
+
+/* Ofertas random del día (grid): tarjetas a 1 tile, alineadas a la izquierda y
+   con el MISMO ancho que una tarjeta 1×1 de cualquier sección normal.
+   Igual que el grid normal (`minmax(--grid-min, 1fr)`) pero con `auto-fill` en
+   vez de `auto-fit`: auto-fill NO colapsa las pistas vacías, así que el `1fr`
+   reparte el ancho entre TODAS las pistas (incluidas las vacías) y cada tarjeta
+   queda con el ancho de 1 tile normal — sin estirarse a toda la fila cuando hay
+   pocas (antes: 1→fila completa, 2→media, 3→un tercio) y arrancando desde la
+   izquierda. */
+#section-random-offer .section-items-container {
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-min), 1fr));
+    justify-content: start;
+}
+
+/* --- SIDE-NAV-WRAPPER: Decoupled Visibility Architecture --- */
+
+body:not([data-view="viaregalo"]) #side-nav-wrapper {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    body[data-view="viaregalo"] #side-nav-wrapper {
+        display: none;
+    }
+}
+
+/* Force-show override: Remove any JS-injected hidden classes */
+@media (min-width: 768px) {
+    body[data-view="viaregalo"] #side-nav-wrapper {
+        display: flex !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+}
+
+#section-nav-dots,
+#section-nav-text {
+    background-color: rgba(23, 23, 23, 0.7);
+    backdrop-filter: blur(8px);
+}
+
+#section-nav-text {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-amber) #171717;
+}
+
+/* --- SECTION-NAV-TEXT: Scroll fade indicator architecture. --- */
+
+#section-nav-text::-webkit-scrollbar {
+    width: 4px;
+}
+
+#section-nav-text::-webkit-scrollbar-track {
+    background: #171717;
+}
+
+#section-nav-text::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-amber);
+    border-radius: 20px;
+}
+
+.nav-text-link {
+    position: relative;
+    z-index: 1;
+    display: block;
+    padding: 0.25rem;
+}
+
+.nav-text-link>div {
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    position: relative;
+    z-index: 1;
+    transition: background-color 0.1s, color 0.1s;
+}
+
+.nav-text-link.active>div {
+    background-color: #e5e7eb;
+    color: var(--color-text-dark);
+}
+
+.nav-text-link.active:hover>div {
+    color: var(--color-text-dark);
+}
+
+.nav-text-link::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.075s ease-in-out 0.05s;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.nav-text-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: 0 0 0 3px white;
+    border-radius: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.05s ease-in-out;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.nav-text-link:hover::after {
+    opacity: 1;
+    transition-duration: 0s;
+    transition-delay: 0s;
+}
+
+.nav-text-link:hover::before {
+    opacity: 1;
+}
+
+.nav-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: white;
+    opacity: 0.5;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-dot-link.active .nav-dot {
+    transform: scale(1.5);
+    opacity: 1;
+}
+
+.section-header {
+    background-color: var(--background-section-header);
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.item-card-wrapper {
+    position: relative;
+    display: block;
+    border-radius: 8px;
+    overflow: visible;
+    cursor: default;
+    z-index: 2;
+    /* The top 15% headroom of the tile must be fully transparent —
+       the visible card background lives on the bottom 85% box. */
+    background-color: transparent;
+    transition: transform 0.3s, z-index 0s;
+    contain: layout style;
+    /* layout+style containment without paint to allow outward projections */
+    
+    border: 1px solid transparent;
+}
+
+.item-card-content {
+    color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 8px;
+}
+
+/* ── Official item-shop tile geometry ──
+   1×1 tiles use the shop's aspect-[.627]; wide tiles (bundles/lotes)
+   keep the same row height as 1×1 neighbours. A fixed per-span
+   aspect-ratio (e.g. 2/1.52) makes the wide tile's height a function of
+   its OWN width (k·col + (k−1)·gap), which only equals the 1×1 height
+   for one exact gap/column ratio — with fr columns and a clamp() gap the
+   wide tile ends up a few px shorter/taller and its bottom edge drifts.
+   The per-span aspects below stay as a fallback; browsers with container
+   queries get the exact row height computed from the single-column width
+   (see the @supports block). */
+.item-card-wrapper {
+    aspect-ratio: 0.627;
+}
+
+.span-card-2 .item-card-wrapper {
+    aspect-ratio: 2 / 1.52;
+}
+
+.span-card-3 .item-card-wrapper {
+    aspect-ratio: 1 / 0.516;
+}
+
+.span-card-4 .item-card-wrapper {
+    aspect-ratio: 1 / 0.38625;
+}
+
+/* Wide tiles collapse to span 2 below 768px — match their height */
+@media (max-width: 767px) {
+    .span-card-3 .item-card-wrapper,
+    .span-card-4 .item-card-wrapper {
+        aspect-ratio: 2 / 1.52;
+    }
+}
+
+/* ── Exact row-height parity for wide tiles ──
+   Column width = (container − (cols − 1)·gap) / cols; every tile's height
+   is that column width / 0.627 regardless of span, so all bottom edges in
+   a row align. --grid-cols mirrors the grid-template-columns breakpoints. */
+.section-items-container {
+    --grid-cols: 2;
+}
+
+@media (min-width: 640px) {
+    .section-items-container {
+        --grid-cols: 3;
+    }
+}
+
+@media (min-width: 768px) {
+    .section-items-container {
+        --grid-cols: 4;
+    }
+}
+
+@supports (container-type: inline-size) {
+    .section-items-container {
+        container-type: inline-size;
+    }
+
+    .span-card-2 .item-card-wrapper,
+    .span-card-3 .item-card-wrapper,
+    .span-card-4 .item-card-wrapper {
+        aspect-ratio: auto;
+        height: calc((100cqw - (var(--grid-cols) - 1) * var(--grid-gap)) / var(--grid-cols) / 0.627);
+    }
+}
+
+/* Delegate bottom-corner radii to the card footer/content block */
+.item-card-content > :last-child {
+    border-radius: 0 0 7px 7px;
+}
+
+.item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* 8px */
+    margin-bottom: 0.25rem;
+    /* 4px */
+}
+
+.item-meta__divider {
+    width: 1px;
+    height: 12px;
+    background-color: var(--border-color-medium);
+}
+
+.item-card .text-gray-400 {
+    color: #9ca3af;
+}
+
+.item-card .text-gray-300 {
+    color: #d1d5db;
+}
+
+/* V-Bucks icon (SVG) sizing and theming */
+.vbucks-icon {
+    display: inline-block;
+    width: 1.25rem;
+    /* 20px default, overridden by utility classes */
+    height: 1.25rem;
+    color: currentColor;
+}
+
+/* Base class for any inline SVG icon */
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+    pointer-events: none;
+    /* icons are decorative; prevent accidental clicks */
+    fill: currentColor;
+}
+
+/* V-Bucks price row alignment and spacing */
+.vbucks-block[data-currency="vbucks"] {
+    align-items: center;
+}
+
+.vbucks-block .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 1px, 1px);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Stack prices vertically for discounted items */
+.item-card-wrapper .price-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+.item-card-wrapper .price-block .price-base-strikethrough {
+    color: var(--price-strikethrough-color);
+}
+
+/* Reset margin for stacked prices */
+.item-card-wrapper .price-block .line-through,
+.item-card-wrapper .price-block .original-price {
+    margin-right: 0 !important;
+    line-height: 1.2;
+}
+
+/* Ensure non-discounted items stay in a row */
+.item-card-wrapper .price-block:not(:has(.line-through)) {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Re-apply margin for non-discounted items */
+.item-card-wrapper .price-block:not(:has(.line-through)) .original-price {
+    margin-right: 6px !important;
+}
+
+/* Official tile anatomy: the visible card box occupies only the BOTTOM 85%
+   of the tile; the artwork layer occupies the TOP 85%, so it pops out above
+   the card border/hover ring. clip-path (instead of overflow:hidden) clips
+   sides and bottom at the box edges while allowing the top overflow. */
+.item-image-container {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 85%;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    border-radius: 7px;
+    clip-path: inset(-18% 0 0 0 round 7px);
+    /* Above the hover ring pseudo-element so the artwork's top overflow
+       renders over the box-shadow */
+    z-index: 1;
+}
+
+.item-image {
+    /* Default (outfits): the official tile's image layer spans the FULL
+       tile (h-full w-full of the tile → 117.65% of the card box),
+       object-cover, scale 1.6 at 80% of the tile = 76.5% of the box. */
+    position: absolute;
+    left: var(--img-left, 50%);
+    top: var(--img-top, 76.5%);
+    z-index: 1;
+    width: 100%;
+    max-width: none;
+    height: var(--img-h, 117.65%);
+    object-fit: var(--img-fit, cover);
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.15s ease-in-out, filter 0s;
+    /* --img-hover-boost es un factor uniforme (como el scale-[1.03] del
+       wrapper oficial), independiente del --img-scale de cada variante */
+    transform: translate(-50%, -50%) scale(calc(var(--img-scale, 1.6) * var(--img-hover-boost, 1)));
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* official gradient-mask: the artwork fades into the card background
+   over the 80%–95% band of the BOX (container-fixed, like the official
+   gradient-mask-container), regardless of each type's image geometry.
+   Implemented as a bg-colored overlay so the fade position doesn't
+   depend on the image element's own size/scale. */
+.item-image-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    border-radius: inherit;
+    z-index: 2;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(transparent 0% 80%, #000 95%);
+    mask-image: linear-gradient(transparent 0% 80%, #000 95%);
+}
+
+/* Per-type artwork treatment — copied from the official shop's rendered
+   1x1 tiles. There, non-outfit artwork lives in a SQUARE wrapper whose
+   side equals the card box height (the bottom-85% image container),
+   anchored at the container top and offset left by −15% (or −30% for
+   pickaxes/instruments) of the tile width; scale/top apply to the img
+   inside that square. Replicated on the single .item-image by making the
+   img itself the square (height 100% of the box, aspect-ratio 1) — tops
+   are box-relative as-is, and the square's centre works out to
+   left = offset + (0.85/0.627)/2 = 52.8% (−15%) or 37.8% (−30%).
+   Variant mapping: emote/wrap/trail/wheels/companion → 0.7 @ 38% ·
+   pickaxe/instruments → 0.75 @ 37% · glider/backbling → 0.78 @ 42% ·
+   shoes → 0.8 @ 42% · jam tracks → width-square 0.875 @ 27.5% ·
+   bundles → cover 1 @ 55% · car bodies → full · outfits/rest → default.
+   The framing is keyed on the `.item-tile` host (data-item-type /
+   data-item-id / data-dynamic-bundle / data-car-offer) so any element
+   with the tile anatomy — shop cards, cart thumbnails — shares it. */
+
+/* scaled-standard: contain object-top 0.7 @ 38% (music packs render as
+   the same square, cover → identical for their square album art) */
+.item-tile[data-item-type="Gestos"] .item-image,
+.item-tile[data-item-type="Envoltorios"] .item-image,
+.item-tile[data-item-type="Estelas"] .item-image,
+.item-tile[data-item-type="Música"] .item-image,
+.item-tile[data-item-type="Ruedas"] .item-image {
+    --img-fit: contain;
+    --img-scale: 0.7;
+    --img-top: 38%;
+    --img-left: 52.8%;
+    --img-h: 100%;
+    object-position: top;
+    width: auto;
+    aspect-ratio: 1;
+}
+
+/* scaled-half-step: FULL-TILE square wrapper (side = tile height,
+   left −30% of the tile), contain 0.75 @ 37% of the tile → box:
+   height 117.65%, centre x ≈ 49.8%, centre y (0.37−0.15)/0.85 = 25.9% */
+.item-tile[data-item-type="Picos"] .item-image,
+.item-tile[data-item-type="Instrumentos"] .item-image {
+    --img-fit: contain;
+    --img-scale: 0.75;
+    --img-top: 25.9%;
+    --img-left: 49.8%;
+    --img-h: 117.65%;
+    width: auto;
+    aspect-ratio: 1;
+}
+
+/* scaled-half-step (gliders/backblings): contain 0.78 @ 42% */
+.item-tile[data-item-type="Alas delta"] .item-image,
+.item-tile[data-item-type="Accesorios mochileros"] .item-image,
+/* Excepciones por objeto: Epic asigna la variante de encuadre por
+   cosmético, no solo por tipo, y la API pública no la expone. Este pico
+   usa la variante de alas delta/mochilas en el tile oficial. */
+.item-tile[data-item-id="Pickaxe_ThinGlaze"] .item-image {
+    --img-fit: contain;
+    --img-scale: 0.78;
+    --img-top: 42%;
+    --img-left: 52.8%;
+    --img-h: 100%;
+    width: auto;
+    aspect-ratio: 1;
+}
+
+/* kicks: contain 0.8 @ 42% */
+.item-tile[data-item-type="Calzado"] .item-image {
+    --img-fit: contain;
+    --img-scale: 0.8;
+    --img-top: 42%;
+    --img-left: 52.8%;
+    --img-h: 100%;
+    width: auto;
+    aspect-ratio: 1;
+}
+
+/* companion: contain 0.7 @ 38% */
+.item-tile[data-item-type="Compañeros"] .item-image {
+    --img-fit: contain;
+    --img-scale: 0.7;
+    --img-top: 38%;
+    --img-left: 52.8%;
+    --img-h: 100%;
+    width: auto;
+    aspect-ratio: 1;
+}
+
+/* full-square (jam tracks): the square is card-WIDTH based (w-full
+   aspect-square h-auto) in a full-tile layer shifted down 2.5rem
+   (top-10), contain 0.875 @ 27.5% of the tile → box 14.7% + 40px;
+   album art keeps rounded-md corners at every size */
+.item-tile[data-item-type="Pistas de improvisación"] .item-image {
+    --img-fit: contain;
+    --img-scale: 0.875;
+    --img-top: calc(14.7% + 2.5rem);
+    --img-h: auto;
+    border-radius: 0.375rem;
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+/* full (car bodies): plain cover of the whole tile */
+.item-tile[data-item-type="Coches"] .item-image {
+    --img-fit: cover;
+    --img-scale: 1;
+    --img-top: 41.2%;
+    --img-h: 117.65%;
+}
+
+/* bundle: FULL-TILE layer, cover 1 @ 55% of the tile → box: height
+   117.65%, centre y (0.55−0.15)/0.85 = 47.1% · wide tiles:
+   1.4@75 · 1.75@78 · 2.28@108 (tile-relative) */
+.item-tile[data-item-type="Lotes"] .item-image {
+    --img-fit: cover;
+    --img-scale: 1;
+    --img-top: 47.1%;
+    --img-h: 117.65%;
+}
+
+.span-card-2 .item-tile[data-item-type="Lotes"] .item-image {
+    --img-fit: contain;
+    --img-scale: 1.4;
+    --img-top: 70.6%;
+    --img-h: 117.65%;
+}
+
+.span-card-3 .item-tile[data-item-type="Lotes"] .item-image {
+    --img-fit: contain;
+    --img-scale: 1.75;
+    --img-top: 74.1%;
+    --img-h: 117.65%;
+}
+
+.span-card-4 .item-tile[data-item-type="Lotes"] .item-image {
+    --img-fit: contain;
+    --img-scale: 2.28;
+    --img-top: 109.4%;
+    --img-h: 117.65%;
+}
+
+/* Wide tiles collapse to span 2 on mobile — use the 2-wide bundle framing */
+@media (max-width: 767px) {
+    .span-card-3 .item-tile[data-item-type="Lotes"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Lotes"] .item-image {
+        --img-fit: contain;
+        --img-scale: 1.4;
+        --img-top: 70.6%;
+    }
+}
+
+/* ── Wide tiles (2+ columns): official grande/venti/trenta framing ──
+   On wide tiles every variant switches to a full-width contain layer;
+   default (outfits) goes from cover to contain so skins no longer
+   spill out of the card. */
+.span-card-2 .item-card-wrapper .item-image,
+.span-card-3 .item-card-wrapper .item-image,
+.span-card-4 .item-card-wrapper .item-image {
+    --img-fit: contain;
+    --img-scale: 1.6;
+    --img-top: 74.7%;
+    --img-left: 50%;
+    --img-h: 117.65%;
+    object-position: center;
+    width: 100%;
+    aspect-ratio: auto;
+}
+
+/* scaled-standard: grande 0.9 @ tile 47.5% · venti/trenta 0.95 @ tile 50% */
+.span-card-2 .item-tile[data-item-type="Gestos"] .item-image,
+.span-card-2 .item-tile[data-item-type="Envoltorios"] .item-image,
+.span-card-2 .item-tile[data-item-type="Estelas"] .item-image,
+.span-card-2 .item-tile[data-item-type="Ruedas"] .item-image {
+    --img-scale: 0.9;
+    --img-top: 38.2%;
+}
+
+.span-card-3 .item-tile[data-item-type="Gestos"] .item-image,
+.span-card-3 .item-tile[data-item-type="Envoltorios"] .item-image,
+.span-card-3 .item-tile[data-item-type="Estelas"] .item-image,
+.span-card-3 .item-tile[data-item-type="Ruedas"] .item-image,
+.span-card-4 .item-tile[data-item-type="Gestos"] .item-image,
+.span-card-4 .item-tile[data-item-type="Envoltorios"] .item-image,
+.span-card-4 .item-tile[data-item-type="Estelas"] .item-image,
+.span-card-4 .item-tile[data-item-type="Ruedas"] .item-image {
+    --img-scale: 0.95;
+    --img-top: 41.2%;
+}
+
+/* scaled-half-step: grande 0.85 @ tile 41% · venti/trenta 0.95 @ tile 45.3% */
+.span-card-2 .item-tile[data-item-type="Picos"] .item-image,
+.span-card-2 .item-tile[data-item-type="Alas delta"] .item-image,
+.span-card-2 .item-tile[data-item-type="Accesorios mochileros"] .item-image,
+.span-card-2 .item-tile[data-item-type="Instrumentos"] .item-image {
+    --img-scale: 0.85;
+    --img-top: 30.6%;
+}
+
+.span-card-3 .item-tile[data-item-type="Picos"] .item-image,
+.span-card-3 .item-tile[data-item-type="Alas delta"] .item-image,
+.span-card-3 .item-tile[data-item-type="Accesorios mochileros"] .item-image,
+.span-card-3 .item-tile[data-item-type="Instrumentos"] .item-image,
+.span-card-4 .item-tile[data-item-type="Picos"] .item-image,
+.span-card-4 .item-tile[data-item-type="Alas delta"] .item-image,
+.span-card-4 .item-tile[data-item-type="Accesorios mochileros"] .item-image,
+.span-card-4 .item-tile[data-item-type="Instrumentos"] .item-image {
+    --img-scale: 0.95;
+    --img-top: 35.6%;
+}
+
+/* kicks: grande contain 0.9 @ tile 35% · venti/trenta 0.95 @ tile 40% */
+.span-card-2 .item-tile[data-item-type="Calzado"] .item-image {
+    --img-scale: 0.9;
+    --img-top: 23.5%;
+}
+
+.span-card-3 .item-tile[data-item-type="Calzado"] .item-image,
+.span-card-4 .item-tile[data-item-type="Calzado"] .item-image {
+    --img-scale: 0.95;
+    --img-top: 29.4%;
+}
+
+/* companion: grande 0.9 · venti 0.95 · trenta 1 — all @ tile 43% */
+.span-card-2 .item-tile[data-item-type="Compañeros"] .item-image {
+    --img-scale: 0.9;
+    --img-top: 32.9%;
+}
+
+.span-card-3 .item-tile[data-item-type="Compañeros"] .item-image {
+    --img-scale: 0.95;
+    --img-top: 32.9%;
+}
+
+.span-card-4 .item-tile[data-item-type="Compañeros"] .item-image {
+    --img-scale: 1;
+    --img-top: 32.9%;
+}
+
+/* full-square: grande 0.75 @ tile 41% · venti 0.8 @ left 62.5%/tile 45% ·
+   trenta 0.8 @ left 60%/tile 45% — wide jam tracks keep the square art
+   layer (w-auto) offset toward the right like the official shop */
+.span-card-2 .item-tile[data-item-type="Pistas de improvisación"] .item-image {
+    --img-scale: 0.75;
+    --img-top: 30.6%;
+    width: auto;
+    aspect-ratio: 1;
+}
+
+.span-card-3 .item-tile[data-item-type="Pistas de improvisación"] .item-image,
+.span-card-4 .item-tile[data-item-type="Pistas de improvisación"] .item-image {
+    --img-scale: 0.8;
+    --img-top: 35.3%;
+    width: auto;
+    aspect-ratio: 1;
+}
+
+.span-card-3 .item-tile[data-item-type="Pistas de improvisación"] .item-image {
+    --img-left: 62.5%;
+}
+
+.span-card-4 .item-tile[data-item-type="Pistas de improvisación"] .item-image {
+    --img-left: 60%;
+}
+
+/* full (car bodies) keeps plain cover on wide tiles */
+.span-card-2 .item-tile[data-item-type="Coches"] .item-image,
+.span-card-3 .item-tile[data-item-type="Coches"] .item-image,
+.span-card-4 .item-tile[data-item-type="Coches"] .item-image {
+    --img-fit: cover;
+    --img-scale: 1;
+    --img-top: 41.2%;
+}
+
+/* 3/4-wide tiles collapse to span 2 on mobile — the official venti/trenta
+   values are md:/lg:-gated, so below 768px each variant falls back to its
+   grande framing. */
+@media (max-width: 767px) {
+    .span-card-3 .item-tile[data-item-type="Gestos"] .item-image,
+    .span-card-3 .item-tile[data-item-type="Envoltorios"] .item-image,
+    .span-card-3 .item-tile[data-item-type="Estelas"] .item-image,
+    .span-card-3 .item-tile[data-item-type="Ruedas"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Gestos"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Envoltorios"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Estelas"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Ruedas"] .item-image {
+        --img-scale: 0.9;
+        --img-top: 38.2%;
+    }
+
+    .span-card-3 .item-tile[data-item-type="Picos"] .item-image,
+    .span-card-3 .item-tile[data-item-type="Alas delta"] .item-image,
+    .span-card-3 .item-tile[data-item-type="Accesorios mochileros"] .item-image,
+    .span-card-3 .item-tile[data-item-type="Instrumentos"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Picos"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Alas delta"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Accesorios mochileros"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Instrumentos"] .item-image {
+        --img-scale: 0.85;
+        --img-top: 30.6%;
+    }
+
+    .span-card-3 .item-tile[data-item-type="Calzado"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Calzado"] .item-image {
+        --img-scale: 0.9;
+        --img-top: 23.5%;
+    }
+
+    .span-card-3 .item-tile[data-item-type="Compañeros"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Compañeros"] .item-image {
+        --img-scale: 0.9;
+        --img-top: 32.9%;
+    }
+
+    .span-card-3 .item-tile[data-item-type="Pistas de improvisación"] .item-image,
+    .span-card-4 .item-tile[data-item-type="Pistas de improvisación"] .item-image {
+        --img-left: 50%;
+        --img-scale: 0.75;
+        --img-top: 30.6%;
+    }
+}
+
+/* Dynamic bundles: multi-cosmetic offers without a bundle wrapper. The
+   official shop renders them with the dynamicbundle tile — the bundle
+   framing — at every size, regardless of the lead item's type. Placed
+   after the per-type rules so it wins for any cosmetic type. */
+.item-tile[data-dynamic-bundle="1"] .item-image {
+    --img-fit: cover;
+    --img-scale: 1;
+    --img-top: 47.1%;
+    --img-left: 50%;
+    --img-h: 117.65%;
+    object-position: center;
+    width: 100%;
+    aspect-ratio: auto;
+    border-radius: 0;
+}
+
+.span-card-2 .item-tile[data-dynamic-bundle="1"] .item-image {
+    --img-fit: contain;
+    --img-scale: 1.4;
+    --img-top: 70.6%;
+    --img-h: 117.65%;
+    width: 100%;
+    aspect-ratio: auto;
+}
+
+.span-card-3 .item-tile[data-dynamic-bundle="1"] .item-image {
+    --img-fit: contain;
+    --img-left: 50%;
+    --img-scale: 1.75;
+    --img-top: 74.1%;
+    --img-h: 117.65%;
+    width: 100%;
+    aspect-ratio: auto;
+}
+
+.span-card-4 .item-tile[data-dynamic-bundle="1"] .item-image {
+    --img-fit: contain;
+    --img-left: 50%;
+    --img-scale: 2.28;
+    --img-top: 109.4%;
+    --img-h: 117.65%;
+    width: 100%;
+    aspect-ratio: auto;
+}
+
+@media (max-width: 767px) {
+    .span-card-3 .item-tile[data-dynamic-bundle="1"] .item-image,
+    .span-card-4 .item-tile[data-dynamic-bundle="1"] .item-image {
+        --img-fit: contain;
+        --img-scale: 1.4;
+        --img-top: 70.6%;
+    }
+}
+
+/* framed-cover (vehicle offers: car body or car bundle): unlike the
+   pop-out variants above, the official car tile keeps the artwork fully
+   inside the box — clipped container, cover image anchored right
+   (object-car-center-right + object-right → 100% 50%) and a 1.03 zoom on
+   hover clipped by the box, so the ring around the box is never covered.
+   The image box is the container box itself (inset: 0, no translate/scale
+   at rest), which keeps their edges on the same subpixel at any viewport
+   width/DPR. Placed after every framing variant so it wins for any offer
+   flagged as a car offer. */
+.item-tile[data-car-offer="1"] .item-image-container {
+    clip-path: inset(0 round 7px);
+}
+
+.item-tile[data-car-offer="1"] .item-image {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    transform: none;
+    object-fit: cover;
+    object-position: 100% 50%;
+}
+
+.item-tile[data-car-offer="1"] .item-image-container:hover .item-image,
+.item-tile[data-car-offer="1"] .item-image-container:focus-visible .item-image {
+    transform: scale(1.03);
+}
+
+/* Stacking context elevation: hovered card image rises above siblings
+   so the outward box-shadow bleeds over adjacent cards.
+   Scoped to image interaction only — must stay below nav/header z-indices. */
+.item-card-wrapper:has(.item-image-container:hover),
+.item-card-wrapper:has(.item-image-container:focus-visible) {
+    z-index: 5;
+}
+
+/* Hover/focus ring lives on a pseudo-element aligned with the card box
+   (bottom 85% of the tile) — the container itself is clip-path'ed, which
+   would clip its own box-shadow. The artwork pops out OVER this ring. */
+.item-card-content::after {
+    content: '';
+    position: absolute;
+    inset: 15% 0 0 0;
+    border-radius: 7px;
+    pointer-events: none;
+    z-index: 0;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.item-card-content:has(.item-image-container:hover)::after,
+.item-card-content:has(.item-image-container:focus-visible)::after {
+    box-shadow: 0 0 0 4px #ffffff;
+}
+
+.item-image-container:hover,
+.item-image-container:focus-visible {
+    outline: none;
+}
+
+/* Brightness scoped to the product image only. The card's color/gradient
+   background and overlays (badges, timers, banners) are unaffected. */
+.item-image-container:hover > .item-image,
+.item-image-container:focus-visible > .item-image {
+    filter: brightness(1.35);
+}
+/* El boost se divide entre --img-scale para que el crecimiento en pantalla
+   sea la misma cantidad de píxeles en todas las tarjetas (≈4.8% del tamaño
+   base del elemento), en lugar de un porcentaje del tamaño ya escalado que
+   hace crecer más a las imágenes grandes. */
+.item-image-container:hover .item-image,
+.item-image-container:focus-visible .item-image {
+    --img-hover-boost: calc(1 + 0.048 / var(--img-scale, 1.6));
+}
+
+/* ── Pistas de improvisación: capa de arte oficial (full-square) ──
+   El wrapper oficial del arte (capa del tamaño del tile, top-10) lleva
+   drop-shadow 0 0 3px y la carátula un contorno interior de 2 px
+   (outline-white/16). En hover/foco ese wrapper sube a top-4 (−1.5rem) y
+   gira −2° sobre SU centro, que queda un 22.5 % de la altura del tile por
+   debajo del centro de la carátula: 0.225 / 0.627 = 35.885 % del lado del
+   cuadrado del arte. El pivote se reproduce con translateY(±pivote) en
+   torno al rotate — no con transform-origin, que desplazaría también el
+   scale — así todo el movimiento es una única transición de `transform`
+   compuesta en GPU (150 ms, ease oficial). La carátula no cambia de
+   escala ni de brillo en hover (a diferencia del resto de tiles). */
+.item-tile[data-item-type="Pistas de improvisación"] .item-image {
+    --jam-art-pivot: 35.885%;
+    --jam-art-lift: 0px;
+    --jam-art-tilt: 0deg;
+    filter: drop-shadow(0 0 3px #000000);
+    outline: 2px solid rgba(255, 255, 255, 0.16);
+    outline-offset: -2px;
+    transform: translate(-50%, -50%)
+        translateY(var(--jam-art-lift))
+        translateY(var(--jam-art-pivot))
+        rotate(var(--jam-art-tilt))
+        translateY(calc(-1 * var(--jam-art-pivot)))
+        scale(var(--img-scale));
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease-in-out;
+}
+
+.item-tile[data-item-type="Pistas de improvisación"] .item-image-container:hover .item-image,
+.item-tile[data-item-type="Pistas de improvisación"] .item-image-container:focus-visible .item-image {
+    filter: drop-shadow(0 0 3px #000000);
+}
+
+/* La inclinación solo existe donde la tienda oficial la ejecuta: desde el
+   breakpoint md (768 px — el mismo en que la navegación de secciones deja
+   de ser la barra superior móvil) y con un puntero fino capaz de hover;
+   en táctil/móvil un toque no la dispara. El foco por teclado la activa
+   en cualquier dispositivo ≥ 768 px (group-focus-within oficial). */
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+    .item-tile[data-item-type="Pistas de improvisación"] .item-image-container:hover .item-image {
+        --jam-art-lift: -1.5rem;
+        --jam-art-tilt: -2deg;
+    }
+}
+
+@media (min-width: 768px) {
+    .item-tile[data-item-type="Pistas de improvisación"] .item-image-container:focus-visible .item-image {
+        --jam-art-lift: -1.5rem;
+        --jam-art-tilt: -2deg;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .item-tile[data-item-type="Pistas de improvisación"] .item-image {
+        transition-duration: 0s;
+    }
+}
+
+/* ── Tile variant "cover" (`data-tile-media="cover"` on the .item-tile
+   host — Vía Cuenta catalogue) ──
+   The media frame IS the card and the artwork sizes it: instead of the
+   shop tile's transparent 15 % headroom + bottom-85 % box, the <img> is
+   laid out in flow at the column width, so the card's height follows the
+   artwork's natural aspect ratio — tall renders show whole, never
+   cropped — while its width stays exactly the grid column's.
+   --tile-min-aspect (width / height) is the only constraint: renders
+   wider than it are cover-cropped to that box so the info overlay always
+   has room, and it doubles as the placeholder ratio while the artwork is
+   still loading (`aspect-ratio: auto <ratio>` yields to the natural ratio
+   the moment it is known). The host is the size container the floor is
+   measured against (100cqw = card width). Nothing is painted beneath the
+   artwork except the inline category colour (visible only while the
+   image loads or if it fails), so no ring, band or corner wedge can show
+   through — the host stays transparent and borderless like the shop
+   tile. Hover keeps the shop mechanics (ring on .item-card-content::after,
+   uniform --img-hover-boost zoom, brightness on the artwork only). */
+.item-tile[data-tile-media="cover"] {
+    --tile-min-aspect: 1;
+    --tile-min-block-size: calc(100cqw / var(--tile-min-aspect));
+    --tile-radius: 8px;
+    container-type: inline-size;
+    aspect-ratio: auto;
+    height: auto;
+    border: 0;
+    border-radius: var(--tile-radius);
+}
+
+.item-tile[data-tile-media="cover"] .item-card-content {
+    height: auto;
+    border-radius: inherit;
+}
+
+.item-tile[data-tile-media="cover"] .item-card-content::after {
+    inset: 0;
+    border-radius: inherit;
+}
+
+/* Single-cell grid: the artwork sizes the row, and the broken-image
+   fallback (which replaces the <img>) stretches to the same floor. */
+.item-tile[data-tile-media="cover"] .item-image-container {
+    position: relative;
+    inset: auto;
+    display: grid;
+    height: auto;
+    min-height: var(--tile-min-block-size);
+    border-radius: inherit;
+    clip-path: none;
+    overflow: clip;
+}
+
+.item-tile[data-tile-media="cover"] .item-image-container::after {
+    content: none;
+}
+
+.item-tile[data-tile-media="cover"] .item-image {
+    --img-scale: 1;
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: var(--tile-min-block-size);
+    aspect-ratio: auto var(--tile-min-aspect);
+    object-fit: cover;
+    object-position: center;
+    transform: scale(var(--img-hover-boost, 1));
+}
+
+.item-tile[data-tile-media="cover"] .card-info-overlay {
+    border-radius: 0 0 var(--tile-radius) var(--tile-radius);
+}
+
+/* ── Info overlay: title/price/meta laid over the artwork's lower edge,
+   like the official shop tiles (p-2 → lg:p-4, bottom gradient). The tint
+   comes from the API's textBackgroundColor per item (--card-overlay-rgb,
+   set inline on .item-card-wrapper), with the neutral dark as fallback. ── */
+.item-card-wrapper {
+    --card-overlay-rgb: 8, 8, 10;
+}
+
+.card-info-overlay {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2;
+    /* official tile typography: font-heading-now-medium */
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    pointer-events: none;
+    border-radius: 0 0 7px 7px;
+    background: linear-gradient(to top,
+            rgba(var(--card-overlay-rgb), 0.92) 0%,
+            rgba(var(--card-overlay-rgb), 0.55) 60%,
+            rgba(var(--card-overlay-rgb), 0) 100%);
+}
+
+/* El padding vive en el cuerpo interno, no en el overlay: así la franja
+   de etiquetas (hermana del cuerpo) ocupa el ancho completo de la
+   tarjeta sin márgenes negativos. */
+.card-info-overlay .card-info-body {
+    padding: 0.5rem;
+    padding-top: 0;
+}
+
+@media (min-width: 1024px) {
+    .card-info-overlay .card-info-body {
+        padding: 1rem;
+        padding-top: 0;
+    }
+}
+
+/* ── MARQUEE OFICIAL DE TARJETA (fortnite.com/item-shop) ──
+   Componente de texto con auto-scroll + placa superior (violator) +
+   franja de tipo/etiquetas. Estilos y timings copiados 1:1 del sitio
+   oficial; reglas y evidencia en docs/fortnite-item-shop-marquee.md. */
+
+/* Componente base: contenedor → viewport (overflow oculto) → scroller
+   (el nodo animado) → contenido en una línea. */
+.fn-marquee {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+}
+
+.fn-marquee__viewport {
+    position: relative;
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.fn-marquee__scroller {
+    /* pe-1 oficial: aire al final del recorrido */
+    padding-inline-end: 0.25rem;
+}
+
+.fn-marquee__content {
+    display: flex;
+    white-space: nowrap;
+}
+
+/* Separador «+» entre tipo y etiquetas (ms-3 me-1 oficial) */
+.fn-marquee__plus {
+    margin-inline-start: 0.75rem;
+    margin-inline-end: 0.25rem;
+}
+
+/* Animación exacta de las tiles oficiales: pausa (0–15 %) → scroll
+   (15–80 %) → pausa (80–95 %) → fade-out (95–100 %) → bucle. Variables
+   inyectadas por CardMarqueeManager solo cuando el texto desborda:
+   --marquee-end = −desborde px; --marquee-duration = desborde/75/0.65 s. */
+@keyframes fn-marquee-scroll {
+    0% { transform: translate(0); }
+    15% { transform: translate(0); }
+    80% { transform: translate(var(--marquee-end)); opacity: 1; }
+    95% { transform: translate(var(--marquee-end)); opacity: 1; }
+    100% { transform: translate(var(--marquee-end)); opacity: 0; }
+}
+
+.fn-marquee__scroller.is-scrolling {
+    animation: fn-marquee-scroll var(--marquee-duration) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fn-marquee__scroller.is-scrolling {
+        animation: none;
+    }
+}
+
+/* ── Placa superior (violator) ──
+   Medidas oficiales: padding 4px 8px, radio 8px, skew −12°, tipografía
+   heading-now-heavy uppercase, 12px → 14px en desktop. */
+.card-info-overlay .card-plate {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.25rem;
+    border-radius: 0.5rem;
+    transform: skewX(-12deg);
+    font-family: var(--font-heading-now-heavy);
+    font-variation-settings: var(--font-heading-now-heavy--font-variation-settings);
+    font-size: 0.75rem;
+    line-height: 1.25;
+    text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+    .card-info-overlay .card-plate {
+        font-size: 0.875rem;
+    }
+}
+
+/* Variantes oficiales: amarilla (banner intensity High), blanca
+   (descuentos, intensity Low), negra/lima («Termina hoy», derivada de
+   outDate y con prioridad sobre el banner de la API). */
+.card-plate[data-plate-variant="info"] {
+    background-color: #f7ff19;
+    color: #000000;
+}
+
+.card-plate[data-plate-variant="offer"] {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.card-plate[data-plate-variant="urgent"] {
+    background-color: #000000;
+    color: #a1ff00;
+}
+
+/* ── Franja de tipo/etiquetas (tag-banner) ──
+   Oculta por defecto (max-height 0) y revelada en hover o foco de teclado
+   (:focus-visible) de la tarjeta con la transición oficial de max-height;
+   cursiva uppercase 12px.
+   Hermana del cuerpo con padding, por lo que ocupa el ancho completo. */
+.card-info-overlay .card-tagline {
+    width: auto;
+    max-height: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0 0.5rem;
+    border-top: 0 solid transparent;
+    border-radius: 0 0 7px 7px;
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    font-style: italic;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    text-transform: uppercase;
+    transition: max-height 0.15s ease-out;
+}
+
+.item-card-wrapper:hover .card-tagline,
+.item-card-wrapper:has(:focus-visible) .card-tagline {
+    max-height: 50px;
+    padding-block: 0.25rem;
+    border-top-width: 2px;
+}
+
+/* En dispositivos táctiles (celular/tablet) no hay hover: la franja no
+   se muestra nunca, igual que en el resto de breakpoints móviles. */
+@media (hover: none), (max-width: 767px) {
+    .card-info-overlay .card-tagline {
+        display: none;
+    }
+}
+
+/* El texto de la franja va centrado cuando no desborda (oficial). Si el
+   texto desborda y anima, el centrado se quita (el oficial retira su clase
+   justify-center al activar el scroll): centrado, un contenido desbordante
+   quedaría recortado por ambos lados y la cinta parecería empezar avanzada
+   en vez de en el extremo izquierdo. */
+.card-tagline .fn-marquee__viewport {
+    justify-content: center;
+}
+
+.card-tagline .fn-marquee__viewport:has(> .is-scrolling) {
+    justify-content: flex-start;
+}
+
+/* Variante OSCURA: la franja solo lleva el tipo («Traje», «Lote»…) */
+.card-tagline[data-tagline-variant="dark"] {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Variante CLARA: hay etiquetas tras el «+» (regla confirmada 45/45).
+   Degradado horizontal blanco 100 % → 55 % → 100 % → 55 % → 100 %. */
+.card-tagline[data-tagline-variant="light"] {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 0.55) 25%,
+            rgba(255, 255, 255, 1) 50%,
+            rgba(255, 255, 255, 0.55) 75%,
+            rgba(255, 255, 255, 1) 100%);
+    color: #000000;
+    border-top-color: #ffffff;
+}
+
+/* Official title scale (fortnite.com tile): text-sm 16px/leading-6 →
+   lg:text-md 19px/leading-6, 1 line on small screens, 2 lines on desktop */
+.card-info-overlay .card-title {
+    color: #ffffff;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+    .card-info-overlay .card-title {
+        font-size: 1.1875rem;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* ── Pistas de improvisación: artista + título (tile oficial) ──
+   Artista en línea propia sobre el título: heading-now-regular (wdth 668 /
+   wght 400), blanco, text-xs 14px/18.67px → md:text-sm 16px/22.86px, una
+   línea con elipsis (truncate). Separación con el título: gap-0 → sm:gap-1. */
+.card-info-overlay .card-artist {
+    margin: 0;
+    color: #ffffff;
+    font-family: var(--font-heading-now-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings);
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: calc(1 / 0.75);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+    .card-info-overlay .card-artist {
+        margin-bottom: 0.25rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .card-info-overlay .card-artist {
+        font-size: 1rem;
+        line-height: calc(1.25 / 0.875);
+    }
+}
+
+/* Official wide-tile title scale (fortnite.com): multi-column tiles use
+   text-md 19px at md and text-lg 24px/leading-7 at lg, while 1×1 tiles keep
+   16px → 19px. The vBucks price stays at the 16px → 19px scale on every span. */
+@media (min-width: 768px) {
+    .span-card-2 .card-info-overlay .card-title,
+    .span-card-3 .card-info-overlay .card-title,
+    .span-card-4 .card-info-overlay .card-title {
+        font-size: 1.1875rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .span-card-2 .card-info-overlay .card-title,
+    .span-card-3 .card-info-overlay .card-title,
+    .span-card-4 .card-info-overlay .card-title {
+        font-size: 1.5rem;
+        line-height: 1.75rem;
+    }
+}
+
+/* Título de la pista: marquee oficial de una sola línea (leading-tight),
+   text-sm 16px → md:text-md 19px → lg:text-lg 24px en todo span. Sin
+   elipsis: si desborda, CardMarqueeManager lo desplaza en hover/foco. */
+.card-info-overlay .card-title.card-title--marquee {
+    display: block;
+    line-height: 1.25;
+    white-space: nowrap;
+    text-overflow: clip;
+}
+
+@media (min-width: 768px) {
+    .card-info-overlay .card-title.card-title--marquee {
+        font-size: 1.1875rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .card-info-overlay .card-title.card-title--marquee {
+        font-size: 1.5rem;
+        line-height: 1.25;
+    }
+}
+
+/* Official title↔price spacing: gap-0 → sm:gap-1 */
+.card-info-overlay .card-footer-pricing {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+}
+
+@media (min-width: 640px) {
+    .card-info-overlay .card-footer-pricing {
+        margin-top: 0.25rem;
+    }
+}
+
+/* Official vBucks price: same heading-now-medium, text-sm 16px →
+   md:text-md 19px, leading-none, 24px icon with 4px gap */
+.card-info-overlay .vbucks-block {
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+@media (min-width: 768px) {
+    .card-info-overlay .vbucks-block {
+        font-size: 1.1875rem;
+    }
+}
+
+.card-info-overlay .vbucks-block .vbucks-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.25rem;
+}
+
+/* Precio en soles: mismo tamaño/tipografía que el precio en paVos
+   (16px → md 19px, leading-none, heading-now-medium del overlay) */
+.card-info-overlay .price-block .price-container > span {
+    font-size: 1rem;
+    line-height: 1;
+    font-weight: 400;
+}
+
+@media (min-width: 768px) {
+    .card-info-overlay .price-block .price-container > span {
+        font-size: 1.1875rem;
+    }
+}
+
+/* Tachado oficial (original-price de fortnite.com/item-shop): texto blanco
+   al 93%, px-1, y barra blanca de 3px rotada -7° al 80% en vez del
+   line-through nativo */
+.card-info-overlay .price-block .base-price {
+    position: relative;
+    width: max-content;
+    padding-inline: 0.25rem;
+    color: #ffffff;
+    opacity: 0.93;
+    text-decoration-color: transparent;
+}
+
+.card-info-overlay .price-block .base-price::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 3px;
+    background-color: #ffffff;
+    opacity: 0.8;
+    transform: translate(-50%, -50%) rotate(-7deg);
+}
+
+.item-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 4px;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+.item-timer {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    z-index: 10;
+    backdrop-filter: blur(2px);
+    transition: background-color 0.3s ease;
+}
+
+.item-timer.critical {
+    background-color: #c53030;
+}
+
+.item-timer>i,
+.item-timer>svg {
+    margin-right: 4px;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* .badge-discount — see consolidated styles near line ~2983 */
+
+.refresh-button {
+    background: linear-gradient(135deg, var(--color-primary-amber) 0%, var(--color-primary-amber-darker) 100%);
+}
+
+.refresh-button:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+#filter-overlay {
+    z-index: var(--z-modal);
+}
+
+/* --- MODAL & FILTER SEMANTIC PALETTE --- */
+
+.filter-section-bg {
+    background-color: var(--modal-bg-secondary);
+}
+
+.modal-divider {
+    border-color: var(--border-modal);
+}
+
+.modal-meta-label {
+    color: var(--text-modal-secondary);
+}
+
+.modal-text-secondary {
+    color: var(--text-modal-secondary);
+}
+
+.price-base-strikethrough {
+    color: var(--text-modal-secondary);
+}
+
+.modal-close-btn {
+    color: var(--text-modal-secondary);
+    transition: color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    color: var(--text-modal-primary);
+}
+
+.filter-secondary-btn {
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #18181b;
+}
+
+.filter-secondary-btn:disabled {
+    background-color: rgba(236, 237, 238, 0.3);
+    color: #ecedee;
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.modal-apply-btn-text {
+    color: #18181b;
+}
+
+#apply-filters-btn {
+    background-color: #f7ff19 !important;
+}
+
+.filter-price-label {
+    color: var(--text-modal-primary);
+}
+
+.modal-history-row {
+    border-color: var(--border-modal);
+    transition: background-color 0.2s ease;
+}
+
+.modal-history-row:hover {
+    background-color: var(--bg-modal-hover);
+}
+
+.empty-state-text {
+    color: var(--text-modal-secondary);
+}
+
+/* --- ITEM PAGE CTA TOOLBAR LAYOUT --- */
+#item-page-actions {
+    width: 100%;
+}
+
+#item-page-actions .cta-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    width: 100%;
+}
+
+#item-page-actions .cta-toolbar>* {
+    min-width: 0;
+    /* allow equal distribution without overflow */
+}
+
+#item-page-actions .cta-toolbar>button {
+    width: 100%;
+    align-self: stretch;
+}
+
+/* --- ITEM PAGE PRICE ROW LAYOUT --- */
+.item-page__price {
+    display: inline-flex;
+    align-items: center;
+    column-gap: 28px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.item-page__price>.ml-3,
+.item-page__price .modal-soles-price-container {
+    margin-left: 0 !important;
+    flex: 0 0 auto;
+}
+
+.item-page__price .modal-soles-price-container {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Precio en soles flotante (sin badge): rebajado a la izquierda, original
+   tachado a la derecha. El DOM lleva base→final, así que se invierte con
+   row-reverse. */
+.item-page__price .price-container {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: baseline;
+    column-gap: 0.5rem;
+    line-height: 1.05;
+    color: #ffffff;
+}
+
+/* Tachado oficial (original-price de fortnite.com/item-shop): mismo
+   tamaño/tipografía que el precio con descuento, texto blanco al 93%,
+   px-1, y barra blanca de 3px rotada -7° al 80% en vez del
+   line-through nativo */
+.item-page__price .price-container .base-price {
+    position: relative;
+    width: max-content;
+    padding-inline: 0.25rem;
+    color: #ffffff;
+    opacity: 0.93;
+    text-decoration-color: transparent;
+}
+
+.item-page__price .price-container .base-price::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 3px;
+    background-color: #ffffff;
+    opacity: 0.8;
+    transform: translate(-50%, -50%) rotate(-7deg);
+}
+
+/* Precio oficial: text-sm md:text-md leading-none (16px → 19px desde 768px). */
+.item-page__price .price-container > span {
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    font-size: 1rem;
+    line-height: 1;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+/* Minor optical alignment for the V icon next to the V-Bucks value */
+.item-page__price img,
+.item-page__price svg {
+    vertical-align: middle;
+}
+
+.item-page__vbucks {
+    display: inline-flex;
+    align-items: center;
+    color: #ffffff;
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    font-size: 1rem;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+    .item-page__price .price-container > span,
+    .item-page__vbucks {
+        font-size: 1.1875rem;
+    }
+}
+
+.item-page__vbucks .vbucks-icon,
+.item-page__vbucks svg,
+.item-page__vbucks img {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.25rem;
+}
+
+@media (max-width: 480px) {
+    .item-page__price {
+        column-gap: 18px;
+    }
+}
+
+/* High contrast / forced colors support */
+@media (forced-colors: active) {
+
+    .vbucks-icon,
+    .icon {
+        forced-color-adjust: auto;
+    }
+}
+
+/* Respect reduced motion for spinner animation */
+@media (prefers-reduced-motion: reduce) {
+    .custom-spinner {
+        animation: none !important;
+    }
+}
+
+/* stacked layout achieved via flex-direction: column; no extra rules needed on children */
+
+.bundle-subitem img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
+.bundle-subitem p {
+    font-size: 0.7rem;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- OCCURRENCES REVEAL: Jank-free height + opacity transition. --- */
+.occurrences-reveal-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+        grid-template-rows 400ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 350ms ease-out;
+    /* No margin/padding/gap in collapsed state */
+}
+
+.occurrences-reveal-wrapper.is-revealed {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+#back-to-top {
+    /* Override Tailwind positional classes with shared FAB tokens */
+    position: fixed !important;
+    right: var(--fab-right) !important;
+    bottom: var(--fab-bottom) !important;
+    width: var(--fab-size);
+    height: var(--fab-size);
+    background-color: var(--color-primary-amber);
+    color: var(--background-main);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s ease-in-out;
+}
+
+#back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+#back-to-top:hover {
+    transform: scale(1.05);
+}
+
+/* --- MOBILE BOTTOM BAR (App-style sticky navigation) --- */
+.mobile-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-dropdown);
+    height: 60px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+    background-color: var(--header-bg, #111113);
+    border-top: 1px solid var(--header-border, rgba(255, 255, 255, 0.06));
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transition: transform 0.3s ease-in-out, background-color 0.25s ease, border-color 0.25s ease;
+    will-change: transform;
+}
+
+@media (min-width: 768px) {
+    .mobile-bottom-bar {
+        display: none;
+    }
+}
+
+#mobile-nav.mobile-nav-hidden {
+    transform: translateY(100%);
+}
+.mobile-nav-link {
+    position: relative;
+    display: grid;
+    grid-template-rows: 22px auto;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-content: center;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        color 150ms cubic-bezier(0.3, 0, 0, 1),
+        background-color 150ms cubic-bezier(0.3, 0, 0, 1),
+        transform 100ms ease;
+}
+
+.mobile-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 22px;
+    overflow: hidden;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.mobile-nav-icon>i,
+.mobile-nav-icon>svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    max-height: 100%;
+    line-height: 1;
+}
+
+.mobile-nav-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.mobile-nav-link:hover {
+    color: var(--color-text-light);
+    background-color: rgba(255, 255, 255, 0.04);
+}
+.mobile-nav-link:active {
+    transform: scale(0.95);
+    transition-duration: 60ms;
+}
+
+.mobile-nav-link:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-primary-amber);
+    color: var(--color-text-light);
+}
+
+.mobile-nav-link.active {
+    color: var(--color-text-light);
+}
+.mobile-nav-link.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    border-radius: 0 0 9999px 9999px;
+    background-color: var(--nav-accent-bg);
+    transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* El dropdown móvil de secciones (#section-dropdown) vive en section-nav.css. */
+
+/* --- CATALOG FILTER: la búsqueda/filtros sólo alternan `hidden`; nunca
+   reconstruyen tarjetas ni secciones (ver public_html/catalog-filter/). --- */
+[data-catalog-section][hidden],
+[data-catalog-section] .section-items-container > [hidden],
+[data-catalog-section] .shop-carousel__track > [hidden],
+[data-catalog-section] .grid > [hidden],
+[data-catalog-section] .viacuenta-grid > [hidden],
+.section-nav__link[hidden],
+#section-dropdown-list li[hidden] {
+    display: none;
+}
+
+#filter-overlay {
+    visibility: hidden;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    pointer-events: none !important;
+    /* backdrop handled by Backdrop */
+}
+
+#filter-overlay.is-visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s ease, visibility 0s linear 0s;
+}
+
+/* Réplica del "Filtro de la tienda" oficial de fortnite.com/item-shop:
+   panel negro transluúcido con blur, tipografía heading-now en cursiva. */
+#filter-panel {
+    transform: scale(0.95);
+    opacity: 0;
+    pointer-events: auto !important;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
+    background-color: var(--bg-filter-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text-modal-primary);
+    width: 100%;
+    max-width: 56rem;
+    /* max-w-4xl, como el modal oficial */
+    max-height: 90vh;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+/* Títulos del modal oficial: heading-now-bold en cursiva, mayúsculas */
+.filter-modal-heading {
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    text-transform: uppercase;
+    line-height: 1.375;
+    color: var(--text-modal-primary);
+}
+
+/* Tipos de artículo en rejilla de 3 columnas (1 en móvil), como la oficial */
+.filter-type-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .filter-type-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+#filter-type-list .custom-checkbox span {
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    font-size: 0.8125rem;
+    line-height: 1.2;
+}
+
+/* Botones del pie: tipografía heading-now-bold como los oficiales.
+   Interacciones replicadas del item-shop oficial:
+   - hover: contorno blanco translúcido que "se acerca" (offset 10px → 4px)
+   - focus visible: mismo contorno pero blanco sólido (accesible con teclado)
+   - clic: velo negro al 20% encima del botón */
+.filter-action-btn {
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    line-height: 1.25;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-action-btn:hover:not(:disabled) {
+    outline-color: rgba(255, 255, 255, 0.4);
+    outline-offset: 4px;
+}
+
+.filter-action-btn:focus-visible {
+    outline-color: #ffffff;
+    outline-offset: 4px;
+}
+
+.filter-action-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: #000000;
+    opacity: 0;
+    transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.filter-action-btn:active:not(:disabled)::after {
+    opacity: 0.2;
+}
+
+#filter-overlay.is-visible #filter-panel {
+    transform: scale(1);
+    opacity: 1;
+}
+.price-range-slider {
+    position: relative;
+    width: 100%;
+    height: 2.25rem;
+    cursor: pointer;
+    /* El drag lo gestiona JS con Pointer Events sobre el contenedor */
+    touch-action: none;
+    display: flex;
+    align-items: center;
+    /* Ensure inputs stack correctly */
+    isolation: isolate;
+}
+
+/* Visual Track (Gray background + Blue active range) */
+.price-range-track {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+    height: 6px;
+    background-color: var(--price-track-inactive);
+    border-radius: 9999px;
+    pointer-events: none;
+    /* Purely visual */
+    z-index: 1;
+}
+
+/* Active Range Highlight (Blue bar) */
+.price-range-track::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--price-range-min-percent, 0%);
+    right: calc(100% - var(--price-range-max-percent, 100%));
+    background-color: var(--color-primary-amber);
+    border-radius: 9999px;
+    z-index: 2;
+}
+
+/* Range Inputs */
+.price-range-input {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    /* Remove default appearance */
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    outline: none;
+    margin: 0;
+    padding: 0;
+    /* CRITICAL: Allow clicking through the transparent parts */
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* Webkit Thumb (Chrome, Safari, Edge) */
+.price-range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid var(--color-primary-amber);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    /* Ensure thumb is centered vertically relative to input */
+    margin-top: -9px;
+    /* (Height of track 6px / 2) - (Height of thumb 24px / 2) approx */
+    position: relative;
+    z-index: 4;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.price-range-input::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 6px rgba(255, 193, 7, 0.2);
+}
+
+.price-range-input::-webkit-slider-thumb:active {
+    transform: scale(0.95);
+    cursor: grabbing;
+}
+
+/* Firefox Thumb */
+.price-range-input::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid var(--color-primary-amber);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    position: relative;
+    z-index: 4;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.price-range-input::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 6px rgba(255, 193, 7, 0.2);
+}
+
+.price-range-input::-moz-range-thumb:active {
+    transform: scale(0.95);
+    cursor: grabbing;
+}
+
+/* Remove default focus outline */
+.price-range-input:focus {
+    outline: none;
+}
+
+.price-range-input:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 6px rgba(255, 193, 7, 0.4);
+}
+
+.price-range-input:focus::-moz-range-thumb {
+    box-shadow: 0 0 0 6px rgba(255, 193, 7, 0.4);
+}
+
+/* Webkit Track (Invisible but needed for sizing) */
+.price-range-input::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+/* Firefox Track */
+.price-range-input::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+.filter-button {
+    position: relative;
+    border-radius: 9999px;
+}
+
+#filter-btn-mobile {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#filter-btn-mobile:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Desktop filter button: pill-shaped, glassy, with text + icon */
+#filter-btn-desktop {
+    padding: 0.55rem 1.1rem;
+    background-color: rgba(255, 255, 255, 0.82);
+    color: #0f172a;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-radius: 0.75rem;
+    transition: background-color 0.15s ease;
+}
+
+#filter-btn-desktop:hover {
+    background-color: rgba(255, 255, 255, 0.92);
+}
+
+#filter-btn-desktop:active {
+    background-color: rgba(255, 255, 255, 0.88);
+}
+/* Clear-filters widgets (desktop & mobile) */
+#desktop-clear-btn,
+#mobile-clear-btn {
+    background-color: rgba(255, 255, 255, 0.82);
+    color: #0f172a;
+    transition: background-color 0.15s ease, transform 0.05s ease;
+    font-size: 0.9rem;
+    /* scaled up for better legibility */
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+}
+
+#desktop-clear-btn svg,
+#mobile-clear-btn svg {
+    width: 1.1em;
+    height: 1.1em;
+}
+
+#desktop-clear-btn:hover,
+#mobile-clear-btn:hover {
+    background-color: rgba(255, 255, 255, 0.92);
+}
+
+#desktop-clear-btn:active,
+#mobile-clear-btn:active {
+    background-color: rgba(255, 255, 255, 0.88);
+}
+
+.badge-dot {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 12px;
+    height: 12px;
+    background-color: #f5de4c;
+    border-radius: 50%;
+    border: 2px solid #1c1c1e;
+    display: none;
+}
+
+.filter-button.has-active-filters .badge-dot {
+    display: block;
+}
+
+/* Piel compartida de casilla (filtros de tienda, Sorteo Flash, motivos de
+   reporte). El input nativo queda invisible pero enfocable; el radio se
+   admite para selecciones de una sola opción con la misma apariencia. */
+.custom-checkbox input[type="checkbox"],
+.custom-checkbox input[type="radio"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    position: absolute;
+}
+
+.custom-checkbox {
+    cursor: pointer;
+}
+
+.custom-checkbox .checkbox-visual {
+    width: 32px;
+    height: 32px;
+    border: 2px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s,
+        outline-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+}
+
+/* Foco con teclado: mismo contorno blanco que los checkboxes oficiales */
+.custom-checkbox input[type="checkbox"]:focus-visible+.checkbox-visual,
+.custom-checkbox input[type="radio"]:focus-visible+.checkbox-visual {
+    outline-color: #ffffff;
+    outline-offset: 4px;
+}
+
+.custom-checkbox .checkbox-visual svg {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+/* Marcado: se oculta la caja con borde y el CheckmarkIcon oficial ocupa todo
+   el cuadro (anillo amarillo + cuadro amarillo + check oscuro) */
+.custom-checkbox input[type="checkbox"]:checked+.checkbox-visual,
+.custom-checkbox input[type="radio"]:checked+.checkbox-visual {
+    border-width: 0;
+    background-color: transparent;
+}
+
+.custom-checkbox input[type="checkbox"]:checked+.checkbox-visual svg,
+.custom-checkbox input[type="radio"]:checked+.checkbox-visual svg {
+    display: block;
+}
+
+.view-switch-btn {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s ease-in-out;
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.view-switch-btn:hover {
+    opacity: 0.75;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.view-switch-btn.active {
+    opacity: 1;
+    transform: scale(1.1);
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.view-switch-btn img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+#image-preloader {
+    display: none;
+}
+
+#music-video-container {
+    position: fixed;
+    z-index: var(--z-nav);
+    background-color: black;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#music-video-container.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#music-video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: none;
+}
+
+#music-control-bar {
+    position: fixed;
+    z-index: var(--z-nav);
+    opacity: 0;
+    transition: opacity 0.3s ease-out, top 0.1s linear, right 0.1s linear, bottom 0.1s linear, left 0.1s linear;
+}
+
+#music-control-bar.visible {
+    display: flex;
+    opacity: 1;
+}
+
+#music-control-bar .control-inner {
+    background-color: rgba(31, 41, 55, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+#music-control-bar button {
+    background: none;
+    border: none;
+    color: #d1d5db;
+    cursor: pointer;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+#music-control-bar button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+#mobile-music-controller {
+    position: fixed;
+    top: 80px;
+    right: 15px;
+    width: 56px;
+    z-index: var(--z-nav);
+    background-color: rgba(31, 41, 55, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+    padding: 8px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#mobile-music-controller.visible {
+    display: flex;
+}
+
+#item-page-media {
+    position: relative !important;
+}
+
+#view-viaregalo .card-footer-pricing {
+    container-type: inline-size;
+    container-name: price-shop;
+}
+
+#view-viacuenta .card-footer-pricing {
+    container-type: inline-size;
+    container-name: price-vc;
+}
+
+.price-container {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+@container price-shop (max-width: 170px) {
+    .base-price {
+        display: none;
+    }
+}
+
+@container price-vc (max-width: 130px) {
+    .base-price {
+        display: none;
+    }
+}
+
+#view-viacuenta .card-footer-pricing {
+    justify-content: flex-end;
+}
+
+.text-green-500 {
+    color: var(--price-discount-color) !important;
+}
+
+.text-price-negative {
+    color: #cc2f2f;
+}
+
+/* ================================================================
+   DISCOUNT BADGE — Consolidated BEM Architecture
+   Structure:
+     .badge-discount                  (container: column flex)
+       .badge-content                 (row: percent + separator + text)
+         .badge-percent
+         .badge-separator
+         .badge-text
+       .badge-divider                 (optional: thin line before expiry)
+       .badge-expiry                  (optional: "Expira: 1D 23H")
+================================================================ */
+
+.badge-discount {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 6px;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(0.7rem, 0.6rem + 0.5vw, 0.9rem);
+    text-transform: uppercase;
+    backdrop-filter: blur(2px);
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0;
+    background-color: var(--badge-bg-color);
+    color: var(--badge-text-color);
+}
+
+/* Row container for percent + separator + label */
+.badge-content {
+    display: flex;
+    align-items: center;
+    padding: 0.3em 0.7em;
+    line-height: 1.2;
+}
+
+.badge-percent {
+    letter-spacing: 0.2px;
+}
+
+.badge-text {
+    line-height: 1;
+}
+
+/* Vertical separator between percent and text */
+.badge-separator {
+    width: 1px;
+    height: 1.2em;
+    background-color: color-mix(in srgb, var(--badge-bg-color, #000) 70%, black);
+    margin: 0 0.35em;
+    border-radius: 1px;
+    flex-shrink: 0;
+}
+
+/* Thin divider line between content row and expiry row */
+.badge-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.25);
+    margin: 0;
+    border: none;
+}
+
+/* Expiry countdown row */
+.badge-expiry {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3em;
+    padding: 0.15em 0.7em 0.25em;
+    font-size: 0.6rem;
+    font-style: normal;
+    font-weight: 700;
+    opacity: 0.9;
+    letter-spacing: 0.02em;
+}
+
+.badge-expiry__icon {
+    font-size: 0.55rem;
+    flex-shrink: 0;
+}
+
+/* --- Modifier: negative (price increase) --- */
+.badge-discount-negative {
+    background-color: #cc2f2f !important;
+    color: #ffffff;
+}
+
+.badge-discount-negative .badge-separator {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Badge turquesa para premios de la ruleta (Daily Spin) */
+.badge-spin-reward {
+    background-color: #00B8D4 !important;
+    color: #ffffff !important;
+}
+
+.badge-spin-reward .badge-separator {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Color turquesa para el precio con descuento de ruleta */
+.text-spin-reward {
+    color: #00B8D4 !important;
+}
+
+.horizontal-scroll-section {
+    /* container for horizontally scrollable sections */
+    position: relative;
+}
+
+/* ── Carousel Macro-Wrapper (unclipped positioning root) ──
+   Buttons are absolute-positioned relative to this wrapper.
+   overflow: visible ensures desktop nav buttons at left/right: -15px
+   are never clipped.  The upstream #view-viaregalo overflow-x: clip
+   prevents any document-level scrollbar leakage. */
+.shop-carousel {
+    position: relative;
+    overflow: visible;
+}
+
+.shop-carousel__viewport {
+    position: relative;
+    overflow-x: clip;
+    overflow-y: visible;
+
+    /* Clip-boundary bleed: extends the overflow-x clip region outward
+       by --carousel-hover-bleed so the outward hover border (box-shadow)
+       on carousel cards is never clipped at the section edges.
+       The width+padding+negative-margin trick expands the padding-box
+       (= clip edge) while keeping the content area unchanged,
+       preserving pixel-perfect card alignment with the grid sections. */
+    box-sizing: border-box;
+    width: calc(100% + 2 * var(--carousel-hover-bleed, 5px));
+    padding-inline: var(--carousel-hover-bleed, 5px);
+    margin-inline: calc(-1 * var(--carousel-hover-bleed, 5px));
+}
+
+/* --- CAROUSEL: Motor free-snap por JS (réplica keen-slider, v3) --- */
+.shop-carousel__track {
+    display: grid;
+    grid-auto-flow: column;
+
+    /* ── Ancho de tarjeta = 1 tile (igual que una sección normal) ──
+       El único carrusel es "Lo más vendido". Sus tarjetas deben verse con el
+       MISMO ancho que una tarjeta 1×1 de una sección grid normal (estirada por
+       `1fr`), no con el --grid-min mínimo (que se ve más delgado).
+       Ese ancho exacto = (W - (N-1)·gap)/N depende de cuántas columnas caben y
+       no es calculable en CSS (no hay floor()), así que lo calcula
+       ShopCarousel.applyTileWidth() en carousel-interaction.js a partir del
+       ancho de la sección y los tokens --grid-min/--grid-gap, y lo fija ANTES
+       de pintar el carrusel (sin parpadeo). No se mide ninguna otra sección,
+       por lo que el ancho NO depende de "Ofertas random del día" ni de nada
+       externo. Fallback a --grid-min si el JS no llega a correr. */
+    grid-auto-columns: var(--carousel-tile-width, var(--grid-min, clamp(140px, 28vw, 260px)));
+    gap: var(--carousel-gap, 1rem);
+
+    overflow-x: auto;
+    overflow-y: visible;
+    overscroll-behavior-x: contain;
+
+    /* Sin scroll-snap CSS: el snap y la inercia los gobierna por completo
+       carousel-interaction.js (física free-snap); el snap nativo "mandatory"
+       re-ajustaría cada asignación de scrollLeft y pelearía con la animación. */
+
+    /* scroll-behavior: auto SIEMPRE — el JS asigna scrollLeft por frame
+       (rAF) y un smooth nativo introduciría doble animación. */
+    scroll-behavior: auto;
+
+    /* Sub-pixel overflow management: padding-block preserves hover-scale
+       and box-shadow effects from being clipped vertically. The matching
+       negative margin keeps visual alignment with the grid sections. */
+    box-sizing: border-box;
+    width: calc(100% + 2 * var(--carousel-safe-padding-x, 12px));
+    padding: var(--carousel-safe-padding-y, 12px) var(--carousel-safe-padding-x, 12px);
+    margin: calc(-1 * var(--carousel-safe-padding-y, 12px)) calc(-1 * var(--carousel-safe-padding-x, 12px));
+
+    /* Hide scrollbar visually, retain touch/trackpad functionality */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    
+    /* Default cursor state */
+    cursor: grab;
+
+    /* Táctil: el eje horizontal lo gobierna el JS (misma física que con
+       ratón); el vertical queda para el scroll nativo de la página. */
+    touch-action: pan-y;
+}
+
+.shop-carousel__track::-webkit-scrollbar {
+    display: none;
+}
+
+/* El track es focable (tabindex=0: paginación por teclado ←/→); indicador
+   solo con foco de teclado, mismo lenguaje visual que las flechas. */
+.shop-carousel__track:focus-visible {
+    outline: 3px solid var(--carousel-arrow-outline, rgba(255, 255, 255, 0.4));
+    outline-offset: 4px;
+}
+
+/* --- ESTADO DE ARRASTRE ---
+   Mientras se arrastra: cursor de agarre y sin hovers/selección/drag nativo
+   en las tarjetas (son <a> con <img>). */
+.shop-carousel__track.is-dragging {
+    cursor: grabbing;
+    user-select: none;
+}
+
+.shop-carousel__track.is-dragging * {
+    pointer-events: none;
+    -webkit-user-drag: none;
+}
+
+/* ── Carousel children: unified card nodes ──
+   No more .carousel-card-container wrapper — cards are direct children;
+   each fills its grid column. */
+.shop-carousel__track>.item-card-wrapper {
+    min-width: 0;
+    min-height: 0;
+}
+
+/* ── Carousel navigation: unified single pair ──
+   Mobile/Tablet (<1024px): static centered row below the track.
+   Desktop (≥1024px): absolute-positioned flanking buttons. */
+.shop-carousel__nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+/* ── Carousel arrow: shared identity (single source of truth) ──
+   Un único botón de flecha para ambos carruseles (réplica del de
+   fortnite.com): superficie translúcida con blur, hover por outline
+   animado, velo oscuro al presionar. Cada contexto ajusta superficie y
+   color vía los tokens --carousel-arrow-*. */
+:is(.shop-carousel__arrow, .item-page__carousel-arrow) {
+    pointer-events: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.625rem;
+    border: none;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: var(--carousel-arrow-bg, rgba(255, 255, 255, 0.8));
+    color: var(--carousel-arrow-fg, rgb(21, 23, 24));
+    backdrop-filter: blur(32px);
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:is(.shop-carousel__arrow, .item-page__carousel-arrow) svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+@media (hover: hover) {
+    :is(.shop-carousel__arrow, .item-page__carousel-arrow):hover:not(:disabled) {
+        outline-color: var(--carousel-arrow-outline, rgba(255, 255, 255, 0.4));
+        outline-offset: 4px;
+    }
+}
+
+:is(.shop-carousel__arrow, .item-page__carousel-arrow):focus-visible {
+    outline-color: var(--carousel-arrow-outline, rgba(255, 255, 255, 0.4));
+    outline-offset: 4px;
+}
+
+:is(.shop-carousel__arrow, .item-page__carousel-arrow)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:is(.shop-carousel__arrow, .item-page__carousel-arrow):active:not(:disabled)::after {
+    opacity: 1;
+}
+
+/* Estado deshabilitado: solo existe en el carrusel de tienda (no es loop;
+   en los extremos la flecha correspondiente se apaga). */
+.shop-carousel__arrow:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ── Desktop spatial metamorphosis (≥1024px) ──
+   Buttons break out of flow and flank the carousel track,
+   vertically centered on the card track (.shop-carousel height
+   equals the card height: the track's safe paddings are cancelled
+   by its negative margins). */
+@media (min-width: 1024px) {
+    .shop-carousel__nav {
+        /* Remove from flow — children position absolutely */
+        display: contents;
+    }
+
+    .shop-carousel__arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 30;
+    }
+
+    .shop-carousel__arrow--prev {
+        left: -15px;
+    }
+
+    .shop-carousel__arrow--next {
+        right: -15px;
+    }
+}
+
+#image-preloader {
+    display: none;
+}
+
+/* Legacy .tile-size-* grid-column rules removed —
+   tile spanning is now handled by .span-card-N utility classes
+   applied via classList.add() in populateSectionItems().
+   Tile heights derive from the wrapper aspect-ratio (official shop
+   proportions); no fixed image-container heights or translate hacks. */
+
+.style-selector-channel {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color-medium);
+}
+
+#item-page-styles>.style-selector-channel:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.style-selector-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.style-selector-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.style-option-btn {
+    background-color: transparent;
+    border: 2px solid var(--border-color-light);
+    border-radius: 8px;
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.style-option-btn:hover:not(.disabled) {
+    border-color: var(--color-primary-amber);
+    transform: scale(1.05);
+}
+
+.style-option-btn.active {
+    border-color: var(--color-primary-amber);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.style-option-btn.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.style-option-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    display: block;
+}
+
+.style-option-btn-numbered {
+    background-color: #3a3a3e;
+    color: white;
+    font-weight: 700;
+    font-size: 1.125rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==================================================================
+   Comunidad de WhatsApp — botón flotante + invitación a pantalla
+   completa. La imagen ocupa todo el círculo; el modal es minimalista
+   con un lado visual (avatar + halo) y un lado de contenido.
+   ================================================================== */
+
+.community-fab {
+    position: relative;
+    width: 62px;
+    height: 62px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.community-fab__img {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.16);
+    transition: box-shadow 0.3s ease;
+}
+
+.community-fab__pulse {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 50%;
+    background: #25d366;
+    opacity: 0;
+}
+
+@keyframes community-fab-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.45;
+    }
+
+    70%,
+    100% {
+        transform: scale(1.9);
+        opacity: 0;
+    }
+}
+
+.community-fab:hover {
+    transform: scale(1.06);
+}
+
+.community-fab:hover .community-fab__img {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.community-fab:hover .community-fab__pulse {
+    animation: community-fab-pulse 2.4s ease-out infinite;
+}
+
+.community-fab:focus-visible {
+    outline: none;
+}
+
+.community-fab:focus-visible .community-fab__img {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.55);
+}
+
+.community-fab__tooltip {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 14px);
+    transform: translateY(-50%) translateX(8px);
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: #111317;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.community-fab__tooltip::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: #111317;
+}
+
+.community-fab:hover .community-fab__tooltip,
+.community-fab:focus-visible .community-fab__tooltip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+.community-modal-open {
+    overflow: hidden;
+}
+
+.community-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(16px, 4vw, 48px);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.community-modal.is-open {
+    opacity: 1;
+}
+
+.community-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 120% at 50% 0%, rgba(18, 140, 84, 0.22), rgba(5, 6, 8, 0.86) 55%);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.community-modal__shell {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    width: min(880px, 100%);
+    max-height: calc(100dvh - 32px);
+    overflow: hidden;
+    border-radius: 26px;
+    background: linear-gradient(160deg, #15181d 0%, #0d0f12 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55);
+    transform: translateY(18px) scale(0.97);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+
+.community-modal.is-open .community-modal__shell {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.community-modal__close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 3;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #e6e7ea;
+    background: rgba(255, 255, 255, 0.08);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.community-modal__close .svg-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.community-modal__close:hover {
+    background: rgba(255, 255, 255, 0.16);
+    transform: rotate(90deg);
+}
+
+.community-modal__visual {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 40px 28px;
+    background: radial-gradient(100% 80% at 50% 0%, rgba(37, 211, 102, 0.16), transparent 70%);
+    overflow: hidden;
+}
+
+.community-modal__halo {
+    position: absolute;
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37, 211, 102, 0.45), transparent 65%);
+    filter: blur(14px);
+    animation: community-halo 6s ease-in-out infinite;
+}
+
+.community-modal__halo--two {
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.25), transparent 65%);
+    animation-delay: -3s;
+}
+
+@keyframes community-halo {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translateY(-10px) scale(1.08);
+        opacity: 1;
+    }
+}
+
+.community-modal__avatar {
+    position: relative;
+    z-index: 1;
+    width: clamp(140px, 18vw, 188px);
+    height: clamp(140px, 18vw, 188px);
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45), 0 0 0 6px rgba(255, 255, 255, 0.05);
+}
+
+.community-modal__body {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(28px, 4vw, 44px);
+    overflow-y: auto;
+}
+
+.community-modal__eyebrow {
+    margin-bottom: 10px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #25d366;
+}
+
+.community-modal__title {
+    margin: 0 0 12px;
+    font-family: 'Outfit', 'Barlow', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    line-height: 1.05;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.community-modal__lead {
+    margin: 0 0 22px;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: #a9adb5;
+}
+
+.community-perks {
+    margin: 0 0 26px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.community-perk {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.community-perk:last-child {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.community-perk__icon {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: #25d366;
+    background: rgba(37, 211, 102, 0.12);
+}
+
+.community-perk__icon .svg-icon {
+    width: 19px;
+    height: 19px;
+}
+
+.community-perk__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #8d929b;
+}
+
+.community-perk__text strong {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f1f2f4;
+}
+
+.community-modal__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 22px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #04130b;
+    text-decoration: none;
+    background: linear-gradient(135deg, #25d366 0%, #1fb457 100%);
+    box-shadow: 0 14px 30px rgba(37, 211, 102, 0.32);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.community-modal__cta .svg-icon {
+    width: 22px;
+    height: 22px;
+}
+
+.community-modal__cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 38px rgba(37, 211, 102, 0.42);
+    filter: brightness(1.04);
+}
+
+.community-modal__cta:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 720px) {
+    .community-modal__shell {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+    }
+
+    .community-modal__visual {
+        padding: 34px 24px 26px;
+    }
+
+    .community-modal__avatar {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .community-fab:hover .community-fab__pulse,
+    .community-modal__halo {
+        animation: none;
+    }
+
+    .community-modal,
+    .community-modal__shell {
+        transition: opacity 0.2s ease;
+    }
+}
+
+/* Botón disparador del menú de redes (ícono "share" abajo-izquierda).
+   Estilo definido por ID (no depende de utilidades Tailwind del CDN): círculo
+   oscuro igual que los íconos del menú (slate-900/80) con un glifo "share"
+   dibujado con trazo (stroke) sobre primitivas SVG — sin rellenos solapados,
+   así que no quedan huecos. El color del glifo se hereda vía currentColor. */
+#social-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    background-color: rgba(15, 23, 42, 0.8);
+    color: #e4e4e7;
+    transition: transform 0.15s ease-in-out, color 0.2s ease-in-out;
+}
+
+#social-trigger:hover {
+    transform: scale(1.05);
+    color: #ffffff;
+}
+
+#social-trigger .social-trigger__icon {
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Controles de video como fortnite.com: pill negro/40 centrado a 3.5rem del
+   borde inferior, con botones transparentes de 2rem y hover-outline. */
+.video-controls-bar {
+    pointer-events: auto;
+    position: absolute;
+    bottom: 3.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    z-index: 15;
+}
+
+.video-controls-bar__pill {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 30px;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.control-bar-button {
+    position: relative;
+    overflow: hidden;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    height: 2rem;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1;
+    border-radius: 0.75rem;
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.control-bar-button--volume {
+    padding: 0 0.25rem;
+}
+
+@media (hover: hover) {
+    .control-bar-button:hover {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+.control-bar-button:focus-visible {
+    outline-color: rgba(255, 255, 255, 0.4);
+    outline-offset: 2px;
+}
+
+.control-bar-button svg {
+    width: 2rem;
+    height: 2rem;
+    display: block;
+}
+
+.control-bar-button svg.is-pause {
+    transform: translateX(-1px);
+}
+
+/* New info button and popover for 'Ofertas Random del Día' header */
+.section-header {
+    position: relative;
+}
+
+/* Icono de dados a la izquierda del título de la sección; hereda el color
+   del título y escala con su tamaño de fuente */
+.section-title-icon {
+    width: 0.9em;
+    height: 0.9em;
+    display: inline-block;
+    vertical-align: -0.08em;
+    margin-right: 0.5rem;
+    font-style: normal;
+    flex-shrink: 0;
+}
+
+/* Ancla del botón de info + popover, en flujo justo a la derecha del título */
+.section-info-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.75rem;
+    font-style: normal;
+}
+
+.section-info-btn {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    /* circular badge */
+    border: none;
+    /* no border/ring */
+    cursor: pointer;
+    color: #FFFFFF;
+    /* white 'i' */
+    background-color: rgba(0, 0, 0, 0.50);
+    /* default opacity 0.50 */
+    transition: background-color 10ms linear, color 10ms linear, opacity 10ms linear;
+}
+
+.section-info-btn:hover {
+    background-color: rgba(30, 30, 30, 0.50);
+    /* same opacity, slightly lighter gray */
+}
+
+.section-info-btn:active {
+    background-color: rgba(0, 0, 0, 0.60);
+    /* pure black with 0.60 opacity */
+    color: #FFFFFF;
+}
+
+.section-info-btn svg {
+    pointer-events: none;
+}
+
+.section-info-popover {
+    position: absolute;
+    left: 50%;
+    /* centrado sobre el botón (el ancla es .section-info-wrap) */
+    bottom: calc(100% + 7px);
+    /* open upward (top placement) — la punta cubre exactamente este hueco */
+    --popover-bg: rgba(17, 24, 39, 0.97);
+    --popover-arrow-size: 7px;
+    background: var(--popover-bg);
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px) scale(0.98);
+    /* subtle upward animation */
+    transition: opacity 140ms ease, transform 180ms cubic-bezier(.2, .8, .2, 1);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.section-info-popover.is-open {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Punta (triángulo) que apunta hacia abajo, al centro del .section-info-btn. */
+.section-info-popover::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    /* arranca justo en el borde inferior del popover, sin hueco */
+    left: 50%;
+    margin-left: calc(-1 * var(--popover-arrow-size));
+    width: 0;
+    height: 0;
+    border-left: var(--popover-arrow-size) solid transparent;
+    border-right: var(--popover-arrow-size) solid transparent;
+    border-top: var(--popover-arrow-size) solid var(--popover-bg);
+    /* triángulo apuntando hacia abajo */
+}
+
+/* Móvil: el botón de info va en su propia fila encima del título (icono +
+   texto siguen juntos en la fila de abajo). El popover se alinea al borde
+   izquierdo en vez de centrarse en el botón, que ya no cabría en pantalla. */
+@media (max-width: 767px) {
+    div[id^="section-random-offer"] > .section-header:not(.skeleton-header) {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-areas:
+            "info info"
+            "icon title";
+        row-gap: 0.5rem;
+        align-items: center;
+    }
+
+    div[id^="section-random-offer"] > .section-header > .section-title-icon {
+        grid-area: icon;
+    }
+
+    div[id^="section-random-offer"] > .section-header > span:not(.section-info-wrap) {
+        grid-area: title;
+    }
+
+    div[id^="section-random-offer"] > .section-header > .section-info-wrap {
+        grid-area: info;
+        justify-self: start;
+        margin-left: 0;
+    }
+
+    .section-info-popover {
+        left: 0;
+        box-sizing: border-box;
+        width: max-content;
+        max-width: calc(100vw - 1.5rem);
+        white-space: normal;
+        transform: translateY(4px) scale(0.98);
+        transform-origin: left bottom;
+    }
+
+    .section-info-popover.is-open {
+        transform: none;
+    }
+
+    .section-info-popover::after {
+        left: 14px;
+    }
+}
+
+@keyframes spin-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.custom-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    color: white;
+}
+
+.custom-spinner {
+    animation: spin-animation 1s linear infinite;
+
+    width: 40px;
+    height: 40px;
+}
+
+.custom-spinner circle {
+    stroke-dasharray: 80, 45.66;
+    stroke-linecap: round;
+}
+.item-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-icon-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(0, 0, 0, 0.1);
+
+    flex-grow: 1;
+}
+
+.error-svg-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    opacity: 0.6;
+    color: var(--color-text-light);
+}
+#item-page-occ-list {
+    max-height: 0;
+    overflow-y: hidden;
+
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 1px solid transparent;
+}
+
+#item-page-occ-list.expanded {
+    max-height: 50rem;
+    overflow-y: visible;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top-color: rgba(100, 116, 139, 0.5);
+}
+
+#item-page-occ-caret.expanded {
+    transform: rotate(-180deg);
+}
+
+#item-page-occ-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#item-page-occ-list::-webkit-scrollbar-track {
+    background: var(--background-section-header);
+    border-radius: 3px;
+}
+
+#item-page-occ-list::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-amber);
+    border-radius: 3px;
+}
+
+#mobile-nav {
+    z-index: 20;
+}
+
+#back-to-top {
+    z-index: 20;
+}
+
+.title-mobile {
+    display: none;
+}
+
+@media (max-width: 767px) {
+
+    .title-desktop {
+        display: none;
+    }
+
+    .title-mobile {
+        display: inline;
+    }
+}
+
+/* --- HEADER ACTION BUTTONS (v3 — contrast-safe dark/light) --- */
+.header-action-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 36px;
+    padding: 0 0.65rem;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    transition:
+        color 150ms cubic-bezier(0.3, 0, 0, 1),
+        background-color 150ms cubic-bezier(0.3, 0, 0, 1),
+        transform 100ms ease;
+}
+/* Icon-only buttons get square dimensions */
+.header-action-btn:has(.header-action-btn__icon:only-child) {
+    width: 36px;
+    padding: 0;
+}
+
+.header-action-btn__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* Text+icon pill (login, etc.) */
+.header-action-btn.header-action-text-btn {
+    width: auto;
+    padding: 0 0.85rem;
+    gap: 0.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: transparent;
+}
+.header-action-btn.header-action-text-btn:has(i),
+.header-action-btn.header-action-text-btn:has(svg) {
+    width: auto;
+}
+
+/* Session avatar styles */
+.session-avatar {
+    border-radius: 9999px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.session-avatar-mobile {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+#mobile-nav .mobile-nav-avatar-link {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Hover */
+.header-action-btn:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.03);
+}
+/* Active (press) */
+.header-action-btn:active {
+    transform: scale(0.96);
+    transition-duration: 60ms;
+}
+
+/* Focus */
+.header-action-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-primary-amber);
+    color: #ffffff;
+}
+@media (max-width: 767px) {
+    .header-action-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+    }
+
+    .header-action-btn span:not(.cart-badge) {
+        display: none;
+    }
+}
+
+/* --- PRIMARY CTA — Login button (Banano yellow accent pill) --- */
+/* --- POLYMORPHIC CTA STATE MAPPING — CSS Variable Hooking --- */
+.header-action-btn.header-action-btn--cta {
+    background-color: var(--nav-accent-bg);
+    color: var(--nav-accent-text);
+    border: none;
+    box-shadow: none;
+    transition:
+        color 150ms cubic-bezier(0.3, 0, 0, 1),
+        background-color 150ms cubic-bezier(0.3, 0, 0, 1),
+        transform 100ms ease;
+}
+
+/* Icon: inherits text color from routing state */
+.header-action-btn.header-action-btn--cta .header-action-btn__icon {
+    color: var(--nav-accent-text);
+}
+/* Text: inherits routing text color */
+.header-action-btn.header-action-btn--cta span {
+    color: var(--nav-accent-text);
+}
+
+/* Hover: chromatic darkening with routing color base */
+.header-action-btn.header-action-btn--cta:hover {
+    background-color: color-mix(in srgb, var(--nav-accent-bg) 85%, #000000);
+    color: var(--nav-accent-text);
+    box-shadow: none;
+    transform: scale(1.03);
+}
+/* Active: snappy press to deeper routing color */
+.header-action-btn.header-action-btn--cta:active {
+    background-color: color-mix(in srgb, var(--nav-accent-bg) 70%, #000000);
+    transform: scale(0.96);
+    transition-duration: 60ms;
+}
+
+/* Focus-visible: routing color accessibility ring */
+.header-action-btn.header-action-btn--cta:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-primary-amber);
+    color: #000000 !important;
+}
+
+/* Mobile: compact yellow circle (text hidden by parent rule) */
+@media (max-width: 767px) {
+    .header-action-btn.header-action-btn--cta {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border-radius: 9999px;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+#back-to-top {
+    opacity: 0;
+    visibility: hidden;
+
+}
+
+#back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+#page-corner-actions {
+    transition: transform 0.35s ease-in-out;
+}
+
+.sr-only {
+    position: absolute !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    padding: 0 !important;
+    border: 0 !important;
+    height: 1px !important;
+    width: 1px !important;
+    overflow: hidden !important;
+}
+
+#back-to-top {
+    opacity: 0;
+    visibility: hidden;
+}
+
+#back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+@keyframes skeleton-pulse {
+    50% {
+        background-color: rgba(58, 58, 62, 0.6);
+    }
+}
+@keyframes skeleton-pulse-light {
+    50% {
+        background-color: #f1f5f9;
+    }
+}
+
+.skeleton-header,
+.skeleton-items {
+
+    background-color: var(--skeleton-pulse-color);
+    animation: skeleton-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+/* El esqueleto del header replica la geometría del header real (texto
+   condensado en negrita-cursiva, sin pill): mismas métricas tipográficas,
+   así su alto coincide 1:1 con el título que lo sustituye. */
+.skeleton-header {
+    border-color: transparent !important;
+    color: transparent !important;
+    user-select: none;
+    border-radius: 8px;
+    height: auto;
+    padding: 0;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+@media (min-width: 1024px) {
+    .skeleton-header {
+        font-size: 2.6875rem;
+    }
+}
+
+.skeleton-header>* {
+    visibility: hidden;
+}
+
+.skeleton-items {
+    border-radius: 12px;
+    animation-delay: 0.1s;
+}
+
+/* Altura exacta de una fila de tarjetas: el pseudo-elemento participa como
+   ítem del grid (.section-items-container), así que ocupa 1 columna y hereda
+   el alto real de una tarjeta 1×1 (ancho de columna / 0.627) en todos los
+   breakpoints — sin alturas fijas que se desactualicen. */
+.skeleton-items::before {
+    content: '';
+    grid-column: span 1;
+    aspect-ratio: 0.627;
+}
+
+/* --- ESTILOS PARA EL CONTADOR DEL CARRITO (CÍRCULO ROJO) --- */
+
+/* --- GLOBAL SEARCH SYSTEM - Unified FSM-driven implementation --- */
+
+#search {
+    --search-panel-height: clamp(52px, 14vw, 64px);
+    --search-transition-duration: 320ms;
+    --search-easing: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Circular trigger button — stacked ABOVE #back-to-top, same column */
+#search-trigger {
+    position: fixed;
+    right: var(--fab-right);
+    bottom: calc(var(--fab-bottom) + var(--fab-size) + var(--fab-gap));
+    width: var(--fab-size);
+    height: var(--fab-size);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--header-bg, rgba(17, 24, 39, 0.9));
+    border: 1px solid var(--header-border, rgba(245, 158, 11, 0.45));
+    color: var(--color-text-light, #ffffff);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.25);
+    z-index: var(--z-nav);
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, background-color 0.2s ease-in-out, opacity 0.2s ease;
+    will-change: transform;
+}
+
+/* Ensure [hidden] works despite display:flex above */
+#search-trigger[hidden] { display: none !important; }
+
+#search-trigger svg {
+    width: clamp(20px, 5vw, 24px);
+    height: clamp(20px, 5vw, 24px);
+    transition: transform var(--search-transition-duration) var(--search-easing);
+}
+
+#search-trigger:hover {
+    transform: scale(1.05);
+}
+
+#search-trigger:active {
+    transform: scale(0.95);
+}
+
+/* Top-anchored panel (no overlay/backdrop) */
+#search-panel {
+    position: fixed;
+    top: clamp(0.5rem, 2vw, 1rem);
+    left: 50%;
+    width: clamp(280px, 90vw, 600px);
+    height: var(--search-panel-height);
+    background-color: var(--header-bg, rgba(17, 24, 39, 0.95));
+    border: 1px solid var(--header-border, rgba(245, 158, 11, 0.45));
+    border-radius: 12px;
+    padding: 0 clamp(0.5rem, 2vw, 1rem);
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 2vw, 0.75rem);
+    z-index: var(--z-header);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -20px);
+    transition: opacity var(--search-transition-duration) var(--search-easing),
+                transform var(--search-transition-duration) var(--search-easing);
+    will-change: transform, opacity;
+}
+
+#search-panel[hidden] {
+    display: flex;
+}
+
+#search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-text-light, #ffffff);
+    font-size: clamp(0.875rem, 3.5vw, 1rem);
+    padding: 0.5rem;
+}
+
+#search-input::placeholder {
+    color: rgba(148, 163, 184, 0.7);
+}
+
+/* Hide native browser clear button on type="search" inputs */
+#search-input::-webkit-search-cancel-button,
+#search-input::-webkit-search-decoration,
+#search-input::-webkit-search-results-button,
+#search-input::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+}
+#search-input::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+#search-close {
+    width: clamp(36px, 9vw, 44px);
+    height: clamp(36px, 9vw, 44px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: rgba(226, 232, 240, 0.7);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+}
+
+#search-close svg {
+    width: clamp(18px, 4.5vw, 20px);
+    height: clamp(18px, 4.5vw, 20px);
+}
+
+#search-close:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+/* FSM State: IDLE */
+#search[data-state="idle"] #search-trigger {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#search[data-state="idle"] #search-panel {
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -20px);
+}
+
+/* FSM State: OPENING */
+#search[data-state="opening"] #search-trigger {
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+#search[data-state="opening"] #search-panel {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* FSM State: OPEN */
+#search[data-state="open"] #search-trigger {
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+#search[data-state="open"] #search-panel {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* FSM State: CLOSING */
+#search[data-state="closing"] #search-trigger {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: none;
+}
+
+#search[data-state="closing"] #search-panel {
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -20px);
+}
+
+/* Mobile spatial hijacking (≤767px) - Full-width, edge-to-edge, zero curvature */
+@media (max-width: 767px) {
+    #search-panel {
+        top: 0;
+        left: 0;
+        width: 100%;
+        border-radius: 0;
+        transform: translateY(-20px);
+    }
+
+    #search[data-state="idle"] #search-panel {
+        transform: translateY(-20px);
+    }
+
+    #search[data-state="opening"] #search-panel,
+    #search[data-state="open"] #search-panel {
+        transform: translateY(0);
+    }
+
+    #search[data-state="closing"] #search-panel {
+        transform: translateY(-20px);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    #search * {
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* --- 1. Título de la página de objeto --- */
+.item-page__title {
+    color: #ffffff;
+}
+
+/* --- SISTEMA DE NOTIFICACIONES (TOAST) - V3 (TRANSICIÓN SIMULTÁNEA) --- */
+
+/* 1. El Contenedor Principal (sin cambios) */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: var(--z-modal);
+    width: 100%;
+    max-width: 400px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+/* 2. La Notificación Individual (ahora un solo elemento) */
+#toast-notification {
+    background-color: #2d3748;
+    /* slate-800 */
+    color: white;
+    padding: 14px 22px;
+    border-radius: 9999px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+
+    /* Estado inicial (oculta y fuera de la vista) */
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    visibility: hidden;
+    /* Clave: oculta completamente por defecto */
+
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+}
+
+/* 3. Clase 'show' para activar la animación de entrada */
+#toast-notification.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    /* Clave: la hace visible */
+}
+
+/* 4. Variantes de Color (SIN border-bottom) */
+.toast-notification.success {
+    background-color: #2f855a;
+    /* Verde */
+}
+
+.toast-notification.error {
+    background-color: #c53030;
+    /* Rojo */
+}
+
+/* NUEVA VARIANTE */
+.toast-notification.info {
+    background-color: #2b6cb0;
+    /* Azul */
+}
+
+/* --- AJUSTES RESPONSIVE PARA NOTIFICACIONES --- */
+
+/* Oculta el contenedor de toasts en pantallas de tablet hacia abajo */
+@media (max-width: 767px) {
+    #toast-container {
+        display: none;
+    }
+}
+
+/* --- ESTILOS PARA EL FALLBACK DE IMAGEN ROTA --- */
+
+.item-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-icon-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Un fondo sutil para diferenciarlo del color principal */
+    background-color: rgba(0, 0, 0, 0.1);
+    /* Asegura que ocupe todo el espacio si la imagen se elimina */
+    flex-grow: 1;
+}
+
+.error-svg-icon {
+    width: 2.5rem;
+    /* 40px */
+    height: 2.5rem;
+    /* 40px */
+    opacity: 0.6;
+    color: var(--color-text-light);
+}
+
+/* --- ESTILOS PARA EL OVERLAY DE CARGA GLOBAL --- */
+.loading-overlay {
+    position: fixed;
+    /* Lo saca del flujo normal y lo fija a la ventana */
+    inset: 0;
+    /* Hace que ocupe toda la pantalla (top:0, right:0, bottom:0, left:0) */
+    z-index: var(--z-modal);
+    /* Mapped to Z-Index Matrix modal layer */
+
+    background-color: var(--background-main);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Transición para una aparición y desaparición suave */
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0s;
+    visibility: visible;
+}
+
+/* Cuando le añadimos la clase 'hidden', se desvanece y desaparece */
+.loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* --- UNIFIED SECTION SPINNER (Pure SVG) --- */
+
+.spinner-container {
+    display: block;
+    margin: 24px auto;
+    /* horizontal centering and spacing */
+    pointer-events: none;
+}
+
+.spinner-group {
+    animation: spinner-rotate 1.1s linear infinite;
+    transform-origin: 50% 50%;
+    will-change: transform;
+}
+
+.spinner-group.is-paused {
+    animation: none !important;
+}
+
+@keyframes spinner-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- SISTEMA DE BANNERS PARA TARJETAS DE PRODUCTO (V5 - ELITE) --- */
+
+/* 1. Tokens de Diseño Configurables y Semánticos en :root. */
+:root {
+    --banner-offset: 6px;
+    --banner-padding-block: 0.3em;
+    /* 2. Padding relativo a la fuente para escalar proporcionalmente. */
+    --banner-padding-inline: 0.8em;
+    --banner-radius: 6px;
+    --banner-font-weight: 900;
+    --banner-font-style: italic;
+
+    /* 3. Tipografía Fluida con clamp(): El tamaño se adapta al viewport. */
+    --banner-font-size: clamp(0.8rem, 0.7rem + 0.5vw, 0.95rem);
+
+    /* 4. Colores, incluyendo OKLCH y fallbacks. */
+    --banner-new-bg: #f7ff19;
+    --banner-new-text: #000000;
+    --banner-default-bg: rgb(28 28 30 / 0.85);
+    --banner-default-text: #FFFFFF;
+}
+
+@supports (color: oklch(0% 0 0)) {
+    :root {
+        --banner-new-text: oklch(20% 0 0);
+    }
+}
+
+/* 5. Estilo base con propiedades lógicas y variables. */
+[data-banner-type] {
+    /* Posicionamiento y Layout */
+    position: absolute;
+    inset-block-start: var(--banner-offset);
+    inset-inline-start: var(--banner-offset);
+    z-index: 10;
+    contain: layout paint style;
+    /* 6. Containment más estricto para máximo rendimiento. */
+
+    /* Apariencia */
+    padding-block: var(--banner-padding-block);
+    padding-inline: var(--banner-padding-inline);
+    border-radius: var(--banner-radius);
+    border: none;
+
+    font: var(--banner-font-style) var(--banner-font-weight) var(--banner-font-size) / 1.3 sans-serif;
+    text-transform: uppercase;
+    /* <<-- AÑADE ESTA LÍNEA */
+    letter-spacing: 0.05em;
+    /* <<-- AÑADE ESTA (Opcional, pero recomendado) */
+
+    white-space: nowrap;
+    text-align: center;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
+
+    /* 7. Transición para futuras animaciones (optimización). */
+    will-change: transform, opacity;
+}
+
+/* 8. Estilos de variantes modulares. */
+[data-banner-type="discount"] {
+    background-color: #FFFFFF;
+    color: #000000;
+    text-shadow: none;
+}
+
+[data-banner-type="new"] {
+    background-color: var(--banner-new-bg);
+    color: var(--banner-new-text);
+    text-shadow: none;
+}
+
+[data-banner-type="default"] {
+    background-color: var(--banner-default-bg);
+    color: var(--banner-default-text);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+/* 9. Soporte para impresión: Ocultar banners decorativos al imprimir. */
+@media print {
+    [data-banner-type] {
+        display: none;
+    }
+}
+
+/* 10. Contexto de Apilamiento: Crear un nuevo contexto para evitar problemas con z-index. */
+.item-image-container {
+    isolation: isolate;
+}
+
+/* Esto asegura que el z-index del banner (10) sea siempre relativo al contenedor
+   de la imagen y no compita con otros elementos de la página. */
+
+/* 11. Ajuste de Contraste para Accesibilidad. */
+@media (prefers-contrast: more) {
+    [data-banner-type] {
+        /* Borde sutil para delinear el banner en modo de alto contraste. */
+        outline: 2px solid;
+        outline-offset: -2px;
+    }
+}
+
+/* --- SECTION HEADER — official shop style: plain bold-italic condensed
+   uppercase text (font-heading-now-bold italic uppercase mb-2 text-lg
+   leading-none lg:text-2xl → 24px, 43px desde 1024px), no pill
+   background, no icon. --- */
+div[id^="section-"] > .section-header:not(.skeleton-header),
+#view-viacuenta .section-header {
+    height: auto;
+    padding: 0;
+    margin-bottom: 0.5rem;
+    background: none;
+    border-radius: 0;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+@media (min-width: 1024px) {
+    div[id^="section-"] > .section-header:not(.skeleton-header),
+    #view-viacuenta .section-header {
+        font-size: 2.6875rem;
+    }
+}
+
+/* Vía Cuenta headers keep their left icon, scaled with the text size */
+#view-viacuenta .section-header > svg,
+#view-viacuenta .section-header > img {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+}
+
+/* --- VÍA CUENTA — catálogo: una <section> por categoría con su lista de
+   tarjetas. Columnas fijas como la tienda oficial (2 en móvil, 4 desde
+   768px) con pistas minmax(0, 1fr): el ancho de cada celda lo dicta el grid
+   y nunca el contenido. Cada tarjeta mide lo alto que su propio arte (tile
+   variant "cover"), así que las celdas se alinean al inicio de su fila —
+   una fila con alturas mixtas queda limpia, sin estirar ni solapar. --- */
+.viacuenta-section {
+    margin-block-end: 3rem;
+}
+
+.viacuenta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 768px) {
+    .viacuenta-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.viacuenta-grid > li {
+    min-width: 0;
+}
+
+/* --- ESQUINAS DEL ARTE: badges (sup. izq.) e insignia de video (sup. der.) --- */
+.card-badges-container {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Los hijos fluyen dentro del contenedor flex en vez de posicionarse solos */
+.card-badges-container>.item-badge,
+.card-badges-container>[data-banner-type] {
+    position: static;
+    top: auto;
+    left: auto;
+}
+
+/* Micro-píldora translúcida con el logo de YouTube (pistas con video).
+   Solo informativa: no captura punteros, así el clic y el hover del arte
+   siguen siendo del enlace. Ningún ancestro con transform: no se mueve con
+   la inclinación de la carátula. */
+.card-video-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.375rem;
+    border-radius: 9999px;
+    line-height: 0;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.45);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+        0 1px 2px rgba(0, 0, 0, 0.35);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+
+.card-video-badge__icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+@media (min-width: 768px) {
+    .card-video-badge__icon {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+}
+
+/* Regla para posicionar el badge en la esquina inferior izquierda */
+.item-badge[data-position="bottom-left"] {
+    top: auto;
+    bottom: 10px;
+    left: 10px;
+}
+
+
+/* --- ESTILOS PARA SUB-ITEMS EN EL MODAL (RÉPLICA 1:1 CON AJUSTES FINALES) --- */
+
+/* --- Contenedor del Grid --- */
+#item-page-bundle {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(96px, calc((100% - 1rem) / 3)), 1fr));
+    gap: 0.5rem;
+    width: 100%;
+}
+
+/* --- Contenedor Principal <a> de cada Sub-Ítem --- */
+.bundle-subitem {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+
+    border: 1px solid transparent;
+    
+    box-shadow: 0 0 0 0px #fff;
+    transition: box-shadow 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bundle-subitem:hover,
+.bundle-subitem:focus-visible {
+    box-shadow: 0 0 0 2px #fff;
+    outline: none;
+}
+/* --- Recuadro de la Imagen --- */
+.bundle-subitem__image-wrapper {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+    /* ¡AJUSTE FINAL! Se elimina la transición para que la iluminación sea instantánea. */
+}
+
+.bundle-subitem:hover .bundle-subitem__image-wrapper {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- La Imagen <img> del Cosmético --- */
+.bundle-subitem__image {
+    width: 100%;
+    height: 105%;
+    object-fit: contain;
+    object-position: 50% 100%;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bundle-subitem:hover .bundle-subitem__image {
+    transform: scale(1.1);
+}
+
+/* --- Barra de Texto Inferior --- */
+.bundle-subitem__text-wrapper {
+    background-color: rgba(0, 0, 0, 0.45);
+    padding: 0.4rem 0.4rem;
+    text-align: left;
+}
+
+/* --- El Texto del Nombre --- */
+.bundle-subitem__text {
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 0.8rem;
+    /* ¡CAMBIO! Antes era 0.875rem */
+    line-height: 1.42;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+/* --- ESTILOS PARA DIFICULTAD DE JAM TRACKS (MODAL) --- */
+
+/* Grid que organiza las filas de instrumentos en dos columnas */
+.jam-track-difficulty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem 1.5rem;
+    /* 12px vertical, 24px horizontal */
+}
+
+/* Fila individual para un instrumento */
+.jam-track-part {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* 12px */
+}
+
+/* Número grande de dificultad */
+.jam-track-part-difficulty {
+    font-size: 2.25rem;
+    /* 36px */
+    font-weight: 900;
+    line-height: 1;
+    color: white;
+    flex-shrink: 0;
+}
+/* Contenedor para el nombre y las barras */
+.jam-track-part-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+/* Nombre del instrumento (Vocal, Bass, etc.) */
+.jam-track-part-name {
+    font-size: 0.875rem;
+
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: #94a3b8;
+    /* slate-400 */
+    white-space: nowrap;
+}
+/* Contenedor de las 7 barras de dificultad */
+.jam-track-part-bars {
+    display: flex;
+    gap: 3px;
+    margin-top: 2px;
+}
+
+/* Barra individual de dificultad */
+.jam-track-part-bar {
+    width: 14px;
+    height: 8px;
+    background-color: #4b5563;
+    /* gris oscuro por defecto */
+    border-radius: 2px;
+    transform: skewX(-15deg);
+    /* Efecto inclinado como en la imagen */
+}
+/* Barra activa (encendida) */
+.jam-track-part-bar.active {
+    background-color: white;
+}
+/* En pantallas muy pequeñas, pasa a una sola columna */
+@media (max-width: 420px) {
+    .jam-track-difficulty-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* .badge-discount overrides removed — consolidated above near line ~2983 *//* ================================================================
+   SITE FOOTER — BEM Architecture
+   Semantic class structure with specific hex values for precise contrast.
+================================================================ */
+
+.site-footer {
+    width: 100%;
+    margin-top: 1rem;
+    padding-top: 0.625rem;
+    /* Móvil: solo el hueco justo de la barra inferior fija (#mobile-nav, 60px)
+       para que el disclaimer no quede tapado; sin espacio sobrante debajo. */
+    padding-bottom: calc(60px + 0.625rem + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+    border-top: 1px solid #27272a;
+    background-color: #18181b;
+}
+
+/* Móvil: únicamente el texto legal; marca y copyright solo en escritorio. */
+@media (max-width: 767.98px) {
+    .site-footer__brand,
+    .site-footer__copyright {
+        display: none;
+    }
+
+    .site-footer__container {
+        gap: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .site-footer {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
+.site-footer__container {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.site-footer__brand {
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    margin: 0;
+    color: #ffffff;
+}
+.site-footer__copyright {
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0;
+    color: #a1a1aa;
+}
+.site-footer__disclaimer {
+    font-size: 0.66rem;
+    line-height: 1.35;
+    max-width: 40rem;
+    margin: 0 auto;
+    color: #71717a;
+}
+
+/* Escritorio: marca + copyright en una sola fila; disclaimer compacto debajo. */
+@media (min-width: 768px) {
+    .site-footer__container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        column-gap: 0.75rem;
+        row-gap: 0.25rem;
+    }
+
+    .site-footer__brand {
+        font-size: 1rem;
+    }
+
+    .site-footer__copyright {
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .site-footer__copyright::before {
+        content: '';
+        display: inline-block;
+        width: 1px;
+        height: 0.9em;
+        margin-right: 0.75rem;
+        background-color: #3f3f46;
+    }
+
+    .site-footer__disclaimer {
+        flex-basis: 100%;
+        font-size: 0.72rem;
+        max-width: 56rem;
+    }
+}
+/* ------------------------------------------------------------------
+   Card "Agotado" — desaturado, sin interacción, sigue legible
+   ------------------------------------------------------------------ */
+.card--agotado {
+    filter: grayscale(0.7) brightness(0.85);
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+/* Velo "AGOTADO": cubre la tarjeta completa siguiendo sus esquinas */
+.card-soldout-overlay {
+    border-radius: inherit;
+}
+
+/* ==================================================================
+   PÁGINAS DE OBJETOS Y PRODUCTOS (/objeto/... y /producto/...)
+   Sustituyen al antiguo modal: layout adaptable de dos columnas
+   (media a la izquierda, información a la derecha) en escritorio y
+   apilado en móvil. Reutilizan la paleta semántica del panel de
+   detalle (modal-divider, modal-text-secondary, etc.).
+   ================================================================== */
+.item-page {
+    color: var(--text-modal-primary);
+}
+
+/* Contenedor ancho como fortnite.com (max-w 1550px, px-3 / lg:px-8). */
+section#view-item {
+    max-width: 1550px;
+    padding: 1rem 0.75rem;
+}
+
+@media (min-width: 768px) {
+    section#view-item {
+        padding: 1.5rem 0.75rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    section#view-item {
+        padding: 2.5rem 2rem;
+    }
+}
+
+.item-page--loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
+}
+
+.item-page__nav {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+.item-page__back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    font-size: 0.875rem;
+    line-height: 1.3334;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.item-page__back .item-page__back-arrow {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: inline-block;
+}
+
+.item-page__back .item-page__back-logo {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-block;
+}
+
+.item-page__share {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: rgb(21, 23, 24);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    cursor: pointer;
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1;
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.item-page__share::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0;
+    z-index: 10;
+    transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.item-page__share:active::after {
+    opacity: 0.2;
+}
+
+@media (hover: hover) {
+    .item-page__share:hover {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+.item-page__share:focus-visible {
+    outline-color: #fff;
+    outline-offset: 4px;
+}
+
+.item-page__share .svg-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+/* Layout como fortnite.com: en móvil título → media → panel/CTA; en
+   escritorio columna de información (~40%) a la izquierda y media (~60%)
+   a la derecha ocupando ambas filas. */
+.item-page__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "header"
+        "media"
+        "info";
+    gap: 1rem;
+    align-items: start;
+}
+
+@media (min-width: 768px) {
+    .item-page__grid {
+        grid-template-columns: 40% 60%;
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+            "header media"
+            "info media";
+        gap: 1rem;
+    }
+}
+
+.item-page__header {
+    grid-area: header;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.item-page__media-col {
+    grid-area: media;
+    min-width: 0;
+}
+
+.item-page__media {
+    position: relative;
+    width: 100%;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: var(--modal-bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+}
+
+/* Con fondo de sección (detail-background) la media no lleva el cuadro de
+   degradado: es transparente sobre el backdrop, como en fortnite.com. El
+   degradado del objeto va inline (populateMedia: background-image /
+   background-color), por eso hace falta el shorthand con !important. */
+#section-backdrop[data-mode="page"] ~ main .item-page__media {
+    background: transparent !important;
+}
+
+.item-page__media img,
+.item-page__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.item-page__media-caption {
+    width: 100%;
+    margin: 1rem 0 0;
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    font-size: 1rem;
+    line-height: 1.25rem;
+    text-align: center;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Pistas de improvisación: media más compacta y centrada, con halo. */
+.item-page--jam .item-page__media {
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.35);
+}
+
+/* Reproductor de YouTube: 16:9 fluido, algo más ancho que la carátula. */
+.item-page__media--video {
+    aspect-ratio: 16 / 9;
+}
+
+.item-page--jam .item-page__media--video {
+    max-width: 40rem;
+}
+
+/* Vídeo directo (archivo subido desde el panel): mismo marco 16:9 que el
+   iframe de YouTube, fondo negro para las barras de letterbox. */
+.item-page__media--file {
+    background-color: #000 !important;
+}
+.item-page__media--file video {
+    display: block;
+    background: #000;
+}
+
+/* Audio directo: carátula intacta arriba y reproductor propio debajo. */
+.item-page__media--audio {
+    aspect-ratio: auto;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+.item-page__media--audio .item-page__media-art {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    object-fit: contain;
+}
+.vc-audio {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.85rem 0.9rem;
+    color: #fff;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0, rgba(0, 0, 0, 0.8) 100%);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.vc-audio__play,
+.vc-audio__mute {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vc-audio__play {
+    width: 3rem;
+    height: 3rem;
+    color: #151718;
+    background: linear-gradient(135deg, #f7ff19 0, #ffb200 100%);
+    box-shadow: 0 6px 18px rgba(247, 255, 25, 0.25);
+}
+.vc-audio__play svg {
+    width: 1.6rem;
+    height: 1.6rem;
+}
+.vc-audio__play:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.vc-audio__mute {
+    width: 2.25rem;
+    height: 2.25rem;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+.vc-audio__mute svg {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+.vc-audio__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.vc-audio__seek {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 0.4rem;
+    margin: 0;
+    border-radius: 9999px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #f7ff19 0, #ffb200 var(--vc-progress, 0%), rgba(255, 255, 255, 0.18) var(--vc-progress, 0%));
+    outline: none;
+}
+.vc-audio__seek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 9999px;
+    background: #fff;
+    border: 2px solid #f7ff19;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.35);
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vc-audio__seek::-moz-range-thumb {
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 9999px;
+    background: #fff;
+    border: 2px solid #f7ff19;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.35);
+}
+.vc-audio__seek::-moz-range-track {
+    background: transparent;
+}
+.vc-audio__seek:focus-visible::-webkit-slider-thumb {
+    transform: scale(1.2);
+}
+.vc-audio__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.75);
+}
+.vc-audio__time {
+    font-variant-numeric: tabular-nums;
+    min-width: 2.6rem;
+}
+.vc-audio__time:last-child {
+    text-align: right;
+}
+.vc-audio__label {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: #f7ff19;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.vc-audio.is-playing .vc-audio__label {
+    animation: vc-audio-pulse 1.6s ease-in-out infinite;
+}
+.vc-audio.is-error .vc-audio__label {
+    color: #fda4a4;
+    animation: none;
+}
+@keyframes vc-audio-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+}
+@media (hover: hover) {
+    .vc-audio__play:hover:not(:disabled) {
+        transform: scale(1.06);
+    }
+    .vc-audio__mute:hover {
+        background: rgba(255, 255, 255, 0.22);
+    }
+}
+
+/* Escritorio: la columna de media ocupa ambas filas del grid; el reproductor
+   se centra en ese espacio y crece hasta el ancho disponible de la columna. */
+@media (min-width: 768px) {
+    .item-page--jam .item-page__media-col {
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .item-page--jam .item-page__media-col > .item-page__media {
+        width: 100%;
+    }
+
+    .item-page--jam .item-page__media--video {
+        max-width: min(100%, 48rem);
+    }
+}
+
+.item-page__artist {
+    margin: 0;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-size: 1.1875rem;
+    line-height: 1.375rem;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+/* Etiquetas secundarias de la página de objeto: blanco puro (sin el gris
+   de --text-modal-secondary / --color-text-muted que usan en el modal). */
+.item-page .modal-meta-label,
+.item-page .jam-track-part-name,
+.item-page .style-selector-title {
+    color: #fff;
+}
+
+.item-page__price-note {
+    margin: 0;
+    font-family: var(--font-heading-now-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings);
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+    color: #fff;
+}
+
+/* Carousel entre objetos de la oferta (réplica de fortnite.com) */
+.item-page__carousel-nav {
+    pointer-events: none;
+    position: absolute;
+    /* Centrado vertical con el pill de controles de video (bottom 3.5rem,
+       alto 3rem → centro a 5rem; flechas de 2.5rem → bottom 3.75rem). */
+    bottom: 3.75rem;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+
+/* La identidad visual de .item-page__carousel-arrow es compartida con
+   .shop-carousel__arrow — ver "Carousel arrow: shared identity". */
+
+.item-page__carousel-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+}
+
+.item-page__carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    padding: 0;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.4);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.item-page__carousel-dot.active {
+    background-color: #fff;
+}
+
+/* Ventana deslizante de puntitos (como fortnite.com): los que se alejan de
+ * la ventana visible se encogen progresivamente y el resto se oculta. */
+.item-page__carousel-dot.is-sm {
+    width: 0.375rem;
+    height: 0.375rem;
+}
+
+.item-page__carousel-dot.is-xs {
+    width: 0.25rem;
+    height: 0.25rem;
+}
+
+.item-page__carousel-dot.is-hidden {
+    display: none;
+}
+
+.item-page__media-loader {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    color: #fff;
+}
+
+.item-page__media-loader.hidden {
+    display: none;
+}
+
+.item-page__loading-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    animation: item-page-spin 1s linear infinite;
+}
+
+@keyframes item-page-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.control-bar-button.is-loading svg {
+    animation: item-page-spin 1s linear infinite;
+}
+
+.item-page__info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+}
+
+/* Placa «Termina hoy» de la página de objeto (mismo violator que la
+   tarjeta; el color lo da .card-plate[data-plate-variant]) y pill de
+   rareza/serie, con la misma forma. Medidas oficiales de la página:
+   padding 4px 8px, radio 8px, skew −12°, texto heading-now-bold 14px /
+   line-height 4/3, sin margen (el gap del header separa de las pills). */
+.item-page__plate,
+.item-page__pill {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    transform: skewX(-12deg);
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-size: 0.875rem;
+    line-height: calc(4 / 3);
+    text-transform: uppercase;
+}
+
+.item-page__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.item-page__pill {
+    position: relative;
+}
+
+.item-page__pill-text {
+    position: relative;
+    z-index: 10;
+    display: inline-block;
+}
+
+.item-page__type {
+    position: relative;
+    z-index: 10;
+    display: inline-block;
+    padding: 0 0.25rem;
+    font-family: var(--font-heading-now-heavy);
+    font-variation-settings: var(--font-heading-now-heavy--font-variation-settings);
+    font-size: 1rem;
+    line-height: 1;
+    text-transform: uppercase;
+    font-style: italic;
+    color: #ffffff;
+}
+
+.item-page__pill--banner,
+.item-page__pill--badge {
+    position: static !important;
+    transform: none !important;
+}
+
+/* Título oficial: text-xl leading-none lg:text-2xl (27px → 43px desde
+   1024px), mismo escalado que el h1 «Tienda» y los títulos de sección. */
+.item-page__title {
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    font-size: 1.6875rem;
+    line-height: 1;
+    text-transform: uppercase;
+    overflow-wrap: break-word;
+    margin: 0;
+}
+
+@media (min-width: 1024px) {
+    .item-page__title {
+        font-size: 2.6875rem;
+    }
+}
+
+.item-page__availability {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.item-page__avail-line {
+    font-family: var(--font-heading-now-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings);
+    font-size: 0.6875rem;
+    line-height: calc(4 / 3);
+    color: #fff;
+    margin: 0;
+}
+
+.item-page__avail-line--off {
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+}
+
+/* --- SHARE MODAL (réplica del "Share this item" de fortnite.com) ---
+   La capa .share-modal-overlay es un cliente de Backdrop (.backdrop-layer). */
+.share-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 36rem;
+    padding: 2rem 1.75rem;
+    border-radius: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    color: #fff;
+}
+
+.share-modal__title {
+    margin: 0;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    text-align: center;
+}
+
+.share-modal__copy {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) {
+    .share-modal__copy:hover {
+        background-color: rgba(255, 255, 255, 0.16);
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+.share-modal__url {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    word-break: break-all;
+    font-size: 0.75rem;
+    line-height: 1.2;
+}
+
+.share-modal__copy-label {
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.share-modal__copy-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+}
+
+.share-modal__close {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    color: rgb(21, 23, 24);
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    text-transform: uppercase;
+    font-size: 1rem;
+    line-height: 1;
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) {
+    .share-modal__close:hover {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+.item-page__bundle-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.item-page__bundle-label {
+    font-size: 1rem;
+    text-align: center;
+    color: #fff;
+    margin: 0;
+}
+
+.item-page__bundle-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 1rem;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.1875rem;
+    letter-spacing: 0.01em;
+    background-color: #e6e6e6;
+    color: #000;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.item-page__bundle-cta:hover {
+    background-color: #fff;
+    transform: scale(1.02);
+}
+
+/* Panel de información translucido (rounded-xl bg-black/45 blur). */
+.item-page__panel {
+    border-radius: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: #fff;
+    font-family: var(--font-heading-now-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings);
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+}
+
+@media (min-width: 1280px) {
+    .item-page__panel {
+        padding: 1rem 1.25rem;
+    }
+}
+
+.item-page__panel-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.item-page__panel-legal {
+    gap: 0.5rem;
+}
+
+.item-page__panel-legal--divided {
+    border-top: 2px solid rgba(255, 255, 255, 0.15);
+    padding-top: 1rem;
+}
+
+.item-page__jam-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    margin: 0;
+    min-width: 0;
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+    white-space: nowrap;
+}
+
+.item-page__jam-meta-part+.item-page__jam-meta-part::before {
+    content: '';
+    display: inline-block;
+    flex-shrink: 0;
+    width: 2px;
+    align-self: stretch;
+    margin-right: 1rem;
+    background-color: rgba(255, 255, 255, 0.15);
+    vertical-align: middle;
+}
+
+.item-page__jam-meta-part {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* El tipo ("Pista de improvisación") es el único tramo que puede ceder:
+   se recorta con puntos suspensivos antes de romper la fila. */
+.item-page__jam-meta-part:first-child {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+/* Móvil: fuente y separaciones más ajustadas para que
+   "Pista de improvisación | Año | Duración" quepa en una sola línea. */
+@media (max-width: 480px) {
+    .item-page__jam-meta {
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1rem;
+    }
+
+    .item-page__jam-meta-part+.item-page__jam-meta-part::before {
+        margin-right: 0.5rem;
+    }
+}
+
+.item-page__description {
+    color: #fff;
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+    margin: 0;
+}
+
+.item-page__meta-row {
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+    color: #fff;
+    margin: 0;
+}
+
+.item-page__history-toggle {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    text-align: left;
+    padding: 0.25rem;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    color: #fff;
+    transition: background-color 0.2s ease;
+}
+
+.item-page__history-toggle:hover {
+    background-color: var(--bg-modal-hover);
+}
+
+.item-page__history-toggle .occ-caret {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.item-page__history-toggle .occ-caret.expanded {
+    transform: rotate(-180deg);
+}
+
+/* "INCLUIDO EN LA OFERTA" a lo ancho bajo el grid, como fortnite.com. */
+.item-page__included {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2.5rem;
+}
+
+.item-page__included-title {
+    color: #ffffff;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    line-height: 1.625rem;
+    margin: 0;
+}
+
+.item-page__included-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .item-page__included-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .item-page__included-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .item-page__included-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .item-page__included-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+}
+
+.included-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    cursor: pointer;
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) {
+    .included-card:hover {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+.included-card:focus-visible {
+    outline-color: rgba(255, 255, 255, 0.4);
+    outline-offset: 4px;
+}
+
+.included-card__media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.included-card:hover .included-card__media,
+.included-card:focus-within .included-card__media {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.included-card__image {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.included-card:hover .included-card__image,
+.included-card:focus-within .included-card__image {
+    transform: scale(1.03);
+}
+
+.included-card__footer {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.45);
+    color: #fff;
+}
+
+.included-card__type {
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    font-size: 0.6875rem;
+    line-height: 1.25;
+    text-transform: uppercase;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.included-card__name {
+    font-family: var(--font-heading-now-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings);
+    font-size: 1rem;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-page__notfound {
+    color: var(--text-modal-secondary);
+    font-size: 1rem;
+    padding: 2rem 0;
+}
+
+.item-page__view-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.item-page__styles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* ============================================================
+   Videos de la comunidad (Jam Tracks): CTA, crédito del autor, botón
+   de reporte, modales, tooltips y Top de colaboradores. Ver
+   videoCommunity.js. Crédito y botón comparten la tipografía y el fondo
+   de .item-page__panel (0.875rem / 1.1667rem, rgba(0,0,0,.45)).
+   ============================================================ */
+
+/* Reserva la altura del CTA antes de que llegue el estado: sin layout shift. */
+.vc-panel {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 3.25rem;
+    margin-top: 0.75rem;
+    display: flex;
+}
+.vc-panel > * {
+    transition: opacity 0.18s ease-out;
+}
+@starting-style {
+    .vc-panel > * {
+        opacity: 0;
+    }
+}
+/* El CTA de subida (.vc-cta) usa la piel de "Comprar ahora":
+   .cart-cta.cart-cta--primary en cart/cart.css. */
+.vc-credit,
+.vc-report-btn {
+    color: #fff;
+    font-family: var(--font-heading-now-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings);
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+}
+.vc-credit {
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    margin: 0;
+    display: flex;
+}
+.vc-credit__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+.vc-credit__body .vc-credit__text {
+    margin: 0;
+}
+/* Fecha y hora exacta de publicación, discreta bajo el nombre. */
+.vc-credit__date {
+    color: #ffffff99;
+    font-size: 0.72rem;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+}
+.vc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.vc-actions > .vc-report-btn {
+    align-self: auto;
+}
+.vc-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #f7ff19;
+    border: 1px solid #f7ff1966;
+    background-color: #f7ff191a;
+}
+.vc-edit-btn__icon {
+    width: 0.95rem;
+    height: 0.95rem;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+.vc-note--edit::before {
+    content: 'Edición abierta';
+}
+.vc-credit__avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+    object-fit: cover;
+    background-color: rgba(0, 0, 0, 0.45);
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+.vc-credit__text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.vc-report-btn {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.45);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: none;
+    border-radius: 0.75rem;
+    align-self: flex-start;
+    padding: 0.5rem 0.9rem;
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vc-report-btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+.vc-report-btn--own {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.vc-report-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    text-transform: uppercase;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+}
+/* La capa .vc-modal-overlay es un cliente de Backdrop (.backdrop-layer). */
+.vc-modal {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    color: #fff;
+    background-color: #0009;
+    border-radius: 0.75rem;
+    flex-direction: column;
+    gap: 0.85rem;
+    width: 100%;
+    max-width: 30rem;
+    padding: 1.5rem;
+    display: flex;
+    position: relative;
+}
+.vc-modal__title {
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(
+        --font-heading-now-bold--font-variation-settings
+    );
+    text-transform: uppercase;
+    margin: 0;
+    padding-right: 2rem;
+    font-size: 1.25rem;
+    font-style: italic;
+    line-height: 1.75rem;
+}
+.vc-modal__subtitle {
+    color: #fffc;
+    margin: 0;
+    font-size: 0.9rem;
+}
+.vc-modal__close {
+    color: #fff;
+    cursor: pointer;
+    background: #ffffff1a;
+    border: none;
+    border-radius: 9999px;
+    justify-content: center;
+    align-items: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+}
+.vc-form {
+    flex-direction: column;
+    gap: 0.85rem;
+    display: flex;
+}
+.vc-field {
+    flex-direction: column;
+    gap: 0.35rem;
+    display: flex;
+}
+.vc-field__label {
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+}
+.vc-field__input {
+    color: #fff;
+    background: #ffffff14;
+    border: 1px solid #ffffff40;
+    border-radius: 0.6rem;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+    transition: border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vc-field__input:focus {
+    border-color: #f7ff19;
+    outline: 0;
+}
+.vc-preview {
+    flex-direction: column;
+    gap: 0.4rem;
+    display: flex;
+}
+.vc-preview__player {
+    aspect-ratio: 16/9;
+    background: #0006;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    width: 100%;
+}
+.vc-preview__player iframe,
+.vc-preview__player > div {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+.vc-preview__status {
+    color: #f4f7c0;
+    margin: 0;
+    font-size: 0.8rem;
+}
+.vc-preview__status--blocked {
+    color: #fda4a4;
+}
+.vc-field__row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+.vc-field__row .vc-field__input {
+    flex: 1;
+    min-width: 0;
+}
+.vc-capture {
+    cursor: pointer;
+    color: #f7ff19;
+    background: #f7ff191a;
+    border: 1px solid #f7ff1966;
+    border-radius: 0.6rem;
+    padding: 0 0.85rem;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    white-space: nowrap;
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vc-capture:hover {
+    background: #f7ff192e;
+}
+.vc-note,
+.vc-warning {
+    position: relative;
+    margin: 0;
+    padding: 0.7rem 0.9rem 0.7rem 1.1rem;
+    font-size: 0.8rem;
+    border: none;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+.vc-note::before,
+.vc-warning::before {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+}
+.vc-note {
+    color: #fdffd8;
+    background: linear-gradient(100deg, #f7ff1926 0, #ffb2001f 100%);
+    box-shadow: inset 4px 0 0 #f7ff19;
+}
+.vc-note::before {
+    content: 'Recompensa instantánea';
+    color: #f7ff19;
+}
+.vc-warning {
+    color: #ffd6d6;
+    background: linear-gradient(100deg, #ef44442e 0, #7f1d1d33 100%);
+    box-shadow: inset 4px 0 0 #ef4444;
+}
+.vc-warning::before {
+    content: 'Advertencia';
+    color: #ff6b6b;
+}
+.vc-feedback {
+    color: #fda4a4;
+    margin: 0;
+    font-size: 0.85rem;
+}
+.vc-feedback--ok {
+    color: #86efac;
+}
+.vc-modal__actions {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    display: flex;
+}
+.vc-modal__primary,
+.vc-modal__secondary {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    min-height: 3rem;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    text-transform: uppercase;
+    outline-offset: 10px;
+    border: none;
+    border-radius: 1rem;
+    outline: #0000 solid 3px;
+    flex: auto;
+    padding: 0.7rem 1.25rem;
+    font-size: 1rem;
+    font-style: italic;
+    line-height: 1;
+    transition:
+        outline-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-offset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vc-modal__primary {
+    color: #151718;
+    background: linear-gradient(135deg, #f7ff19 0, #ffb200 100%);
+}
+.vc-modal__secondary {
+    color: #fff;
+    background: #ffffff1a;
+}
+.vc-modal__primary:disabled,
+.vc-modal__secondary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* Eliminar el propio aporte: misma silueta que los botones del modal, en la
+   paleta roja de .vc-warning. */
+.vc-modal__primary--danger {
+    color: #fff;
+    background: linear-gradient(135deg, #ef4444 0, #b91c1c 100%);
+}
+.vc-modal__actions--danger {
+    border-top: 1px solid #ffffff1f;
+    padding-top: 0.85rem;
+}
+.vc-modal__danger {
+    gap: 0.5rem;
+    color: #ff8a8a;
+    background: #ef44441f;
+    box-shadow: inset 0 0 0 1px #ef444466;
+    font-size: 0.85rem;
+}
+.vc-modal__danger .vc-edit-btn__icon {
+    width: 1rem;
+    height: 1rem;
+}
+.vc-note--deleted::before {
+    content: 'Recompensa revertida';
+}
+.vc-note__balance {
+    display: block;
+    margin-top: 0.35rem;
+}
+.vc-note__balance b {
+    color: #fff;
+    font-weight: 700;
+}
+.vc-tip {
+    display: inline-flex;
+    position: relative;
+}
+.vc-tip__btn {
+    color: #ffffffd9;
+    cursor: pointer;
+    background: #ffffff1a;
+    border: 1px solid #fff6;
+    border-radius: 9999px;
+    justify-content: center;
+    align-items: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    font-size: 0.7rem;
+    font-style: italic;
+    font-weight: 700;
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+}
+@media (hover: hover) {
+    .vc-report-btn:hover:not(:disabled):not(.vc-report-btn--own) {
+        background-color: rgba(0, 0, 0, 0.65);
+    }
+    .vc-edit-btn:hover:not(:disabled) {
+        background-color: #f7ff1933;
+    }
+    .vc-fab:hover {
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 14px 34px rgba(247, 255, 25, 0.35);
+    }
+    .vc-reasons__option:hover input:not(:checked) + .checkbox-visual {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+    .vc-modal__close:hover {
+        background: #ffffff38;
+    }
+    .vc-modal__primary:hover:not(:disabled),
+    .vc-modal__secondary:hover:not(:disabled) {
+        outline-offset: 4px;
+        outline-color: #fff6;
+    }
+    .vc-tip__btn:hover {
+        background: #ffffff40;
+    }
+}
+.vc-tip__bubble {
+    z-index: 10;
+    color: #ffffffe6;
+    text-transform: none;
+    background: #000000eb;
+    border: 1px solid #fff3;
+    border-radius: 0.5rem;
+    width: 16rem;
+    max-width: 70vw;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.35;
+    position: absolute;
+    bottom: calc(100% + 0.4rem);
+    left: 50%;
+    transform: translate(-50%);
+}
+.vc-reasons {
+    border: none;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+/* Cada motivo es un <label class="custom-checkbox">: la casilla (input +
+   .checkbox-visual) hereda la piel global; aquí solo va el layout. */
+.vc-reasons__option {
+    color: #fff;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+    display: flex;
+}
+.vc-reasons__label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+/* Botón flotante "Top colaboradores" (trofeo): misma columna de FABs de la
+   esquina inferior derecha (#back-to-top, #search-trigger), apilado encima.
+   Solo se monta si el panel admin tiene el Top activo. */
+.vc-fab {
+    position: fixed;
+    right: var(--fab-right);
+    bottom: calc(var(--fab-bottom) + (var(--fab-size) + var(--fab-gap)) * 2);
+    z-index: var(--z-nav);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--fab-size);
+    height: var(--fab-size);
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #151718;
+    background: linear-gradient(135deg, #f7ff19 0, #ffb200 100%);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+    transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: vc-fab-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+.vc-fab .vc-top__icon {
+    width: 55%;
+    height: 55%;
+}
+.vc-fab__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+.vc-fab:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+@keyframes vc-fab-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.9); }
+    to { opacity: 1; transform: none; }
+}
+.vc-modal--top {
+    max-width: 26rem;
+}
+.vc-top {
+    min-height: 4rem;
+}
+.vc-top__icon {
+    fill: currentColor;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+.vc-top__list {
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: min(60vh, 26rem);
+    margin: 0;
+    padding: 0 0.15rem 0 0;
+    list-style: none;
+    display: flex;
+    overflow-y: auto;
+}
+.vc-top__item {
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 0.65rem;
+    background: #ffffff0f;
+    display: flex;
+}
+.vc-top__item--podium {
+    background: linear-gradient(100deg, #f7ff1926 0, #ffb2001a 100%);
+    box-shadow: inset 3px 0 0 #f7ff19;
+}
+.vc-top__item--p1 .vc-top__rank {
+    color: #151718;
+    background: linear-gradient(135deg, #f7ff19 0, #ffb200 100%);
+}
+.vc-top__item--p2 .vc-top__rank {
+    color: #151718;
+    background: linear-gradient(135deg, #e5e7eb 0, #9ca3af 100%);
+}
+.vc-top__item--p3 .vc-top__rank {
+    color: #fff;
+    background: linear-gradient(135deg, #d97706 0, #92400e 100%);
+}
+.vc-top__rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 9999px;
+    background: #ffffff1f;
+    color: #fff;
+    font-family: var(--font-heading-now-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings);
+    font-style: italic;
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+}
+.vc-top__avatar {
+    object-fit: cover;
+    background: #ffffff1a;
+    border-radius: 9999px;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+}
+.vc-top__name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: auto;
+    min-width: 0;
+    overflow: hidden;
+}
+.vc-top__coins {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #f7ff19;
+    font-weight: 700;
+}
+.vc-top__coin-icon {
+    width: 1.1em;
+    height: 1.1em;
+    object-fit: contain;
+}
+.vc-top__loading {
+    color: #fff9;
+    font-size: 0.8rem;
+}

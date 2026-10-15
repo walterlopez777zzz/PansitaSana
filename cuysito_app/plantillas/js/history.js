@@ -1,0 +1,1 @@
+export { HistoryManager } from "./core/history-manager.js";

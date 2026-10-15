@@ -1,0 +1,35 @@
+<!-- WhatsApp Settings Modal -->
+<div id="whatsapp-settings-modal" class="fixed inset-0 overflow-y-auto z-50 hidden" role="dialog" aria-modal="true" data-modal-backdrop>
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">​</span>
+        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-slide-up">
+            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                        <i class="fab fa-whatsapp text-green-500 mr-2"></i>Ajustes de Mensaje de WhatsApp
+                    </h3>
+                    <button data-close-button type="button" class="text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-gray-200 transition"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label for="wa-greeting" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mensaje de Saludo</label>
+                        <input type="text" id="wa-greeting" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-fortnite-blue focus:border-fortnite-blue sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Ej: Hola, te contacto sobre tu pedido...">
+                    </div>
+                    <div>
+                        <h4 class="text-md font-medium text-gray-900 dark:text-white mb-3">Incluir en el mensaje:</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center"><input id="wa-include-order-code" type="checkbox" class="h-4 w-4 text-fortnite-blue rounded border-gray-300"><label for="wa-include-order-code" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Número de Pedido</label></div>
+                            <div class="flex items-center"><input id="wa-include-status" type="checkbox" class="h-4 w-4 text-fortnite-blue rounded border-gray-300"><label for="wa-include-status" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Estado del Pedido</label></div>
+                            <div class="flex items-center"><input id="wa-include-items" type="checkbox" class="h-4 w-4 text-fortnite-blue rounded border-gray-300"><label for="wa-include-items" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Lista de Productos</label></div>
+                            <div class="flex items-center"><input id="wa-include-total" type="checkbox" class="h-4 w-4 text-fortnite-blue rounded border-gray-300"><label for="wa-include-total" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Monto Total</label></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button id="save-wa-settings-btn" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-fortnite-blue text-base font-medium text-white hover:bg-fortnite-purple sm:ml-3 sm:w-auto sm:text-sm transition">Guardar Ajustes</button>
+            </div>
+        </div>
+    </div>
+</div>

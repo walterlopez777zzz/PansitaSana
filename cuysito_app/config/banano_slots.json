@@ -1,0 +1,55 @@
+{
+    "slots": {
+        "desktop": {
+            "1": {
+                "url": "/assets/banano_poses/banano_desktop_1.png?v=1786938439",
+                "scale": 100,
+                "rotate": 0,
+                "x": 0,
+                "y": 0
+            },
+            "2": {
+                "url": "/assets/banano_poses/banano_desktop_2.png?v=1786938446",
+                "scale": 120,
+                "rotate": 0,
+                "x": 46,
+                "y": 0
+            },
+            "3": {
+                "url": "/assets/banano_poses/banano_desktop_3.png?v=1786938450",
+                "scale": 180,
+                "rotate": 0,
+                "x": 74,
+                "y": -2
+            },
+            "4": {
+                "url": "/assets/banano_poses/banano_desktop_4.png?v=1786938453",
+                "scale": 100,
+                "rotate": 0,
+                "x": 0,
+                "y": 0
+            }
+        },
+        "mobile": {
+            "1": {
+                "url": "/assets/banano_poses/banano_mobile_1.png?v=1787257663",
+                "scale": 100,
+                "rotate": 0,
+                "x": 0,
+                "y": 0
+            },
+            "2": {
+                "url": "/assets/banano_poses/banano_mobile_2.png?v=1787257667",
+                "scale": 100,
+                "rotate": 0,
+                "x": 0,
+                "y": 0
+            }
+        }
+    },
+    "pages": {
+        "manga_trampa": {
+            "url": "/assets/banano_poses/banano_page_manga_trampa.jpg?v=1787257520"
+        }
+    }
+}

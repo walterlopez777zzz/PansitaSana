@@ -1,0 +1,131 @@
+{
+    "v2:/dlcustom4d9fb33ff0e76e787657e3e4": {
+        "regularPrice": 1500,
+        "finalPrice": 1500,
+        "devName": "[VIRTUAL]1 x Dr. Eggman, 1 x Orbot and Cubot for -1 MtxCurrency",
+        "offerId": "v2:/dlcustom4d9fb33ff0e76e787657e3e4",
+        "inDate": "2026-08-21T00:00:00Z",
+        "outDate": "2026-08-30T23:59:59.999Z",
+        "giftable": true,
+        "refundable": false,
+        "sortPriority": 0,
+        "layoutId": "SonicKnucklesEggman.100",
+        "layout": {
+            "id": "SonicKnucklesEggman",
+            "name": "Sonic the Hedgehog",
+            "index": 0,
+            "rank": 198,
+            "showIneligibleOffers": "always",
+            "useWidePreview": false,
+            "displayType": "tileGrid"
+        },
+        "colors": {
+            "color1": "ffee00ff",
+            "color3": "ff8500ff",
+            "textBackgroundColor": "ff8500ff"
+        },
+        "tileBackgroundMaterial": "ShopTile_Glitch",
+        "tileSize": "Size_1_x_1",
+        "displayAssetPath": "/OfferCatalog/DisplayAssets/DA_Character_SouthBalk",
+        "newDisplayAssetPath": "/OfferCatalog/NewDisplayAssets/S42/DAv2_Character_SouthBalk",
+        "newDisplayAsset": {
+            "id": "DAv2_Character_SouthBalk",
+            "cosmeticId": "Character_SouthBalk",
+            "materialInstances": [],
+            "renderImages": [
+                {
+                    "productTag": "Product.BR",
+                    "fileName": "cosmo__544900f6626d2eae_29c0c4191e61fb71.png",
+                    "image": "https://fortnite-api.com/images/cosmetics/br/newdisplayassets/544900f6626d2eae/renderimage_0.png"
+                },
+                {
+                    "productTag": "Product.Juno",
+                    "fileName": "cosmo__544900f6626d2eae_5aff8d0c456b1e98.png",
+                    "image": "https://fortnite-api.com/images/cosmetics/br/newdisplayassets/544900f6626d2eae/renderimage_1.png"
+                }
+            ]
+        },
+        "brItems": [
+            {
+                "id": "Character_SouthBalk",
+                "name": "Dr. Eggman",
+                "description": "Gafas, guantes y buen gusto.",
+                "type": {
+                    "value": "outfit",
+                    "displayValue": "Atuendo",
+                    "backendValue": "AthenaCharacter"
+                },
+                "rarity": {
+                    "value": "gaminglegends",
+                    "displayValue": "Leyendas de videojuegos",
+                    "backendValue": "EFortRarity::Epic"
+                },
+                "series": {
+                    "value": "Leyendas de videojuegos",
+                    "colors": [
+                        "8078ffff",
+                        "5328d6ff",
+                        "3e1398ff",
+                        "28085fff",
+                        "0d0027ff"
+                    ],
+                    "backendValue": "PlatformSeries"
+                },
+                "set": {
+                    "value": "Sonic the Hedgehog",
+                    "text": "Pieza del conjunto Sonic the Hedgehog.",
+                    "backendValue": "LiftPurple"
+                },
+                "introduction": {
+                    "chapter": "7",
+                    "season": "4",
+                    "text": "Introducido en Capítulo 7, Temporada 4.",
+                    "backendValue": 42
+                },
+                "images": {
+                    "smallIcon": "https://fortnite-api.com/images/cosmetics/br/character_southbalk/smallicon.png",
+                    "icon": "https://fortnite-api.com/images/cosmetics/br/character_southbalk/icon.png",
+                    "featured": "https://fortnite-api.com/images/cosmetics/br/character_southbalk/featured.png",
+                    "lego": {
+                        "small": "https://fortnite-api.com/images/cosmetics/lego/character_southbalk/small.png",
+                        "large": "https://fortnite-api.com/images/cosmetics/lego/character_southbalk/large.png",
+                        "wide": "https://fortnite-api.com/images/cosmetics/lego/character_southbalk/wide.png"
+                    }
+                },
+                "metaTags": [
+                    "Cosmetics.MetaTags.Special.BodySwap.Full"
+                ],
+                "added": "2026-08-21T00:00:00Z"
+            }
+        ],
+        "displayName": "Dr. Eggman",
+        "displayAssets": [
+            {
+                "displayAsset": "DAv2_migrated",
+                "materialInstance": "MI_0",
+                "url": "https://fortnite-api.com/images/cosmetics/br/character_southbalk/featured.png",
+                "background": "https://fortnite-api.com/images/cosmetics/br/character_southbalk/featured.png",
+                "full_background": "https://fortnite-api.com/images/cosmetics/br/character_southbalk/featured.png"
+            }
+        ],
+        "images": {
+            "featured": "https://fortnite-api.com/images/cosmetics/br/character_southbalk/featured.png",
+            "icon": "https://fortnite-api.com/images/cosmetics/br/character_southbalk/icon.png"
+        },
+        "offerDates": {
+            "in": "2026-08-21T00:00:00Z",
+            "out": "2026-08-30T23:59:59.999Z"
+        },
+        "vbucks": 1500,
+        "displayType": "Atuendo",
+        "rarity": {
+            "id": "Leyendas de videojuegos",
+            "name": "COMúN"
+        },
+        "section_name": "Sonic the Hedgehog",
+        "store_rank": 198,
+        "precio_base_soles": "21.00",
+        "precio_oferta_soles": "16.80",
+        "tiene_oferta_nuestra": true
+    }
+}

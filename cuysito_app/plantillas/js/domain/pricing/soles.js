@@ -1,0 +1,1 @@
+import{resolveConversionRate as r}from"./conversion-rate.js";import{roundSoles as o}from"./money-format.js";export function computeSoles(t,e){const m=Number(t)||0,n=r(e);return o(m*n)}
