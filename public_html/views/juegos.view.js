@@ -53,6 +53,7 @@ const ACCOUNT_HREF = '/cuenta/';
  * exponer `?id=` no aporta nada y filtra un identificador interno.
  */
 const ROOM_HREF = '/juegos/sorteo_flash/';
+const HUB_HREF = '/juegos/sorteo_flash/hub';
 /** Id de cliente en window.Backdrop (velo compartido) para el dialog de Sorteo Flash. */
 const FLASH_BACKDROP_CLIENT = 'flashDialog';
 
@@ -730,8 +731,8 @@ const FLASH_COPY = Object.freeze({
   none: {
     badge: ['Sin sorteos por ahora', TONE.neutral],
     desc: 'Anunciamos los próximos sorteos en la comunidad. ¡Atento!',
-    cardCta: ['Próximamente', 'secondary', null],
-    modalCta: ['Próximamente', 'secondary', null],
+    cardCta: ['Ver Hub del Sorteo', 'secondary', 'hub'],
+    modalCta: ['Explorar el Hub', 'secondary', 'hub'],
     note: 'Aún no hay un sorteo programado.',
   },
   next: {
@@ -807,8 +808,8 @@ const FLASH_COPY = Object.freeze({
   completed: {
     badge: ['Finalizado', TONE.neutral],
     desc: 'El sorteo terminó. Consulta los resultados.',
-    cardCta: ['Ver resultados', 'secondary', 'open-flash'],
-    modalCta: ['Ver resultados', 'secondary', 'room'],
+    cardCta: ['Ver Hub del Sorteo', 'secondary', 'hub'],
+    modalCta: ['Ir al Hub del Sorteo', 'secondary', 'hub'],
     note: '',
   },
   cancelled: {
@@ -1541,6 +1542,7 @@ function performAction(action, panel, trigger) {
   switch (action) {
     case 'open-daily': openDailyModal(); break;
     case 'open-flash': openFlashDialog(trigger); break;
+    case 'hub': window.location.assign(HUB_HREF); break;
     case 'close-flash': closeFlashDialog(); break;
     case 'spin': spin(); break;
     case 'set-mode': setMode(trigger.dataset.mode); break;

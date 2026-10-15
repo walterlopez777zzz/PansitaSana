@@ -197,15 +197,71 @@ if (!function_exists('sv_shop_index')) {
         $index = [];
         foreach (DailySpinFilters::loadShopEntries() as $entry) {
             if (!is_array($entry) || empty($entry['offerId'])) continue;
-            $image = $entry['images']['icon'] ?? $entry['images']['featured'] ?? '';
-            if (!$image && isset($entry['displayAssets'][0]['url'])) $image = $entry['displayAssets'][0]['url'];
+            $components = [];
+            foreach (['brItems', 'instruments', 'cars', 'legoKits', 'tracks'] as $key) {
+                if (!empty($entry[$key]) && is_array($entry[$key])) {
+                    foreach ($entry[$key] as $component) {
+                        if (is_array($component)) $components[] = $component;
+                    }
+                }
+            }
+            $mainItem = $components[0] ?? [];
+            foreach ($components as $component) {
+                if (!empty($component['series']) || !empty($component['rarity'])) {
+                    $mainItem = $component;
+                    break;
+                }
+            }
+            $renderImages = $entry['newDisplayAsset']['renderImages'] ?? [];
+            $renderImage = '';
+            if (is_array($renderImages)) {
+                foreach ($renderImages as $candidate) {
+                    if (!is_array($candidate) || empty($candidate['image'])) continue;
+                    if (($candidate['productTag'] ?? '') !== 'Product.Juno') {
+                        $renderImage = (string)$candidate['image'];
+                        break;
+                    }
+                    if ($renderImage === '') $renderImage = (string)$candidate['image'];
+                }
+            }
+            $image = (string)($mainItem['albumArt'] ?? '');
+            if ($image === '') $image = $renderImage;
+            if ($image === '') $image = (string)($entry['newDisplayAsset']['renderImages'][0]['image'] ?? '');
+            if ($image === '') $image = (string)($mainItem['images']['featured'] ?? $mainItem['images']['icon'] ?? '');
+            if ($image === '') $image = (string)($entry['images']['featured'] ?? $entry['images']['icon'] ?? '');
+            if ($image === '') $image = (string)($entry['displayAssets'][0]['url'] ?? '');
+            $series = $mainItem['series'] ?? [];
+            $seriesColors = is_array($series['colors'] ?? null) ? array_slice($series['colors'], 0, 5) : [];
+            $rawColors = $entry['colors'] ?? [];
+            $banner = $entry['banner'] ?? [];
+            if (!is_array($banner)) $banner = [];
+            $name = (string)($entry['bundle']['name'] ?? $entry['displayName'] ?? 'Artículo sin nombre');
             $index[(string)$entry['offerId']] = [
                 'offer_id' => (string)$entry['offerId'],
-                'name' => (string)($entry['displayName'] ?? 'Artículo sin nombre'),
+                'name' => $name,
                 'type' => (string)($entry['displayType'] ?? ''),
-                'rarity' => (string)($entry['rarity']['name'] ?? ''),
+                'rarity' => (string)($mainItem['rarity']['displayValue'] ?? $entry['rarity']['name'] ?? ''),
+                'rarity_id' => (string)($mainItem['rarity']['value'] ?? $entry['rarity']['id'] ?? ''),
+                'series_name' => (string)($series['displayValue'] ?? $series['value'] ?? ''),
+                'series_colors' => $seriesColors,
+                'tile_colors' => [
+                    'color1' => (string)($rawColors['color1'] ?? ''),
+                    'color3' => (string)($rawColors['color3'] ?? ''),
+                    'text_background_color' => (string)($rawColors['textBackgroundColor'] ?? ''),
+                ],
+                'section_name' => (string)($entry['section_name'] ?? $entry['layout']['name'] ?? $entry['displayType'] ?? 'Otros'),
+                'item_id' => (string)($mainItem['id'] ?? ''),
+                'is_bundle' => !empty($entry['bundle']),
+                'is_dynamic_bundle' => !empty($entry['devName']) && str_ends_with((string)$entry['devName'], 'for -1 MtxCurrency'),
+                'is_car_offer' => !empty($entry['cars']) && empty($entry['brItems']) && empty($entry['instruments']) && empty($entry['tracks']),
+                'banner' => [
+                    'value' => (string)($banner['value'] ?? ''),
+                    'intensity' => (string)($banner['intensity'] ?? ''),
+                    'backend_value' => (string)($banner['backendValue'] ?? ''),
+                ],
                 'image' => (string)$image,
                 'pavos' => (int)($entry['finalPrice'] ?? 0),
+                'regular_pavos' => (int)($entry['regularPrice'] ?? $entry['finalPrice'] ?? 0),
                 'soles' => (float)($entry['precio_oferta_soles'] ?? $entry['precio_base_soles'] ?? 0),
                 'giftable' => ($entry['giftable'] ?? true) !== false,
                 'out_date' => (string)($entry['outDate'] ?? ''),
@@ -222,9 +278,8 @@ if (!function_exists('sv_validate_combo')) {
         foreach ($rawIds as $rawId) {
             if (!is_scalar($rawId)) throw new Exception('La lista de artículos no es válida.');
             $id = trim((string)$rawId);
-            if ($id !== '') $ids[$id] = $id;
+            if ($id !== '') $ids[] = $id;
         }
-        $ids = array_values($ids);
         if (count($ids) < 1 || count($ids) > SV_MAX_ITEMS) {
             throw new Exception('El combo debe incluir entre 1 y ' . SV_MAX_ITEMS . ' artículos.');
         }
@@ -523,7 +578,7 @@ if (!function_exists('sv_stats')) {
         $cacheFile = __DIR__ . '/../cache/sorteo_votacion_stats.json';
         if (!$fresh && is_file($cacheFile)) {
             $cached = json_decode((string)@file_get_contents($cacheFile), true);
-            if (is_array($cached) && isset($cached['generated_at']) && (time() - (int)($cached['_cached_at'] ?? 0)) < SV_STATS_TTL) {
+            if (is_array($cached) && isset($cached['generated_at'], $cached['resumen'], $cached['ranking_ganadores']) && (time() - (int)($cached['_cached_at'] ?? 0)) < SV_STATS_TTL) {
                 unset($cached['_cached_at']);
                 return $cached;
             }
@@ -532,17 +587,19 @@ if (!function_exists('sv_stats')) {
         $privateFilter = $priv === '0 AS is_private' ? '1=1' : "{$priv} = 0";
         $winnerFilter = "w.choice IN ('original','cashback','double_won','double_lost')";
         $topWinners = [];
+        $winnerRanking = [];
         $res = $conn->query("SELECT w.user_id, COALESCE(NULLIF(u.public_display_name,''), u.game_username) AS name, a.filename AS avatar, u.is_verified,
                     COUNT(DISTINCT w.raffle_id) AS wins, MAX(COALESCE(w.gamble_resolved_at, w.prize_selected_at, r.end_time)) AS last_win_at
              FROM raffle_winners w JOIN raffles r ON r.raffle_id = w.raffle_id AND r.status = 'completed'
              JOIN users u ON u.id = w.user_id LEFT JOIN avatars a ON a.id = u.avatar_id
              WHERE {$winnerFilter} GROUP BY w.user_id, name, a.filename, u.is_verified
-             ORDER BY wins DESC, last_win_at DESC LIMIT 10");
+             ORDER BY wins DESC, last_win_at DESC LIMIT 500");
         while ($row = $res->fetch_assoc()) {
             $user = sv_stats_user($conn, $row);
             $user['wins'] = (int)$row['wins'];
             $user['last_win_at'] = sv_utc_iso($row['last_win_at'] ?? null);
-            $topWinners[] = $user;
+            $winnerRanking[] = $user + ['rank' => count($winnerRanking) + 1];
+            if (count($topWinners) < 10) $topWinners[] = $user;
         }
 
         $participantRows = [];
@@ -668,14 +725,24 @@ if (!function_exists('sv_stats')) {
                 ];
             } else $latestChoices[$choice] = null;
         }
+        $summaryRow = $conn->query("SELECT
+                COALESCE((SELECT SUM(amount) FROM coin_transactions
+                    WHERE amount > 0 AND reason IN ('raffle_win','raffle_cashback','raffle_prize_coins','raffle_early_bird','raffle_double_bonus','sorteo_votacion')), 0) AS bananos_entregados,
+                (SELECT COUNT(*) FROM raffles WHERE status = 'completed') AS sorteos_realizados")->fetch_assoc();
+        $summary = [
+            'bananos_entregados' => (float)($summaryRow['bananos_entregados'] ?? 0),
+            'sorteos_realizados' => (int)($summaryRow['sorteos_realizados'] ?? 0),
+        ];
         $payload = [
             'top_ganadores' => $topWinners,
+            'ranking_ganadores' => $winnerRanking,
             'top_participantes' => $topParticipants,
             'peor_suerte' => $worstLuck,
             'top_rachas' => $topStreaks,
             'total_sorteos' => count($raffles),
             'elecciones' => $choices,
             'ultimas_elecciones' => $latestChoices,
+            'resumen' => $summary,
             'generated_at' => gmdate('Y-m-d\TH:i:s\Z'),
             '_cached_at' => time(),
         ];
@@ -688,6 +755,128 @@ if (!function_exists('sv_stats')) {
         }
         unset($payload['_cached_at']);
         return $payload;
+    }
+}
+
+if (!function_exists('sv_latest_public_raffle')) {
+    function sv_latest_public_raffle(mysqli $conn, int $viewerId): array
+    {
+        $privateColumn = rp_private_column_sql($conn, 'r');
+        $privateFilter = $privateColumn === '0 AS is_private' ? '1=1' : "{$privateColumn} = 0";
+        $raffleResult = $conn->query("SELECT r.raffle_id, r.title, r.end_time, r.start_time, r.prize_config, r.cashback_percent
+            FROM raffles r
+            WHERE r.status = 'completed' AND {$privateFilter}
+            ORDER BY COALESCE(r.end_time, r.start_time) DESC, r.raffle_id DESC LIMIT 1");
+        $raffle = $raffleResult ? $raffleResult->fetch_assoc() : null;
+        if (!$raffle) return ['sorteo' => null, 'my' => null];
+
+        $raffleId = (int)$raffle['raffle_id'];
+        $participantsStmt = $conn->prepare("SELECT COUNT(*) AS total FROM raffle_participants
+            WHERE raffle_id = ? AND review_status <> 'expelled'");
+        $participantsStmt->bind_param('i', $raffleId);
+        $participantsStmt->execute();
+        $participants = (int)($participantsStmt->get_result()->fetch_assoc()['total'] ?? 0);
+        $participantsStmt->close();
+
+        $winnerStmt = $conn->prepare("SELECT w.id, w.user_id, w.position, w.choice, w.final_prize,
+                    w.cashback_credited_coins, w.delivery_status,
+                    COALESCE(NULLIF(u.public_display_name,''), u.game_username) AS name,
+                    a.filename AS avatar, u.is_verified,
+                    (SELECT MIN(rp.ticket_index) FROM raffle_participants rp
+                     WHERE rp.raffle_id = w.raffle_id AND rp.user_id = w.user_id) AS ticket_index
+            FROM raffle_winners w
+            JOIN users u ON u.id = w.user_id
+            LEFT JOIN avatars a ON a.id = u.avatar_id
+            WHERE w.raffle_id = ? AND w.choice IN ('original','cashback','double_won','double_lost')
+            ORDER BY w.position ASC, w.id ASC");
+        $winnerStmt->bind_param('i', $raffleId);
+        $winnerStmt->execute();
+        $winnerResult = $winnerStmt->get_result();
+        $winners = [];
+        $winnerTickets = [];
+        $viewerWon = false;
+        while ($row = $winnerResult->fetch_assoc()) {
+            $position = (int)$row['position'];
+            $choice = (string)$row['choice'];
+            $finalPrize = json_decode((string)($row['final_prize'] ?? ''), true);
+            if (!is_array($finalPrize)) $finalPrize = [];
+            $prizeName = (string)($finalPrize['resolved_item']['name'] ?? '');
+            if ($choice === 'double_lost') {
+                $prizeName = 'Se perdió en Doble o Nada';
+            } elseif ($choice === 'cashback') {
+                $cashbackCoins = (float)($row['cashback_credited_coins'] ?? 0);
+                if ($cashbackCoins <= 0) {
+                    if (!function_exists('rr_recorded_raffle_credit')) require_once __DIR__ . '/raffle_rewards.php';
+                    $cashbackCoins = max(0, rr_recorded_raffle_credit($conn, (int)$row['user_id'], $raffleId, 'raffle_cashback'));
+                }
+                $cashbackText = rtrim(rtrim(number_format($cashbackCoins, 2, ',', '.'), '0'), ',');
+                $prizeName = $cashbackCoins > 0 ? "Cashback de {$cashbackText} Bananos" : 'Cashback en Bananos';
+            } elseif ($prizeName === '') {
+                if (!function_exists('rr_prize_for_position')) require_once __DIR__ . '/raffle_rewards.php';
+                $prizeConfig = json_decode((string)($raffle['prize_config'] ?? ''), true);
+                $positionPrize = is_array($prizeConfig) ? rr_prize_for_position($prizeConfig, $position) : [];
+                if (($finalPrize['kind'] ?? $finalPrize['type'] ?? '') === 'coins') {
+                    $amount = (float)($finalPrize['amount'] ?? $finalPrize['coins'] ?? $positionPrize['amount'] ?? 0);
+                    $prizeName = number_format($amount, 0, ',', '.') . ' Bananos';
+                } else {
+                    $prizeName = (string)($finalPrize['name'] ?? $finalPrize['label'] ?? $positionPrize['name'] ?? $positionPrize['label'] ?? $positionPrize['display_name'] ?? '');
+                }
+            }
+            if ($prizeName === '') $prizeName = 'Premio del sorteo';
+            $ticket = $row['ticket_index'] !== null ? (int)$row['ticket_index'] : null;
+            if ($ticket !== null) $winnerTickets[] = ['ticket' => $ticket, 'position' => $position];
+            $user = sv_stats_user($conn, $row);
+            $winners[] = $user + [
+                'position' => $position,
+                'choice' => $choice,
+                'prize_name' => $prizeName,
+                'delivery_status' => $choice === 'cashback' || (string)($row['delivery_status'] ?? '') === 'delivered' ? 'delivered' : 'pending',
+                'ticket_index' => $ticket,
+            ];
+            if ((int)$row['user_id'] === $viewerId) $viewerWon = true;
+        }
+        $winnerStmt->close();
+
+        $my = null;
+        if ($viewerId > 0) {
+            $myStmt = $conn->prepare("SELECT ticket_index FROM raffle_participants
+                WHERE raffle_id = ? AND user_id = ? AND review_status <> 'expelled' LIMIT 1");
+            $myStmt->bind_param('ii', $raffleId, $viewerId);
+            $myStmt->execute();
+            $myRow = $myStmt->get_result()->fetch_assoc();
+            $myStmt->close();
+            if ($myRow) {
+                $myTicket = (int)$myRow['ticket_index'];
+                $closestTicket = null;
+                $closestDistance = null;
+                foreach ($winnerTickets as $winnerTicket) {
+                    $distance = abs($myTicket - $winnerTicket['ticket']);
+                    if ($closestDistance === null || $distance < $closestDistance
+                        || ($distance === $closestDistance && $winnerTicket['position'] < $closestTicket['position'])) {
+                        $closestTicket = $winnerTicket;
+                        $closestDistance = $distance;
+                    }
+                }
+                $my = [
+                    'participo' => true,
+                    'gano' => $viewerWon,
+                    'mi_ticket' => $myTicket,
+                    'ticket_ganador' => $closestTicket['ticket'] ?? null,
+                    'distancia' => $closestDistance,
+                ];
+            }
+        }
+
+        return [
+            'sorteo' => [
+                'raffle_id' => $raffleId,
+                'title' => (string)$raffle['title'],
+                'end_time' => sv_utc_iso($raffle['end_time'] ?? $raffle['start_time'] ?? null),
+                'participantes' => $participants,
+                'ganadores' => $winners,
+            ],
+            'my' => $my,
+        ];
     }
 }
 
@@ -742,6 +931,10 @@ if (!function_exists('sv_public_state')) {
             $activeCount = (int)($stmt->get_result()->fetch_assoc()['total'] ?? 0);
             $stmt->close();
         }
+        $stats = sv_stats($conn);
+        $latestRaffle = sv_latest_public_raffle($conn, $viewerId);
+        $my = ['logged_in' => $viewerId > 0, 'has_proposed' => $hasProposed, 'has_voted' => $hasVoted, 'voted_propuesta_id' => $votedProposalId];
+        if ($latestRaffle['my'] !== null) $my['ultimo_sorteo'] = $latestRaffle['my'];
         return [
             'votacion_abierta' => $settings['votacion_abierta'] && $openCycle !== null,
             'max_propuestas' => $settings['max_propuestas'],
@@ -752,8 +945,10 @@ if (!function_exists('sv_public_state')) {
             'ciclo' => $cycle ? ['id' => (int)$cycle['id'], 'estado' => (string)$cycle['estado'], 'opened_at' => sv_utc_iso($cycle['opened_at'] ?? null), 'closed_at' => sv_utc_iso($cycle['closed_at'] ?? null)] : null,
             'propuestas' => $proposals,
             'total_votos' => $totalVotes,
-            'my' => ['logged_in' => $viewerId > 0, 'has_proposed' => $hasProposed, 'has_voted' => $hasVoted, 'voted_propuesta_id' => $votedProposalId],
-            'stats' => sv_stats($conn),
+            'my' => $my,
+            'resumen' => $stats['resumen'] ?? ['bananos_entregados' => 0, 'sorteos_realizados' => 0],
+            'ultimo_sorteo' => $latestRaffle['sorteo'],
+            'stats' => $stats,
         ];
     }
 }
