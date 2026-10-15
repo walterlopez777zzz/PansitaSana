@@ -29,7 +29,7 @@ function eco_category_sql(string $a = 'ct'): string {
     return "CASE
         WHEN $a.reference_type = 'admin_id' OR $a.reason = 'admin_adjust' OR $a.reference_type = 'deleted_reversal' THEN 'manual'
         WHEN $a.reason IN ('cashback','spend','refund') THEN 'tienda'
-        WHEN $a.reason LIKE 'raffle_%' THEN 'sorteos'
+        WHEN $a.reason LIKE 'raffle_%' OR $a.reason = 'sorteo_votacion' THEN 'sorteos'
         WHEN $a.reason = 'daily_spin' THEN 'giro'
         WHEN $a.reason LIKE 'video_%' THEN 'videos'
         ELSE 'otros' END";
@@ -62,6 +62,7 @@ function eco_reason_labels(): array {
         'raffle_double_bonus' => 'Bono Doble o Nada',
         'raffle_expel_refund' => 'Devolución por expulsión',
         'raffle_unexpel_recharge' => 'Recobro por reingreso',
+        'sorteo_votacion' => 'Recompensa por propuesta (Votación Sorteo)',
         'video_reward' => 'Recompensa por vídeo aprobado',
         'video_upload_reward' => 'Recompensa por vídeo aprobado',
         'video_report_reward' => 'Recompensa por reporte de vídeo',
