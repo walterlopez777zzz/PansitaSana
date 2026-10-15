@@ -21,7 +21,7 @@ if (!function_exists('sv_output_json')) {
     }
 }
 
-$sub = trim((string)($_POST['sub'] ?? $_GET['sub'] ?? 'estado'));
+$sub = trim((string)($_POST['sub'] ?? $_GET['sub'] ?? $_GET['action'] ?? 'estado'));
 $userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
 
 try {
@@ -39,7 +39,7 @@ try {
         $items = [];
         foreach (sv_shop_index() as $item) {
             if (!$item['giftable']) continue;
-            unset($item['giftable'], $item['out_date']);
+            unset($item['giftable']);
             $items[] = $item;
         }
         usort($items, static fn($a, $b) => $a['pavos'] <=> $b['pavos']);
