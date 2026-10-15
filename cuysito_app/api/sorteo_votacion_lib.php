@@ -558,7 +558,7 @@ if (!function_exists('sv_stats')) {
                  GROUP BY w.user_id
              ) user_wins ON user_wins.user_id = rp.user_id
              WHERE rp.review_status <> 'expelled' GROUP BY rp.user_id, name, a.filename, u.is_verified
-             ORDER BY participations DESC, wins DESC, name ASC");
+             ORDER BY participations DESC, wins DESC, name ASC LIMIT 10");
         while ($row = $res->fetch_assoc()) $participantRows[] = $row;
         $topParticipants = [];
         foreach ($participantRows as $row) {
@@ -601,19 +601,20 @@ if (!function_exists('sv_stats')) {
             while ($row = $res->fetch_assoc()) $byRaffle[(int)$row['raffle_id']][] = $row;
             $runs = [];
             foreach ($raffles as $index => $raffleId) {
-                foreach ($runs as $userId => &$run) {
-                    if (!isset($run['present'][$index])) $run['current'] = 0;
-                }
-                unset($run);
                 foreach ($byRaffle[$raffleId] ?? [] as $row) {
                     $userId = (int)$row['user_id'];
-                    if (!isset($runs[$userId])) $runs[$userId] = ['best' => 0, 'current' => 0, 'user' => $row];
-                    $runs[$userId]['current']++;
+                    if (!isset($runs[$userId])) $runs[$userId] = ['best' => 0, 'current' => 0, 'last' => -2, 'user' => $row];
+                    $runs[$userId]['current'] = ($runs[$userId]['last'] === $index - 1) ? $runs[$userId]['current'] + 1 : 1;
                     $runs[$userId]['best'] = max($runs[$userId]['best'], $runs[$userId]['current']);
-                    $runs[$userId]['present'][$index] = true;
+                    $runs[$userId]['last'] = $index;
                     $runs[$userId]['user'] = $row;
                 }
             }
+            $lastIndex = count($raffles) - 1;
+            foreach ($runs as &$run) {
+                if ($run['last'] !== $lastIndex) $run['current'] = 0;
+            }
+            unset($run);
             foreach ($runs as $run) {
                 $user = sv_stats_user($conn, $run['user']);
                 $user['best_streak'] = (int)$run['best'];
