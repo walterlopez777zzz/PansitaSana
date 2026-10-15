@@ -1,0 +1,1 @@
+export function clamp(n,t,r){return Math.max(t,Math.min(r,n))}export function parseOptionalInt(n){const t=String(n??"").trim();if(!t)return null;const r=Math.round(Number(t));return Number.isFinite(r)?r:null}export function normalizeOptionalNumber(n){if(null==n)return null;const t=String(n).trim();if(!t)return null;const r=Number(t);return Number.isFinite(r)?r:null}

@@ -1,0 +1,1 @@
+export function createStatusSetter(t){return e=>{t.textContent=String(e||"")}}

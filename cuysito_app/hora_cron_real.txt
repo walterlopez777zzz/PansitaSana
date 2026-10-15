@@ -1,0 +1,5 @@
+--- REPORTE EXACTO DE ZONAS HORARIAS CRON ---
+Hora LIMA (America/Lima) : 2026-03-09 20:36:02
+Hora ET   (America/New_York): 2026-03-09 21:36:02 <-- (Suele ser el reloj de cPanel)
+Hora UTC  (Tiempo Universal) : 2026-03-10 01:36:02
+---------------------------------------------

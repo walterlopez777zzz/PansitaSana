@@ -1,0 +1,1 @@
+.corner-hud{position:absolute;left:14px;top:12px;z-index:30;display:grid;gap:6px;color:var(--text-dim);pointer-events:none}.corner-hud__title{font-size:12px;font-weight:800;letter-spacing:.03em}.corner-hud__status{font-size:11px;color:var(--text-faint);min-height:1em}

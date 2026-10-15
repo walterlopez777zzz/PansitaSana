@@ -1,0 +1,1695 @@
+<!doctype html>
+<html lang="es-419">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plantillas - Promos Fortnite</title>
+  <link rel="preload" href="assets/fonts/burbank-small-bold.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="assets/fonts/burbank-big-regular-black.otf" as="font" type="font/otf" crossorigin>
+  <script src="js/core/theme-preload.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  
+  <div class="command-bar" id="command-bar" aria-hidden="true" role="search">
+    <div class="command-bar__inner">
+      <svg class="command-bar__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+        <path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <input class="command-bar__input" id="command-bar-input" type="search" placeholder="Buscar artículos…"
+        autocomplete="off" spellcheck="false" aria-label="Buscar artículos" />
+      <span class="command-bar__hint">
+        <kbd class="command-bar__kbd">ESC</kbd>
+        <span>cerrar</span>
+      </span>
+    </div>
+  </div>
+  <div class="command-bar__backdrop" id="command-bar-backdrop"></div>
+
+  <div class="corner-hud">
+    <div class="corner-hud__title">Generador de Promos</div>
+    <div class="corner-hud__status" id="app-status" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="fab-column">
+    <button class="icon-btn reset-fab" id="reset-all" type="button" aria-label="Restablecer" title="Restablecer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+        <path d="M3 7v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M21 17a8 8 0 0 0-13.66-5.66L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </button>
+
+    <div class="mode-btn-group" role="group" aria-label="Modo de diseño">
+      <button class="button mode-btn" id="mode-individual" type="button" aria-pressed="true">Modo Individual</button>
+      <button class="button mode-btn" id="mode-collage" type="button" aria-pressed="false">Modo Collage</button>
+      <button class="button mode-btn" id="mode-cart" type="button" aria-pressed="false">Modo Carrito</button>
+      <button class="button mode-btn" id="mode-coupon" type="button" aria-pressed="false">Modo Cupón</button>
+    </div>
+
+    <button class="icon-btn theme-toggle-fab" id="theme-toggle" type="button" aria-label="Cambiar a tema claro"
+      aria-pressed="false" title="Tema">
+      <svg class="theme-toggle__sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em"
+        fill="none">
+        <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" stroke="currentColor" stroke-width="2" />
+        <path
+          d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <svg class="theme-toggle__moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em"
+        fill="none">
+        <path d="M21 13.2A8 8 0 0 1 10.8 3a6.5 6.5 0 1 0 10.2 10.2Z" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+  </div>
+
+  <main class="app">
+    <section class="hero" id="hero" aria-label="Vista previa">
+      <div class="hero__layout">
+        <aside class="panel" aria-label="Controles">
+          <div class="panel__content">
+            <div class="panel-head">
+              <div class="panel-tabs" role="tablist" aria-label="Secciones">
+                <button class="panel-tab" id="tab-elementos" type="button" role="tab" aria-selected="true"
+                  aria-controls="tab-panel-elementos" data-tab="elementos" aria-label="Elementos" title="Elementos">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" width="1em" height="1em"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M8 0H1Q0 0 0 1v7q0 1 .7 1.7l13.6 13.6q1.2 1.2 2.4 0l6.6-6.6q1.2-1.2 0-2.4L9.7.7Q9 0 8 0M5 2.5a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 1 0-5" />
+                  </svg>
+                </button>
+                <button class="panel-tab" id="tab-diseno" type="button" role="tab" aria-selected="false"
+                  aria-controls="tab-panel-diseno" data-tab="diseno" aria-label="Diseño" title="Diseño">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1280" width="1em" height="1em"
+                    fill="currentColor">
+                    <path
+                      d="M613.5 160.6c-119.2 7.6-224.9 54.3-308.8 136.4-76.2 74.5-124.7 169.5-139.6 273.7-3.8 26.1-4.6 38.4-4.5 69.8 0 44.3 3.8 76 13.9 116.5 8.9 35.1 18.1 60.2 35 94.5 18.5 37.6 36.4 65.2 63.6 98 11.8 14.3 46.1 48.1 61.6 60.8 71.1 58.1 153.9 94 244 105.7 31.2 4.1 69 5 79.8 2 18.2-5.1 32.8-14.3 43.4-27.5 13-16.1 19.1-35 17.7-55.5-1.2-19.7-6.8-32.5-21.9-50.5-6.7-8-13.7-21.6-16.3-32-2.5-9.6-2.5-28.5 0-38 6.3-24.3 22.5-43.7 44.9-54 14.9-6.8 14.1-6.7 88.7-7.5 37.1-.4 68.6-1 70-1.3 1.4-.4 7-1.3 12.5-2.2 53.6-8.4 105-35.1 144.7-75.2 32.4-32.7 53.9-68.8 67.2-113.3 10.8-36 13.3-81 7-126.5-18.6-133.5-106.6-251.2-237.9-318-58.2-29.6-118.5-47.1-186.5-54-14.7-1.5-65.4-2.7-78.5-1.9m-84 109.4c27.2 8.6 47.4 29.6 54.7 56.8 2.8 10.9 2.8 28.7-.1 39.7-7.4 28.1-29.5 50.2-57.6 57.6-11.4 3-28 3-39.4 0-27.7-7.3-48.4-27.1-57.1-54.6-2.8-9-3.8-26.7-2-36.8 5.4-31.3 30.1-57 61.4-64.2 9.4-2.2 31.2-1.4 40.1 1.5m260.3-1.5c31.5 6.6 56.7 32.5 62.2 64.2 1.8 10.1.8 27.8-2 36.8-8.7 27.5-29.4 47.3-57.1 54.6-11.4 3-28 3-39.4 0-28.1-7.4-50.2-29.5-57.6-57.6-3-11.2-3-28.9 0-39.9 7.9-29.7 32.3-52.7 62.2-58.5 7.1-1.4 24.2-1.2 31.7.4M359 481.1c17.7 2.8 31.3 10 44.5 23.3 13.3 13.4 20 27.2 22.5 46.4 3.2 24.5-6.1 49.6-24.7 67.3-9.8 9.4-20.1 15.1-34 19.1-10.2 2.9-30.4 3.1-40.3.4-36.2-9.9-60-40.8-60-77.5 0-16.5 4.2-31.1 12.7-43.9 17.5-26.3 48.6-40.1 79.3-35.1m595.8 1.9c34.8 9.8 58.2 40.8 58.2 77 0 16.5-3.9 29.7-12.6 43.3-25 38.7-77 48.3-114.6 21-12.2-8.8-23.8-25-28.6-39.9-8.8-27.1-2-57.7 17.5-78.5 12.3-13 27.1-21.3 43.8-24.5 9.6-1.9 26.9-1.1 36.3 1.6" />
+                  </svg>
+                </button>
+                <button class="panel-tab" id="tab-imagen" type="button" role="tab" aria-selected="false"
+                  aria-controls="tab-panel-imagen" data-tab="imagen" aria-label="Imagen" title="Imagen">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 20" width="1em" height="1em"
+                    fill="currentColor">
+                    <path d="m0 0 3 3v14h17l3 3H0zm5 8v7h15V9l-5-5-4 4-3-3z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="tab-panel-elementos" role="tabpanel" aria-labelledby="tab-elementos">
+              <div class="panel__section">
+                <label class="field">
+                  <span class="field__label">Buscar</span>
+                  <input id="search" class="input" type="search" placeholder="Nombre u oferta" autocomplete="off" />
+                </label>
+                <button class="button button--primary add-cards-trigger" id="add-cards-open" type="button"
+                  aria-haspopup="dialog" aria-controls="add-cards-dialog" title="Añadir tarjetas (Insert o A)" hidden>
+                  <span class="add-cards-trigger__label">Añadir tarjetas</span>
+                  <kbd class="add-cards-trigger__kbd" aria-hidden="true">A</kbd>
+                </button>
+              </div>
+
+              <details class="accordion" id="acc-collage" open hidden>
+                <summary class="accordion__summary"><span id="acc-collage-title">Collage</span></summary>
+                <div class="accordion__body">
+                  
+                  <label class="field" id="field-section-name" data-mode-field="collage">
+                    <span class="field__label">Nombre de Sección</span>
+                    <input id="collage-section-name" class="input" type="text" placeholder="Ej: Love and Legends"
+                      autocomplete="off" />
+                  </label>
+                  
+                  <label class="field" id="field-cart-total" data-mode-field="cart" hidden>
+                    <span class="field__label">Total</span>
+                    <input id="cart-total" class="input" type="text" placeholder="S/ 0" autocomplete="off"
+                      inputmode="text" aria-label="Total del carrito" />
+                  </label>
+                  <p class="cart-unpriced" id="cart-unpriced-hint" role="status" aria-live="polite" hidden></p>
+                  <label class="field">
+                    <span class="field__label">Separación (Gap)</span>
+                    <input id="collage-gap" class="range" type="range" min="0" max="120" step="1" />
+                  </label>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-branding-bar" open hidden>
+                <summary class="accordion__summary">Branding Bar</summary>
+                <div class="accordion__body">
+                  <label class="field">
+                    <span class="field__label">Texto</span>
+                    <input id="branding-text" class="input" type="text" placeholder="BANANO.PE" autocomplete="off"
+                      spellcheck="false" aria-label="Texto de marca" />
+                    <span id="branding-text-error" class="field-error" role="alert" hidden></span>
+                  </label>
+
+                  <div class="row">
+                    <div class="pill">Ícono</div>
+                    <button class="button button--primary" id="branding-icon-toggle" type="button"
+                      aria-pressed="true">Activado</button>
+                  </div>
+
+                  <div id="branding-icon-controls" class="stack">
+                    <div class="branding-mode-group" role="group" aria-label="Fuente del ícono">
+                      <button class="button branding-mode-btn" id="branding-mode-path" type="button"
+                        aria-pressed="true">SVG Path</button>
+                      <button class="button branding-mode-btn" id="branding-mode-url" type="button"
+                        aria-pressed="false">URL de Imagen</button>
+                    </div>
+
+                    <div id="branding-path-group">
+                      <label class="field">
+                        <span class="field__label">SVG Path Data</span>
+                        <textarea id="branding-icon-path" class="textarea branding-path-textarea" rows="3"
+                          spellcheck="false" autocomplete="off" placeholder="M12 2a10 10 0…"
+                          aria-label="Datos de trazado SVG"></textarea>
+                        <span id="branding-path-error" class="field-error" role="alert" hidden></span>
+                      </label>
+                    </div>
+
+                    <div id="branding-url-group" hidden>
+                      <label class="field">
+                        <span class="field__label">URL de Imagen</span>
+                        <input id="branding-icon-url" class="input" type="url" placeholder="https://…"
+                          autocomplete="off" spellcheck="false" aria-label="URL de imagen del ícono" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-coupon-geometry" open hidden>
+                <summary class="accordion__summary">Geometría del Cupón</summary>
+                <div class="accordion__body">
+                  <label class="field">
+                    <span class="field__label">SVG Path Data</span>
+                    <textarea id="coupon-custom-path" class="textarea branding-path-textarea" rows="4"
+                      spellcheck="false" autocomplete="off" placeholder="M 36 0 L 524 0 A 36 36 0 0 0 560 36…"
+                      aria-label="Datos de trazado SVG del cupón"></textarea>
+                    <span id="coupon-path-error" class="field-error" role="alert" hidden></span>
+                  </label>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-name" open>
+                <summary class="accordion__summary">Nombre</summary>
+                <div class="accordion__body">
+                  <div class="grid-2">
+                    <label class="field">
+                      <span class="field__label">Texto</span>
+                      <input id="item-name" class="input" type="text" autocomplete="off" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-precios" open>
+                <summary class="accordion__summary">Precios</summary>
+                <div class="accordion__body">
+                  <div class="price-row">
+                    <label class="field">
+                      <span class="field__label">V-Bucks</span>
+                      <input id="vbucks" class="input" type="number" min="0" step="1" />
+                    </label>
+
+                    <button class="icon-btn price-lock" id="price-lock" type="button" aria-label="Vincular precios"
+                      aria-pressed="true"></button>
+
+                    <label class="field">
+                      <span class="field__label">Soles</span>
+                      <input id="soles" class="input" type="number" min="0" step="1" />
+                    </label>
+                  </div>
+
+                  <label class="field">
+                    <span class="field__label">Conversión (S/ por V-Buck)</span>
+                    <input id="conversion" class="input" type="number" min="0" step="0.0001" />
+                  </label>
+
+                  <div class="row">
+                    <div class="pill">Descuento</div>
+                    <button class="button button--success" id="discount-add" type="button">Agregar descuento</button>
+                    <button class="button" id="discount-remove" type="button" hidden>Quitar descuento</button>
+                  </div>
+
+                  <div id="discount-controls" class="stack" hidden>
+                    <div class="row">
+                      <div class="pill">Modo</div>
+                      <button class="button button--primary" id="discount-mode" type="button"
+                        aria-pressed="false">Calculado</button>
+                    </div>
+
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Porcentaje (%)</span>
+                        <input id="discount-percent" class="input" type="number" min="0" max="95" step="1" />
+                      </label>
+                    </div>
+
+                    <div id="discount-manual" class="grid-2" hidden>
+                      <label class="field">
+                        <span class="field__label">Precio Antes</span>
+                        <input id="discount-manual-list" class="input" type="number" min="0" step="1" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Precio Ahora</span>
+                        <input id="discount-manual-offer" class="input" type="number" min="0" step="1" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-cart-recipients" open hidden>
+                <summary class="accordion__summary">Destinatarios</summary>
+                <div class="accordion__body">
+                  <div class="cart-recipients-section" id="cart-recipients-section">
+                    <div class="row" style="margin-bottom: 8px">
+                      <div class="pill">Para:</div>
+                      <button class="button button--success" id="cart-add-recipient" type="button">Agregar "Para:"</button>
+                    </div>
+                    <div id="cart-recipients-list" class="cart-recipients-list"
+                      aria-label="Lista de destinatarios"></div>
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-type" open>
+                <summary class="accordion__summary">Tipo</summary>
+                <div class="accordion__body">
+                  <div class="grid-2">
+                    <label class="field">
+                      <span class="field__label">Texto</span>
+                      <input id="item-type" class="input" type="text" autocomplete="off" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-rarity" open>
+                <summary class="accordion__summary">Rareza</summary>
+                <div class="accordion__body">
+                  <div class="grid-2">
+                    <label class="field">
+                      <span class="field__label">Texto</span>
+                      <input id="item-rarity" class="input" type="text" autocomplete="off" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-date" open>
+                <summary class="accordion__summary">Fecha</summary>
+                <div class="accordion__body">
+                  <div class="grid-2">
+                    <label class="field">
+                      <span class="field__label">Texto (DD/MM)</span>
+                      <input id="date" class="input" type="text" inputmode="numeric" placeholder="22/12"
+                        autocomplete="off" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" id="acc-label" open>
+                <summary class="accordion__summary">Etiqueta</summary>
+                <div class="accordion__body">
+                  <div class="grid-2">
+                    <label class="field">
+                      <span class="field__label">Texto</span>
+                      <input id="gift-label" class="input" type="text" autocomplete="off" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div class="tab-panel" id="tab-panel-diseno" role="tabpanel" aria-labelledby="tab-diseno" hidden>
+              <div id="design-individual" class="stack">
+                <details class="accordion" open>
+                  <summary class="accordion__summary">Fondo (Degradado)</summary>
+                  <div class="accordion__body">
+                    <div class="row">
+                      <button class="button" id="gradient-add" type="button">Agregar color</button>
+                    </div>
+                    <div id="gradient-list" class="gradient-list" aria-label="Lista de colores"></div>
+                  </div>
+                </details>
+
+                <details class="accordion" open>
+                  <summary class="accordion__summary">Color de Acento</summary>
+                  <div class="accordion__body">
+                    <button class="button" id="accent-add" type="button" hidden>Agregar Acento</button>
+                    <div id="accent-controls">
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="accent-color-picker" class="color-swatch" type="button"
+                            style="--swatch-color:#000000" aria-label="Color de acento"></button>
+                        </div>
+                        <input id="accent-color-hex" class="input" type="text" autocomplete="off" spellcheck="false"
+                          placeholder="Transparente" />
+                        <div class="gradient-row__controls">
+                          <button class="icon-btn" id="accent-visibility" type="button" aria-label="Ocultar acento"
+                            title="Mostrar/Ocultar"></button>
+                          <button class="icon-btn icon-btn--danger" id="accent-color-clear" type="button"
+                            aria-label="Quitar color de acento" title="Quitar">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="1em" height="1em">
+                              <path fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"
+                                stroke-linejoin="round" d="M35 12H65M12 32H88M25 32L34 90H66L75 32" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="grid-2">
+                        <label class="field">
+                          <span class="field__label">Altura</span>
+                          <input id="accent-height" class="range" type="range" min="0" max="0.5" step="0.01" />
+                        </label>
+                        <label class="field">
+                          <span class="field__label">Densidad</span>
+                          <input id="accent-density" class="range" type="range" min="0" max="1" step="0.01" />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+
+              <div id="design-collage" hidden>
+                <details class="accordion" open>
+                  <summary class="accordion__summary">Ajustes Globales del Collage</summary>
+                  <div class="accordion__body">
+                    <details class="accordion" open>
+                      <summary class="accordion__summary">Fondo del Collage</summary>
+                      <div class="accordion__body">
+                        <div class="gradient-row">
+                          <div class="gradient-row__swatch">
+                            <button id="collage-bg-picker" class="color-swatch" type="button"
+                              style="--swatch-color:#333335" aria-label="Color de fondo"></button>
+                          </div>
+                          <input id="collage-bg-hex" class="input" type="text" autocomplete="off" spellcheck="false"
+                            placeholder="#333335" />
+                          <div class="gradient-row__controls"></div>
+                        </div>
+
+                        <div class="row collage-bg-gallery-header">
+                          <div class="grid__meta" id="collage-bg-gallery-title">Galería de Fondos</div>
+                          <output class="collage-bg-search__count" id="collage-bg-search-count"
+                            for="collage-bg-search" aria-live="polite"></output>
+                        </div>
+                        <search class="collage-bg-search" role="search" aria-label="Buscar fondos por nombre">
+                          <label class="collage-bg-search__field">
+                            <span class="visually-hidden">Buscar fondo por nombre</span>
+                            <svg class="collage-bg-search__icon" viewBox="0 0 24 24" fill="none"
+                              stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                              stroke-linejoin="round" aria-hidden="true">
+                              <circle cx="11" cy="11" r="7" />
+                              <line x1="20" y1="20" x2="16.5" y2="16.5" />
+                            </svg>
+                            <input id="collage-bg-search" class="input collage-bg-search__input" type="search"
+                              placeholder="Buscar fondo por nombre…" autocomplete="off" autocorrect="off"
+                              autocapitalize="off" spellcheck="false" enterkeyhint="search"
+                              aria-controls="collage-bg-gallery" aria-describedby="collage-bg-search-count" />
+                          </label>
+                          <button class="collage-bg-search__clear" id="collage-bg-search-clear" type="button"
+                            aria-label="Limpiar búsqueda" hidden>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
+                              stroke-linecap="round" aria-hidden="true">
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                            </svg>
+                          </button>
+                        </search>
+                        <input type="file" id="collage-bg-file-input" accept="image/*" hidden aria-hidden="true" />
+                        <button class="collage-bg-upload-btn" id="collage-bg-upload-btn" type="button"
+                          aria-label="Subir imagen desde el dispositivo">
+                          <span class="collage-bg-upload-btn__icon"></span>
+                          <span>Subir desde Dispositivo</span>
+                        </button>
+                        <div id="collage-bg-gallery" class="collage-bg-gallery" role="region"
+                          aria-labelledby="collage-bg-gallery-title"></div>
+                        <p id="collage-bg-empty" class="collage-bg-empty" role="status" hidden></p>
+                      </div>
+                    </details>
+
+                    <details class="accordion" open>
+                      <summary class="accordion__summary">Estilos de Tarjeta</summary>
+                      <div class="accordion__body">
+                        <div id="collage-style-groups" class="stack" aria-label="Grupos de estilo"></div>
+                      </div>
+                    </details>
+                  </div>
+                </details>
+              </div>
+
+              <div id="design-coupon" hidden>
+                <details class="accordion" open>
+                  <summary class="accordion__summary">Fondo del Canvas</summary>
+                  <div class="accordion__body">
+                    <div class="row">
+                      <button class="button" id="coupon-bg-gradient-add" type="button">Agregar color</button>
+                    </div>
+                    <div id="coupon-bg-gradient-list" class="gradient-list" aria-label="Colores del fondo"></div>
+                  </div>
+                </details>
+
+                <details class="accordion" open>
+                  <summary class="accordion__summary">Cuerpo del Cupón</summary>
+                  <div class="accordion__body">
+                    <div class="row">
+                      <button class="button" id="coupon-body-gradient-add" type="button">Agregar color</button>
+                    </div>
+                    <div id="coupon-body-gradient-list" class="gradient-list" aria-label="Colores del cuerpo"></div>
+                  </div>
+                </details>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="tab-panel-imagen" role="tabpanel" aria-labelledby="tab-imagen" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Exportar</summary>
+                <div class="accordion__body">
+
+                  <div class="export-size">
+                    <label class="field export-size__field">
+                      <span class="field__label">Ancho</span>
+                      <input id="export-w" class="input" type="number" min="1" step="1" />
+                    </label>
+
+                    <button class="icon-btn export-link" id="export-link" type="button" aria-label="Vincular proporción"
+                      aria-pressed="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor"
+                        transform="rotate(-45)">
+                        <path
+                          d="M0 22.944q0 2.464 1.76 4.224l3.072 3.104q1.76 1.728 4.224 1.728t4.256-1.728l2.688-2.976q1.376-1.344 1.664-3.232t-0.512-3.552l-6.784 6.784q-0.576 0.576-1.408 0.576t-1.44-0.576l-2.816-2.816q-0.576-0.608-0.576-1.408t0.576-1.408l6.784-6.816q-1.632-0.8-3.52-0.512t-3.264 1.664l-2.944 2.72q-1.76 1.76-1.76 4.224zM9.792 20.256q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576l8.48-8.48q0.576-0.576 0.576-1.408t-0.576-1.408q-0.608-0.576-1.44-0.576t-1.408 0.576l-8.448 8.48q-0.576 0.576-0.576 1.408zM14.336 7.968q-0.288 1.888 0.512 3.552l6.816-6.816q0.576-0.576 1.408-0.576t1.408 0.576l2.816 2.848q0.576 0.576 0.576 1.408t-0.576 1.408l-6.784 6.784q1.632 0.832 3.52 0.512t3.264-1.664l2.944-2.944q1.76-1.76 1.76-4.224t-1.76-4.256l-2.816-2.816q-1.76-1.76-4.224-1.76t-4.256 1.76l-2.944 2.944q-1.344 1.376-1.664 3.264z" />
+                      </svg>
+                    </button>
+
+                    <label class="field export-size__field">
+                      <span class="field__label">Alto</span>
+                      <input id="export-h" class="input" type="number" min="1" step="1" />
+                    </label>
+
+                    <div class="export-presets" role="group" aria-label="Presets de resolución">
+                      <button class="export-presets__btn" id="export-preset-1x" type="button"
+                        aria-label="Resolución 1x">1x</button>
+                      <button class="export-presets__btn" id="export-preset-2x" type="button"
+                        aria-label="Resolución 2x">2x</button>
+                      <button class="export-presets__btn" id="export-preset-4x" type="button"
+                        aria-label="Resolución 4x">4x</button>
+                    </div>
+                  </div>
+
+                  <label class="field export-filename">
+                    <span class="field__label">Nombre</span>
+                    <input id="export-filename" class="input" type="text" placeholder="auto" autocomplete="off"
+                      spellcheck="false" />
+                  </label>
+
+                  <div class="export-dropdown" id="export-dropdown">
+                    <span class="field__label">Formato</span>
+                    <button class="export-dropdown__trigger" id="export-format-trigger" type="button"
+                      aria-haspopup="listbox" aria-expanded="false">
+                      <span id="export-format-label">PNG</span>
+                      <svg class="export-dropdown__chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"
+                        fill="currentColor">
+                        <path d="M6 8L1 3h10z" />
+                      </svg>
+                    </button>
+                    <div class="export-dropdown__menu" id="export-format-menu" role="listbox" hidden></div>
+                  </div>
+
+                  <div id="export-quality-group" hidden>
+                    <label class="field">
+                      <span class="field__label">Calidad: <span id="export-quality-value">0.92</span></span>
+                      <input id="export-quality" class="range" type="range" min="0.1" max="1" step="0.01"
+                        value="0.92" />
+                    </label>
+                  </div>
+
+                  <section class="export-weight" id="export-weight" aria-labelledby="export-weight-title"
+                    data-state="idle">
+                    <header class="export-weight__header">
+                      <h3 class="export-weight__title" id="export-weight-title">Peso exacto del archivo</h3>
+                      <span class="export-weight__badge" id="export-weight-badge"></span>
+                    </header>
+                    <output class="export-weight__primary" id="export-weight-primary"
+                      for="export-w export-h export-quality" aria-live="polite" aria-atomic="true">—</output>
+                    <meter class="export-weight__meter" id="export-weight-meter" min="0" max="16000000" value="0"
+                      aria-labelledby="export-weight-title" aria-describedby="export-weight-status"></meter>
+                    <dl class="export-weight__details">
+                      <div class="export-weight__detail">
+                        <dt>Bytes</dt>
+                        <dd id="export-weight-bytes">—</dd>
+                      </div>
+                      <div class="export-weight__detail">
+                        <dt>KB</dt>
+                        <dd id="export-weight-kb">—</dd>
+                      </div>
+                      <div class="export-weight__detail">
+                        <dt>MB</dt>
+                        <dd id="export-weight-mb">—</dd>
+                      </div>
+                    </dl>
+                    <p class="export-weight__status" id="export-weight-status" role="status"></p>
+                  </section>
+
+                  <div class="export-actions">
+                    <button class="button button--primary export-actions__primary" id="export-download"
+                      type="button">Descargar</button>
+                    <button class="button button--primary export-actions__primary" id="export-copy-image"
+                      type="button">Copiar Imagen</button>
+                  </div>
+
+                  <div class="export-secondary">
+                    <button class="button button--ghost export-secondary__btn" id="export-advanced" type="button">Más
+                      formatos…</button>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+          </div>
+        </aside>
+
+        <div class="hero__preview">
+          <div class="preview" id="preview">
+            <canvas id="preview-canvas" aria-label="Vista previa del diseño" role="img"></canvas>
+          </div>
+        </div>
+
+        <aside class="panel inspector" id="inspector" aria-label="Inspector" hidden>
+          <div class="panel__content">
+            <div class="panel-head inspector-head">
+              <div class="inspector-title" id="inspector-title">Propiedades</div>
+              <button class="icon-btn icon-btn--danger" id="inspector-delete" type="button"
+                aria-label="Eliminar / Ocultar" title="Eliminar / Ocultar" hidden></button>
+              <button class="icon-btn" id="inspector-close" type="button" aria-label="Cerrar inspector" title="Cerrar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none">
+                  <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            <div id="inspector-text" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Estilo</summary>
+                <div class="accordion__body">
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Apariencia</div>
+
+                    <div class="gradient-row">
+                      <div class="gradient-row__swatch">
+                        <button id="inspector-color-picker" class="color-swatch" type="button"
+                          style="--swatch-color:#FFFFFF" aria-label="Color"></button>
+                      </div>
+                      <input id="inspector-color-hex" class="input" type="text" autocomplete="off" spellcheck="false"
+                        placeholder="#FFFFFF" />
+                      <div class="gradient-row__controls"></div>
+                    </div>
+
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Opacidad</span>
+                        <input id="inspector-opacity" class="range" type="range" min="0" max="1" step="0.01" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Tamaño</span>
+                        <input id="inspector-font-scale" class="input" type="number" min="0.6" max="1.4" step="0.01" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Ancho Máximo</span>
+                        <input id="inspector-max-width" class="input" type="number" min="0.35" max="1" step="0.01" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Interlineado</span>
+                        <input id="inspector-line-height" class="input" type="number" min="0.6" max="1.8" step="0.01" />
+                      </label>
+                      <label class="field inspector-span-2">
+                        <span class="field__label">Rotación</span>
+                        <input id="inspector-text-rotation" class="range" type="range" min="-180" max="180" step="1" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Alineación</span>
+                        <select id="inspector-text-align" class="input">
+                          <option value="left">Izquierda</option>
+                          <option value="center">Centro</option>
+                          <option value="right">Derecha</option>
+                        </select>
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Ancla Vertical</span>
+                        <select id="inspector-v-anchor" class="input">
+                          <option value="top">Arriba</option>
+                          <option value="middle">Medio</option>
+                          <option value="bottom">Abajo</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-image" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Imagen</summary>
+                <div class="accordion__body">
+                  <div class="panel-tabs inspector-subtabs" role="tablist" aria-label="Imagen">
+                    <button class="panel-tab" id="inspector-image-tab-settings" type="button"
+                      aria-selected="true">Ajustes</button>
+                    <button class="panel-tab" id="inspector-image-tab-gallery" type="button"
+                      aria-selected="false">Galería</button>
+                  </div>
+
+                  <div id="inspector-image-settings" class="tab-panel">
+                    <div class="inspector-block">
+                      <div class="inspector-block__title">Transformación</div>
+                      <div class="grid-2">
+                        <label class="field">
+                          <span class="field__label">Escala</span>
+                          <input id="inspector-image-scale" class="input" type="number" min="0.1" max="5" step="0.01" />
+                        </label>
+                        <label class="field">
+                          <span class="field__label">Opacidad</span>
+                          <input id="inspector-image-opacity" class="range" type="range" min="0" max="1" step="0.01" />
+                        </label>
+                        <label class="field inspector-span-2">
+                          <span class="field__label">Rotación</span>
+                          <input id="inspector-image-rotation" class="range" type="range" min="-180" max="180"
+                            step="1" />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="inspector-block">
+                      <div class="inspector-block__title">Desvanecido</div>
+                      <div class="inspector-toggle-row">
+                        <div class="pill">Desvanecido Inferior</div>
+                        <button class="button button--primary" id="inspector-image-fade-toggle" type="button"
+                          aria-pressed="true">Activado</button>
+                      </div>
+
+                      <div class="grid-2">
+                        <label class="field">
+                          <span class="field__label">Altura</span>
+                          <input id="inspector-image-fade-height" class="input" type="number" min="0" max="0.5"
+                            step="0.01" />
+                        </label>
+                        <label class="field">
+                          <span class="field__label">Densidad</span>
+                          <input id="inspector-image-fade-density" class="input" type="number" min="0" max="1"
+                            step="0.01" />
+                        </label>
+                      </div>
+                    </div>
+
+                    <details class="accordion" open>
+                      <summary class="accordion__summary">Efectos</summary>
+                      <div class="accordion__body">
+                        <div class="grid-2">
+                          <label class="field">
+                            <span class="field__label">Brillo</span>
+                            <input id="inspector-image-brightness" class="range" type="range" min="0" max="200"
+                              step="1" />
+                          </label>
+                          <label class="field">
+                            <span class="field__label">Contraste</span>
+                            <input id="inspector-image-contrast" class="range" type="range" min="0" max="200"
+                              step="1" />
+                          </label>
+                          <label class="field">
+                            <span class="field__label">Saturación</span>
+                            <input id="inspector-image-saturation" class="range" type="range" min="0" max="300"
+                              step="1" />
+                          </label>
+                          <label class="field">
+                            <span class="field__label">Tono</span>
+                            <input id="inspector-image-hue" class="range" type="range" min="0" max="360" step="1" />
+                          </label>
+                          <label class="field inspector-span-2">
+                            <span class="field__label">Sepia</span>
+                            <input id="inspector-image-sepia" class="range" type="range" min="0" max="100" step="1" />
+                          </label>
+                        </div>
+                      </div>
+                    </details>
+                  </div>
+
+                  <div id="inspector-image-gallery" class="tab-panel" hidden>
+                    <div id="inspector-gallery" class="gallery-sections"></div>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-collage-card" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Tarjeta</summary>
+                <div class="accordion__body">
+                  <div class="inspector-dpad">
+                    <button class="icon-btn" id="inspector-collage-card-move-left" type="button"
+                      aria-label="Mover a la izquierda" title="Mover a la izquierda"></button>
+                    <button class="icon-btn" id="inspector-collage-card-move-up" type="button" aria-label="Mover arriba"
+                      title="Mover arriba"></button>
+                    <button class="icon-btn" id="inspector-collage-card-move-down" type="button"
+                      aria-label="Mover abajo" title="Mover abajo"></button>
+                    <button class="icon-btn" id="inspector-collage-card-move-right" type="button"
+                      aria-label="Mover a la derecha" title="Mover a la derecha"></button>
+                  </div>
+
+                  <div class="grid-2">
+                    <label class="field">
+                      <span class="field__label">Escala de Tarjeta</span>
+                      <input id="inspector-collage-card-scale" class="input" type="number" min="0.5" max="2"
+                        step="0.01" />
+                    </label>
+                    <label class="field">
+                      <span class="field__label">Tamaño de Tile (Unidad de Ancho)</span>
+                      <input id="inspector-collage-card-width-units" class="input" type="number" min="1" max="4"
+                        step="1" />
+                    </label>
+                    <label class="field inspector-span-2">
+                      <span class="field__label">Rotación</span>
+                      <input id="inspector-collage-card-rotation" class="range" type="range" min="-180" max="180"
+                        step="1" />
+                    </label>
+                  </div>
+
+                  <div class="inspector-toggle-row">
+                    <div class="pill">Ignorar Espaciado</div>
+                    <button class="button button--primary" id="inspector-collage-card-ignore-gaps" type="button"
+                      aria-pressed="false">Desactivado</button>
+                  </div>
+
+                  <div class="inspector-toggle-row">
+                    <div class="pill">Mover junto con tarjeta</div>
+                    <button class="button button--primary" id="inspector-collage-card-link-children" type="button"
+                      aria-pressed="true">Activado</button>
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" open>
+                <summary class="accordion__summary">Fondo (Degradado)</summary>
+                <div class="accordion__body">
+                  <div class="inspector-toggle-row">
+                    <div class="pill">Usar Estilo Global</div>
+                    <button class="button button--primary" id="inspector-collage-card-gradient-use-global" type="button"
+                      aria-pressed="true">Activado</button>
+                  </div>
+                  <div class="row">
+                    <button class="button" id="inspector-collage-card-gradient-add" type="button">Agregar color</button>
+                    <button class="icon-btn" id="inspector-collage-card-gradient-visibility" type="button"
+                      aria-label="Ocultar gradiente" title="Mostrar/Ocultar"></button>
+                  </div>
+
+                  <div id="inspector-collage-card-gradient-list" class="gradient-list" aria-label="Lista de colores">
+                  </div>
+                </div>
+              </details>
+
+              <details class="accordion" open>
+                <summary class="accordion__summary">Color de Acento</summary>
+                <div class="accordion__body">
+                  <div class="inspector-toggle-row">
+                    <div class="pill">Use Global</div>
+                    <button class="button button--primary" id="inspector-collage-card-accent-use-global" type="button"
+                      aria-pressed="true">Activado</button>
+                  </div>
+
+                  <button class="button" id="inspector-collage-card-accent-add" type="button" hidden>Agregar
+                    Acento</button>
+                  <div id="inspector-collage-card-accent-controls">
+                    <div class="gradient-row">
+                      <div class="gradient-row__swatch">
+                        <button id="inspector-collage-card-accent-picker" class="color-swatch" type="button"
+                          style="--swatch-color:#000000" aria-label="Color de acento"></button>
+                      </div>
+                      <input id="inspector-collage-card-accent-hex" class="input" type="text" autocomplete="off"
+                        spellcheck="false" placeholder="Transparente" />
+                      <div class="gradient-row__controls">
+                        <button class="icon-btn" id="inspector-collage-card-accent-visibility" type="button"
+                          aria-label="Ocultar acento" title="Mostrar/Ocultar"></button>
+                        <button class="icon-btn icon-btn--danger" id="inspector-collage-card-accent-clear" type="button"
+                          aria-label="Quitar color de acento" title="Quitar">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="1em" height="1em">
+                            <path fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"
+                              stroke-linejoin="round" d="M35 12H65M12 32H88M25 32L34 90H66L75 32" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Altura</span>
+                        <input id="inspector-collage-card-accent-height" class="range" type="range" min="0" max="0.5"
+                          step="0.01" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Densidad</span>
+                        <input id="inspector-collage-card-accent-density" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-collage-title" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Título de Sección</summary>
+                <div class="accordion__body">
+
+                  <div class="gradient-row">
+                    <div class="gradient-row__swatch">
+                      <button id="inspector-collage-title-color-picker" class="color-swatch" type="button"
+                        style="--swatch-color:#FFFFFF" aria-label="Color del título"></button>
+                    </div>
+                    <input id="inspector-collage-title-color-hex" class="input" type="text" autocomplete="off"
+                      spellcheck="false" placeholder="#FFFFFF" />
+                    <div class="gradient-row__controls"></div>
+                  </div>
+
+                  <div class="grid-2">
+                    <label class="field">
+                      <span class="field__label">Tamaño</span>
+                      <input id="inspector-collage-title-font-size" class="input" type="number" min="10" max="300"
+                        step="1" />
+                    </label>
+                    <label class="field">
+                      <span class="field__label">Opacidad</span>
+                      <input id="inspector-collage-title-opacity" class="range" type="range" min="0" max="1"
+                        step="0.01" />
+                    </label>
+                    <label class="field inspector-span-2">
+                      <span class="field__label">Rotación</span>
+                      <input id="inspector-collage-title-rotation" class="range" type="range" min="-180" max="180"
+                        step="1" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-branding" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Branding Bar</summary>
+                <div class="accordion__body">
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Colores</div>
+
+                    <div class="inspector-toggle-row">
+                      <div class="pill">Vincular Colores</div>
+                      <button class="button button--primary" id="inspector-branding-sync-toggle" type="button"
+                        aria-pressed="true">Activado</button>
+                    </div>
+
+                    <div id="inspector-branding-master-group">
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-branding-master-picker" class="color-swatch" type="button"
+                            style="--swatch-color:rgba(203,213,225,0.78)" aria-label="Color maestro"></button>
+                        </div>
+                        <input id="inspector-branding-master-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="#CBD5E1" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad</span>
+                        <input id="inspector-branding-master-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+
+                    <div id="inspector-branding-independent-group" hidden>
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-branding-text-picker" class="color-swatch" type="button"
+                            style="--swatch-color:rgba(203,213,225,0.78)" aria-label="Color de texto"></button>
+                        </div>
+                        <input id="inspector-branding-text-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Texto" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad Texto</span>
+                        <input id="inspector-branding-text-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-branding-icon-picker" class="color-swatch" type="button"
+                            style="--swatch-color:rgba(203,213,225,0.78)" aria-label="Color de ícono"></button>
+                        </div>
+                        <input id="inspector-branding-icon-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Ícono" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad Ícono</span>
+                        <input id="inspector-branding-icon-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-cart-recipient" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Encabezado "Para:"</summary>
+                <div class="accordion__body">
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Colores</div>
+                    <div class="inspector-toggle-row">
+                      <div class="pill">Vincular Colores</div>
+                      <button class="button button--primary" id="inspector-recipient-sync-toggle" type="button"
+                        aria-pressed="true">Activado</button>
+                    </div>
+                    <div id="inspector-recipient-master-group">
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-recipient-master-picker" class="color-swatch" type="button"
+                            style="--swatch-color:rgba(203,213,225,0.78)" aria-label="Color maestro"></button>
+                        </div>
+                        <input id="inspector-recipient-master-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="#CBD5E1" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad</span>
+                        <input id="inspector-recipient-master-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+                    <div id="inspector-recipient-independent-group" hidden>
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-recipient-label-picker" class="color-swatch" type="button"
+                            style="--swatch-color:rgba(203,213,225,0.78)" aria-label="Color de Para:"></button>
+                        </div>
+                        <input id="inspector-recipient-label-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Para:" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad "Para:"</span>
+                        <input id="inspector-recipient-label-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-recipient-username-picker" class="color-swatch" type="button"
+                            style="--swatch-color:rgba(203,213,225,0.78)" aria-label="Color de username"></button>
+                        </div>
+                        <input id="inspector-recipient-username-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Username" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad Username</span>
+                        <input id="inspector-recipient-username-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Posición</div>
+                    <label class="field">
+                      <span class="field__label">Desplazamiento X</span>
+                      <input id="inspector-recipient-offset-x" class="input" type="number" step="1" value="0" />
+                    </label>
+                    <label class="field">
+                      <span class="field__label">Desplazamiento Y</span>
+                      <input id="inspector-recipient-offset-y" class="input" type="number" step="1" value="0" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-cart-header" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Encabezado Total</summary>
+                <div class="accordion__body">
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Colores</div>
+
+                    <div class="inspector-toggle-row">
+                      <div class="pill">Modo de Vinculación</div>
+                      <button class="button button--primary" id="inspector-cart-header-sync-mode" type="button"
+                        data-sync-mode="partial">Parcial</button>
+                    </div>
+
+                    <div id="inspector-cart-header-master-group" hidden>
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-cart-header-master-picker" class="color-swatch" type="button"
+                            style="--swatch-color:#CBD5E1" aria-label="Color maestro"></button>
+                        </div>
+                        <input id="inspector-cart-header-master-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="#CBD5E1" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad</span>
+                        <input id="inspector-cart-header-master-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+
+                    <div id="inspector-cart-header-partial-group">
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-cart-header-iconlabel-picker" class="color-swatch" type="button"
+                            style="--swatch-color:#CBD5E1"
+                            aria-label="Color de ícono y etiqueta"></button>
+                        </div>
+                        <input id="inspector-cart-header-iconlabel-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Ícono + Etiqueta" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad Ícono + Etiqueta</span>
+                        <input id="inspector-cart-header-iconlabel-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-cart-header-value-picker" class="color-swatch" type="button"
+                            style="--swatch-color:#FF5252" aria-label="Color de valor"></button>
+                        </div>
+                        <input id="inspector-cart-header-value-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Valor" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad Valor</span>
+                        <input id="inspector-cart-header-value-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+
+                    <div id="inspector-cart-header-independent-group" hidden>
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-cart-header-icon-picker" class="color-swatch" type="button"
+                            style="--swatch-color:#CBD5E1" aria-label="Color de ícono"></button>
+                        </div>
+                        <input id="inspector-cart-header-icon-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Ícono" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad Ícono</span>
+                        <input id="inspector-cart-header-icon-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-cart-header-label-picker" class="color-swatch" type="button"
+                            style="--swatch-color:#CBD5E1" aria-label="Color de etiqueta"></button>
+                        </div>
+                        <input id="inspector-cart-header-label-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Etiqueta" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad Etiqueta</span>
+                        <input id="inspector-cart-header-label-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+
+                      <div class="gradient-row">
+                        <div class="gradient-row__swatch">
+                          <button id="inspector-cart-header-indep-value-picker" class="color-swatch" type="button"
+                            style="--swatch-color:#FF5252" aria-label="Color de valor"></button>
+                        </div>
+                        <input id="inspector-cart-header-indep-value-hex" class="input" type="text" autocomplete="off"
+                          spellcheck="false" placeholder="Valor" />
+                        <div class="gradient-row__controls"></div>
+                      </div>
+                      <label class="field">
+                        <span class="field__label">Opacidad Valor</span>
+                        <input id="inspector-cart-header-indep-value-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-collage-text" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Texto</summary>
+                <div class="accordion__body">
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Contenido</div>
+                    <label class="field">
+                      <span class="field__label">Contenido</span>
+                      <input id="inspector-collage-text-content" class="input" type="text" autocomplete="off"
+                        spellcheck="false" />
+                    </label>
+                  </div>
+
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Apariencia</div>
+                    <div class="gradient-row">
+                      <div class="gradient-row__swatch">
+                        <button id="inspector-collage-text-color-picker" class="color-swatch" type="button"
+                          style="--swatch-color:#FFFFFF" aria-label="Color"></button>
+                      </div>
+                      <input id="inspector-collage-text-color-hex" class="input" type="text" autocomplete="off"
+                        spellcheck="false" placeholder="#FFFFFF" />
+                      <div class="gradient-row__controls"></div>
+                    </div>
+
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Tamaño de Fuente</span>
+                        <input id="inspector-collage-text-font-size" class="input" type="number" min="10" max="200"
+                          step="1" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Opacidad</span>
+                        <input id="inspector-collage-text-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                      <label class="field inspector-span-2">
+                        <span class="field__label">Rotación</span>
+                        <input id="inspector-collage-text-rotation" class="range" type="range" min="-180" max="180"
+                          step="1" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div id="inspector-collage-name-style" class="inspector-block" hidden>
+                    <div class="inspector-block__title">Nombre</div>
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Ancho Máximo</span>
+                        <input id="inspector-collage-name-max-width" class="input" type="number" min="0.35" max="1"
+                          step="0.01" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Interlineado</span>
+                        <input id="inspector-collage-name-line-height" class="input" type="number" min="0.6" max="1.8"
+                          step="0.01" />
+                      </label>
+                      <label class="field inspector-span-2">
+                        <span class="field__label">Tipografía</span>
+                        <select id="inspector-collage-name-typography" class="input">
+                          <option value="shop">Tienda (Heading Now)</option>
+                          <option value="big">Burbank Big</option>
+                          <option value="small">Burbank Small</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-collage-image" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Imagen</summary>
+                <div class="accordion__body">
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Origen</div>
+                    <label class="field">
+                      <span class="field__label">URL de Imagen</span>
+                      <input id="inspector-collage-image-url" class="input" type="text" autocomplete="off"
+                        spellcheck="false" />
+                    </label>
+                    <input type="file" id="inspector-collage-image-file-input" accept="image/*" hidden
+                      aria-hidden="true" />
+                    <button class="collage-bg-upload-btn" id="inspector-collage-image-upload-btn" type="button"
+                      aria-label="Subir imagen desde el dispositivo">
+                      <span class="collage-bg-upload-btn__icon"></span>
+                      <span>Subir desde Dispositivo</span>
+                    </button>
+                  </div>
+
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Transformación</div>
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Zoom</span>
+                        <input id="inspector-collage-image-zoom" class="input" type="number" min="0.1" max="5"
+                          step="0.01" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Opacidad</span>
+                        <input id="inspector-collage-image-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                      <label class="field inspector-span-2">
+                        <span class="field__label">Rotación</span>
+                        <input id="inspector-collage-image-rotation" class="range" type="range" min="-180" max="180"
+                          step="1" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Encuadre</div>
+                    <div class="inspector-toggle-row">
+                      <div class="pill">Sobresalir por Arriba</div>
+                      <button class="button button--primary" id="inspector-collage-image-overflow-toggle" type="button"
+                        aria-pressed="true">Activado</button>
+                    </div>
+                  </div>
+
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Desvanecido</div>
+                    <div class="inspector-toggle-row">
+                      <div class="pill">Desvanecido Inferior</div>
+                      <button class="button button--primary" id="inspector-collage-image-fade-toggle" type="button"
+                        aria-pressed="true">Activado</button>
+                    </div>
+
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Altura</span>
+                        <input id="inspector-collage-image-fade-height" class="input" type="number" min="0" max="0.5"
+                          step="0.01" />
+                      </label>
+                      <label class="field">
+                        <span class="field__label">Densidad</span>
+                        <input id="inspector-collage-image-fade-density" class="input" type="number" min="0" max="1"
+                          step="0.01" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <details class="accordion" open>
+                    <summary class="accordion__summary">Efectos</summary>
+                    <div class="accordion__body">
+                      <div class="grid-2">
+                        <label class="field">
+                          <span class="field__label">Brillo</span>
+                          <input id="inspector-collage-image-brightness" class="range" type="range" min="0" max="200"
+                            step="1" />
+                        </label>
+                        <label class="field">
+                          <span class="field__label">Contraste</span>
+                          <input id="inspector-collage-image-contrast" class="range" type="range" min="0" max="200"
+                            step="1" />
+                        </label>
+                        <label class="field">
+                          <span class="field__label">Saturación</span>
+                          <input id="inspector-collage-image-saturation" class="range" type="range" min="0" max="300"
+                            step="1" />
+                        </label>
+                        <label class="field">
+                          <span class="field__label">Tono</span>
+                          <input id="inspector-collage-image-hue" class="range" type="range" min="0" max="360"
+                            step="1" />
+                        </label>
+                        <label class="field inspector-span-2">
+                          <span class="field__label">Sepia</span>
+                          <input id="inspector-collage-image-sepia" class="range" type="range" min="0" max="100"
+                            step="1" />
+                        </label>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-collage-outdate" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Fecha de Salida</summary>
+                <div class="accordion__body">
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Contenido</div>
+                    <label class="field">
+                      <span class="field__label">Contenido</span>
+                      <input id="inspector-collage-outdate-content" class="input" type="text" autocomplete="off"
+                        spellcheck="false" placeholder="DD/MM" />
+                    </label>
+                  </div>
+
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Colores</div>
+                    <div class="gradient-row">
+                      <div class="gradient-row__swatch">
+                        <button id="inspector-collage-outdate-bg-picker" class="color-swatch" type="button"
+                          style="--swatch-color:#000000" aria-label="Color de fondo"></button>
+                      </div>
+                      <input id="inspector-collage-outdate-bg-hex" class="input" type="text" autocomplete="off"
+                        spellcheck="false" placeholder="Fondo" />
+                      <div class="gradient-row__controls"></div>
+                    </div>
+
+                    <div class="gradient-row">
+                      <div class="gradient-row__swatch">
+                        <button id="inspector-collage-outdate-text-picker" class="color-swatch" type="button"
+                          style="--swatch-color:#FFFFFF" aria-label="Color de texto"></button>
+                      </div>
+                      <input id="inspector-collage-outdate-text-hex" class="input" type="text" autocomplete="off"
+                        spellcheck="false" placeholder="Texto" />
+                      <div class="gradient-row__controls"></div>
+                    </div>
+                  </div>
+
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Apariencia</div>
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Opacidad Fondo</span>
+                        <input id="inspector-collage-outdate-bg-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+
+                      <label class="field">
+                        <span class="field__label">Opacidad Texto</span>
+                        <input id="inspector-collage-outdate-text-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+
+                      <label class="field inspector-span-2">
+                        <span class="field__label">Rotación</span>
+                        <input id="inspector-collage-outdate-rotation" class="range" type="range" min="-180" max="180"
+                          step="1" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-collage-banner" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Banner ¡NUEVO!</summary>
+                <div class="accordion__body">
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Contenido</div>
+                    <label class="field">
+                      <span class="field__label">Contenido</span>
+                      <input id="inspector-collage-banner-content" class="input" type="text" autocomplete="off"
+                        spellcheck="false" placeholder="¡NUEVO!" />
+                    </label>
+                  </div>
+
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Colores</div>
+                    <div class="gradient-row">
+                      <div class="gradient-row__swatch">
+                        <button id="inspector-collage-banner-bg-picker" class="color-swatch" type="button"
+                          style="--swatch-color:#FFFF11" aria-label="Color de fondo"></button>
+                      </div>
+                      <input id="inspector-collage-banner-bg-hex" class="input" type="text" autocomplete="off"
+                        spellcheck="false" placeholder="Fondo" />
+                      <div class="gradient-row__controls"></div>
+                    </div>
+
+                    <div class="gradient-row">
+                      <div class="gradient-row__swatch">
+                        <button id="inspector-collage-banner-text-picker" class="color-swatch" type="button"
+                          style="--swatch-color:#000000" aria-label="Color de texto"></button>
+                      </div>
+                      <input id="inspector-collage-banner-text-hex" class="input" type="text" autocomplete="off"
+                        spellcheck="false" placeholder="Texto" />
+                      <div class="gradient-row__controls"></div>
+                    </div>
+                  </div>
+
+                  <div class="inspector-block">
+                    <div class="inspector-block__title">Apariencia</div>
+                    <div class="grid-2">
+                      <label class="field">
+                        <span class="field__label">Opacidad Fondo</span>
+                        <input id="inspector-collage-banner-bg-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+
+                      <label class="field">
+                        <span class="field__label">Opacidad Texto</span>
+                        <input id="inspector-collage-banner-text-opacity" class="range" type="range" min="0" max="1"
+                          step="0.01" />
+                      </label>
+
+                      <label class="field inspector-span-2">
+                        <span class="field__label">Rotación</span>
+                        <input id="inspector-collage-banner-rotation" class="range" type="range" min="-180" max="180"
+                          step="1" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div id="inspector-collage-discount" class="panel__section" hidden>
+              <div class="inspector-toggle-row">
+                <div class="pill">Usar descuento global</div>
+                <button class="button button--primary" id="inspector-collage-discount-use-global" type="button"
+                  aria-pressed="true">Activado</button>
+              </div>
+
+              <div class="inspector-toggle-row">
+                <div class="pill">Descuento</div>
+                <button class="button button--success" id="inspector-collage-discount-active" type="button"
+                  aria-pressed="false">Agregar descuento</button>
+              </div>
+
+              <div class="inspector-toggle-row" id="inspector-collage-discount-controls" hidden>
+                <div class="pill">Modo</div>
+                <button class="button button--primary" id="inspector-collage-discount-mode" type="button"
+                  aria-pressed="false">Calculado</button>
+              </div>
+
+              <label class="field" id="inspector-collage-discount-fields" hidden>
+                <span class="field__label">Porcentaje (%)</span>
+                <input id="inspector-collage-discount-percent" class="input" type="number" min="0" max="95" step="1" />
+              </label>
+
+              <div id="inspector-collage-discount-manual" class="grid-2" hidden>
+                <label class="field">
+                  <span class="field__label">Precio Antes</span>
+                  <input id="inspector-collage-discount-manual-list" class="input" type="number" min="0" step="1" />
+                </label>
+                <label class="field">
+                  <span class="field__label">Precio Ahora</span>
+                  <input id="inspector-collage-discount-manual-offer" class="input" type="number" min="0" step="1" />
+                </label>
+              </div>
+            </div>
+
+            <div id="inspector-position" class="tab-panel" hidden>
+              <details class="accordion" open>
+                <summary class="accordion__summary">Posición</summary>
+                <div class="accordion__body">
+                  <div class="grid-2">
+                    <label class="field">
+                      <span class="field__label">Desplazamiento X</span>
+                      <input id="inspector-offset-x" class="input" type="number" step="1" />
+                    </label>
+                    <label class="field">
+                      <span class="field__label">Desplazamiento Y</span>
+                      <input id="inspector-offset-y" class="input" type="number" step="1" />
+                    </label>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <dialog class="dialog add-cards" id="add-cards-dialog" aria-labelledby="add-cards-title"
+    aria-describedby="add-cards-hint">
+    <form class="add-cards__form" id="add-cards-form" novalidate>
+      <header class="add-cards__header">
+        <h2 class="dialog__title add-cards__title" id="add-cards-title">Añadir tarjetas</h2>
+        <p class="add-cards__hint" id="add-cards-hint">
+          Busca en Vía Regalo y Vía Cuenta o pega un pedido (una línea por tarjeta).
+          <kbd>↑</kbd><kbd>↓</kbd> navegar · <kbd>Enter</kbd> a la cesta · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> insertar · <kbd>Esc</kbd> cerrar
+        </p>
+        <button class="icon-btn add-cards__close" id="add-cards-close" type="button" aria-label="Cerrar">×</button>
+      </header>
+
+      <div class="add-cards__body">
+        <section class="add-cards__catalog" aria-labelledby="add-cards-search-label">
+          <search class="add-cards__search">
+            <label class="field">
+              <span class="field__label" id="add-cards-search-label">Buscar tarjetas</span>
+              <input id="add-cards-search" class="input" type="text" role="combobox" aria-autocomplete="list"
+                aria-expanded="true" aria-controls="add-cards-results" aria-describedby="add-cards-catalog-status"
+                autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done"
+                placeholder="Nombre, tipo o pedido pegado" />
+            </label>
+            <div class="add-cards__search-meta">
+              <p class="add-cards__status" id="add-cards-catalog-status" role="status" aria-live="polite"></p>
+              <label class="add-cards__toggle">
+                <input id="add-cards-offers-mode" type="checkbox" />
+                <span>Precios de oferta Vía Cuenta</span>
+              </label>
+            </div>
+          </search>
+          <ul class="add-cards__results" id="add-cards-results" role="listbox" aria-label="Resultados de búsqueda"></ul>
+        </section>
+
+        <aside class="add-cards__basket" aria-labelledby="add-cards-basket-title">
+          <h3 class="add-cards__subtitle" id="add-cards-basket-title">
+            Cesta <output class="add-cards__count" id="add-cards-basket-count" for="add-cards-basket">0</output>
+          </h3>
+          <ul class="add-cards__lines" id="add-cards-basket" aria-label="Tarjetas en la cesta"></ul>
+          <p class="add-cards__empty" id="add-cards-basket-empty">Aún no hay tarjetas en la cesta.</p>
+        </aside>
+      </div>
+
+      <details class="add-cards__free" id="add-cards-free">
+        <summary class="add-cards__summary">Tarjeta libre (imagen + título + precio)</summary>
+        <fieldset class="add-cards__fieldset">
+          <legend class="visually-hidden">Datos de la tarjeta libre</legend>
+          <div class="add-cards__free-grid">
+            <label class="field add-cards__free-image">
+              <span class="field__label">URL de la imagen</span>
+              <input id="add-cards-free-image" class="input" type="url" inputmode="url" autocomplete="off"
+                spellcheck="false" placeholder="https://…/imagen.png" />
+            </label>
+            <label class="field">
+              <span class="field__label">Título</span>
+              <input id="add-cards-free-title" class="input" type="text" maxlength="200" autocomplete="off" />
+            </label>
+            <label class="field">
+              <span class="field__label">Precio (S/)</span>
+              <input id="add-cards-free-price" class="input" type="text" inputmode="decimal" autocomplete="off"
+                placeholder="12.50" />
+            </label>
+          </div>
+          <p class="add-cards__error" id="add-cards-free-error" role="alert"></p>
+          <div class="row add-cards__free-actions">
+            <button class="button button--primary" id="add-cards-free-add" type="button">Añadir a la cesta</button>
+            <button class="button" id="add-cards-free-save" type="button">Guardar preset</button>
+          </div>
+          <section class="add-cards__presets-section" aria-labelledby="add-cards-presets-title">
+            <h4 class="add-cards__subtitle" id="add-cards-presets-title">Presets guardados</h4>
+            <ul class="add-cards__presets" id="add-cards-presets" aria-label="Presets de tarjeta libre"></ul>
+            <p class="add-cards__empty" id="add-cards-presets-empty">Sin presets. Rellena el formulario y pulsa «Guardar preset».</p>
+          </section>
+        </fieldset>
+      </details>
+
+      <footer class="add-cards__footer">
+        <p class="add-cards__feedback" id="add-cards-feedback" role="status" aria-live="polite"></p>
+        <div class="dialog__actions">
+          <button class="button" id="add-cards-cancel" type="button">Cancelar</button>
+          <button class="button button--primary" id="add-cards-submit" type="submit" disabled>Añadir</button>
+        </div>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="dialog" id="reset-dialog" aria-labelledby="reset-dialog-title">
+      <div class="dialog__title" id="reset-dialog-title">Restablecer ajustes</div>
+      <div class="dialog__body">¿Seguro que quieres restablecer todos los cambios al estado por defecto del ítem?</div>
+      <div class="row dialog__actions">
+        <button class="button" id="reset-cancel" type="button">Cancelar</button>
+        <button class="button button--primary" id="reset-confirm" type="button">Restablecer</button>
+      </div>
+    </dialog>
+
+    <dialog class="dialog dialog--wide" id="collage-bg-dialog" aria-labelledby="collage-bg-dialog-title">
+      <div class="dialog__title" id="collage-bg-dialog-title">Fondo</div>
+      <div class="dialog__body">
+        <div class="field">
+          <label class="field__label" for="collage-bg-dialog-name">Nombre</label>
+          <div class="collage-bg-dialog-name-row">
+            <input id="collage-bg-dialog-name" class="input" type="text" autocomplete="off" spellcheck="false" />
+            <button class="button" id="collage-bg-dialog-fill-name" type="button" hidden>Usar el nombre de sección actual</button>
+          </div>
+        </div>
+
+        <label class="field">
+          <span class="field__label" id="collage-bg-dialog-url-label">URL de la Imagen</span>
+          <input id="collage-bg-dialog-url" class="input" type="text" autocomplete="off" spellcheck="false"
+            placeholder="https://..." />
+        </label>
+
+        <div class="field">
+          <span class="field__label">Vista previa</span>
+          <div class="collage-bg-dialog-preview">
+            <img id="collage-bg-dialog-preview-img" alt="" hidden />
+            <div class="collage-bg-dialog-error" id="collage-bg-dialog-error" hidden>URL inválida</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row dialog__actions">
+        <button class="button button--ghost" id="collage-bg-dialog-cancel" type="button">Cancelar</button>
+        <button class="button button--primary" id="collage-bg-dialog-save" type="button" disabled>Guardar</button>
+      </div>
+    </dialog>
+
+    <dialog class="dialog dialog--wide export-modal" id="export-modal" aria-labelledby="export-modal-title">
+      <div class="export-modal__content">
+        <header class="export-modal__header">
+          <div class="dialog__title" id="export-modal-title">Exportar — Formatos Avanzados</div>
+          <button class="icon-btn" id="export-modal-close" type="button" aria-label="Cerrar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </header>
+        <div class="export-modal__body" id="export-modal-body"></div>
+        <div class="export-modal__settings" id="export-modal-settings"></div>
+        <footer class="export-modal__footer">
+          <span class="export-modal__status" id="export-modal-status"></span>
+          <button class="button button--ghost" id="export-modal-cancel" type="button">Cancelar</button>
+          <button class="button button--primary" id="export-modal-download" type="button">Descargar</button>
+        </footer>
+      </div>
+    </dialog>
+
+    <section class="grid-section" id="items-section" aria-label="Selector de Objetos">
+      <div class="grid" aria-label="Selector de Objetos">
+        <div class="grid__header">
+          <h2 class="grid__title">Selector de Objetos</h2>
+          <div class="grid__meta" id="grid-meta"></div>
+        </div>
+        <div id="shop-sync-status" class="shop-sync-status" hidden aria-live="polite" role="status"></div>
+        <div id="item-filters" class="filter-panel" hidden aria-label="Filtros de tipo"></div>
+        <div id="items" class="items-sections" aria-label="Lista de artículos"></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="layers-float" id="layers-float" aria-label="Capas">
+    <div class="layers-float__head">
+      <div class="layers-float__title">Capas</div>
+    </div>
+    <div id="layers-list" class="layers-list" aria-label="Lista de capas"></div>
+  </section>
+
+  <div id="color-picker-popover" class="color-picker-popover" hidden role="dialog" aria-label="Selector de color">
+    <div id="color-picker-mount"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

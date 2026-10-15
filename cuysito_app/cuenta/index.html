@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajustes de Cuenta - Banano Store</title>
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('banano_account_theme');
+                if (t === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    document.documentElement.style.colorScheme = 'light';
+                }
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;1,900&display=swap">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/cuenta/dashboard.css">
+    <script src="/avatar-fallback.js?v=20260914"></script>
+    <!-- <link rel="stylesheet" href="/shared/css/order_panels_shared.css"> -->
+</head>
+
+<body class="min-h-screen dashboard">
+
+    <nav class="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center gap-2 text-zinc-100 hover:text-zinc-200 transition-colors h-full">
+                    <svg class="shrink-0 h-full w-auto py-2 dashboard-brand-logo" viewBox="0 0 100 68" width="100"
+                        height="68" role="img" aria-hidden="true" focusable="false" fill="currentColor"
+                        shape-rendering="geometricPrecision">
+                        <path
+                            d="m47.65 13.93c.07.01.04.01.1.06.7 2 1.37 4.04 2.08 6.03 1.19 3.12 2.34 6.26 3.57 9.37.41 1.03.98 1.32.99 2.58q-.53.02-1.06.06c-1 .09-3.65.42-4.16 1.23-1.28 2.04 1.56 4.64 3.63 4.24 1.28-.24 1.77-.68 2.49-1.6.07.57.23 1.36.33 1.95q.45 2.59.94 5.18c-.27.48-2.36 2.92-2.82 3.34q-.92.81-1.97 1.43c-1.99 1.12-4.2 1.78-6.47 1.94-1.29-.69-2.66-3.1-2.97-4.51-.06-.24-.27-1.01-.23-1.21.42-1.88.29-3.79.29-5.71 2.56.96 3.86-1.28 3.99-3.54.12-2.09-2.47-1.69-3.86-1.7.33-1.79.31-4.48.42-6.36.04-.87.43-1.88.41-2.74-.06-1.62.14-3.28.11-4.87-.02-1.41-.18-2.89-.2-4.3 2.87.45 1.98.09 4.39-.87zm-2.34 25.3c.01.25 0 .54.01.77.12.12.26.27.38.37.93 0 3.06.07 3.83-.14.23-.14.26-.18.43-.39 0-.34.05-.65-.17-.89-.39-.18-3.49-.1-4.11-.1-.13.13-.25.23-.37.38zm17.79 5.12c.43.26 1.33 2.24 1.54 2.79.21.56-.03 2.05-.07 2.7-.16 2.47-.5 4.93-.93 7.38-.3 1.56-.5 3.25-1.18 4.69-.23.5-1.79.9-2.34 1.1q-2.1.74-4.18 1.5c-1.62.61-2.63 1.23-4.31 1.66-.2-1.31-.58-1.83-1.25-2.92.85-.41 1.88-.75 2.74-1.16 1.45-.69 3.13-2.02 4.28-3.14.91-.87 1.81-2.16 2.01-3.42.04-.3.02-1.08.02-1.42.01-.73-.39-1.42-.91-1.89-1.86-.08-.36 1.32-.29 2.04.2 2.14-1.7 3.97-3.27 5.1-.96.7-1.51 1.12-2.52 1.61-1.19.57-2.61.96-3.72 1.58l-.05.02q-.29-.59-.7-1.11c.93-2.27 3.83-4.15 5.57-5.95q2.08-2.19 3.88-4.62c-.04-.46-.12-.72-.25-1.17h.68c.67-.55 1.27-1.35 1.87-1.96 1.11-1.14 2.24-2.3 3.38-3.41zm-24.58 3.63c.25.24.01.89.51 1.33-.09.18-.24.47-.26.66-.17 1.93.42 4.11.4 6.02-.56-.19-1.6-.89-2.11-.69q-.18.07-.25.25c-.37.99 1.36 1.48 2.03 1.71-.8.89-.76 1.56-.75 2.67-.21.28-.36.49-.44.83-.05.24-.05.22-.26.29-.98.21-2.43.35-3.12-.55-.5-.63-.54-1.74-.32-2.49.25-.82.88-1.44 1.25-2.18.78-1.53 1.52-3.08 2.3-4.61.51-1 .6-2.22 1.02-3.24zm15.78-25.65c.04.09.27.98.32 1.16q.4 1.34.81 2.69c.72 2.36 1.53 4.73 2.26 7.09.65 2.12 1.05 4.03 1.89 6.12-.22.59-.53.89-.94 1.36-.22.29-.75.81-1.02 1.08-.14-.51-.37-1.96-.47-2.53l-1.07-6c-.45-2.52-2.2-8.55-1.78-10.97zm-7.84 39.36l.07.01c.35.23 1.33 2.01 1.63 2.47.04.06.19.55.22.66-.59.58-.69.74-.84 1.55-1.3 0-2.87-.65-4.1-1.14-.56-.24-1.73-.59-2.15-.85.13-.41.29-.83.4-1.23.16-.61-.24-.87-.65-1.16 2.04.43 3.47.54 5.42-.31zm15.49-20.99c.49.43.53 1.34.52 1.93-.26.44-.83 1.1-1.17 1.51q-1.85 2.29-4 4.29c-.31-.01-.5-.04-.81-.1-.2-.02-.51-.02-.72-.03q.86-1.3 1.76-2.55c1.3-1.78 2.88-3.48 4.42-5.05zm-17.71 15.33l.04.01c.19.27-.19.58.48 1.03-.1.16-.27.12-.44.23-.1.06-.17.12-.19.24-.08.61.07.9.68 1l.06.01c.04.12-.34.35-.34.62-.01.49.07.58.48.64l.06.01c.15.13-.05.35.01.56.03.1.15.31.2.41-.62.26-1.65.36-2.32.26-.49-.07-.89-.12-1.36-.29-.48-.67-.22-.87-1.04-1.63.22-.82.5-1.43 1.13-2.01.74-.69 1.65-.75 2.55-1.09zm11.01-7.06c.16.16.7 1.3.83 1.57-1.51 2.11-3.43 4.16-5.38 5.87-.74.65-1.43 1.21-2.12 1.92-.14.15-.28.34-.47.43l-.04-.05c.27-1 3.57-4.87 4.38-5.93q1.47-1.85 2.8-3.81zm-6.15-36.98c.35.24 2.68 6.05 2.98 6.8.46 1.12.7 1.74.4 2.95-.1.38.01.95-.09 1.35-.24-.46-.68-1.76-.89-2.29-.99-2.49-1.75-5.32-2.75-7.79.13-.28.25-.71.35-1.02zm4.82 21.22c.12-.02.36-.07.46-.01.54.34.12 1.41-.12 1.83-.68 1.2-1.77 1.56-2.97.88-.79-.56-.94-.8-1.26-1.71.88-.69 2.76-.85 3.89-.99zm-8.64-24.98c.41.06.49.14.8.42-.36.92-.91 2.22-1.11 3.19-.04.18.23.48.35.62-.17.27-.58.23-.83.11-.1-.8.04-1.64-.1-2.42-.03-.15-.2-.23-.33-.25-.21-.01-.42-.05-.59.09-.54.45-.15 1.9-.6 2.27-.16.08-.21.06-.39.04-.15-.22-.09-2.35-.09-2.78.41-.23 2.48-1.16 2.89-1.29zm-3.42 26.14c.9.01 2.17-.06 3.08.04.1.01.17.22.21.33-.08.64-.32 1.4-.62 1.97-.29.41-.65.5-1.1.65-1.27-.59-1.56-1.66-1.57-2.99zm7.83 15.82l.04.04c-.01.39-.25 1.07-.32 1.48-.15.81-.14 1.29-.44 2.08-.54-.2-1.01-.44-1.52-.72-1.16-.93-.61-.65-.62-2.02.77-.27 2.08-.66 2.86-.86zm5.78-3.81l.02.07c-.62.78-1.07 1.52-1.65 2.32-.69.96-1.94 1.76-2.93 2.39.02-.35.1-.72.11-1.06 0-.03-.05-.23-.06-.34.17-.18.64-.42.87-.52 1.46-.67 2.53-1.72 3.64-2.86zm-15.63-32.48c.73.17 2.29 1.88 2.34 2.66.01.26.06 1.78-.05 1.95l-.06-.11c-.52-1.39-1.29-2.95-2.7-3.61.14-.29.32-.61.47-.89zm2.03 35.38c.53.41.99.89 1.51 1.26-.27.56-.22.78-.22 1.4q-.16.15-.34.29c-.31.19-.57.35-.86.55 0-1.27-.05-2.28-.09-3.5zm-1.61.48c.26.22.21 1.87.25 2.32.1 1.29.33 2.63.43 3.91-.07.15-.21.21-.35.31-.27-.19-.58-5.08-.66-5.72-.02-.14.25-.65.33-.82zm3.6 3.3l.1.04q.03.05.04.1c-.13.68.09 1.52-.74 1.82-.37.13-.76.21-1.12.26-.07-.32-.13-.7-.19-1.02.71-.39 1.24-.73 1.91-1.2zm12.15-35.43c1.39-.04 2.39 1.42 2.91 2.55-.23-.21-.49-.48-.71-.7q-.04-.05-.09-.09c-1.06-1.09-1.97-.89-3.39-.9.44-.57.59-.64 1.28-.86zm-8.79-9.06c.24 0 .36-.02.53.16.05.34-.49 2.05-.63 2.52l-.02.05c-.05-.06-.05-.2-.05-.3-.01-.36-.15-.5-.37-.78q.12-.32.23-.64c.12-.35.05-.75.31-1.01zm-2.32 42.43c.95.09.81.7.1 1.13-.76-.06-.88-.72-.1-1.13zm-4.75-5.52l.05.05c.04.16.09 2.6.05 2.81l-.25-.1c-.43-.3-.1-2.33.15-2.76zm9.51 19.11c.28.26.7 1.37.68 1.74l-.11-.06c-.27-.38-.44-1.2-.57-1.68zm7.41.88c-.17.76-.2 1.72-.34 2.53h-6.75c1.02-.78 2.12-.49 3.21-.93 1.32-.52 2.53-1.12 3.88-1.6zm-17.77-.65c1.43.83 1.55.88 3.11 1.39-.09.39-.31 1.4-.35 1.79h-3.01c.02-.91.14-2.29.25-3.18zm4.29 1.9c1.74.52 1.95.84 3.88.84.22.17.29.23.48.44h-4.6c.03-.44.14-.85.24-1.28z" />
+                    </svg>
+                    <span class="font-bold text-sm tracking-[0.2em] uppercase text-zinc-100">Banano Store</span>
+                </a>
+                <div class="flex items-center gap-4">
+
+                    <div class="hidden md:flex flex-col items-end mr-2">
+                        <span id="navUsername" class="text-sm font-bold text-zinc-100">...</span>
+                        <span id="navCode" class="text-xs text-zinc-400 tracking-wider">...</span>
+
+                    </div>
+
+                    <div class="relative mr-2">
+                        <button id="notifBell" type="button"
+                            class="relative grid place-items-center w-10 h-10 rounded-full text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 transition"
+                            aria-label="Notificaciones" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-bell text-lg" aria-hidden="true"></i>
+                            <span id="notifBadge"
+                                class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold leading-none min-w-[18px] h-[18px] px-1 grid place-items-center rounded-full ring-2 ring-zinc-950 hidden">0</span>
+                        </button>
+                        <!-- Móvil: panel casi a ancho completo, fijo bajo la cabecera. Escritorio: dropdown anclado a la campana. -->
+                        <div id="notifPanel"
+                            class="hidden opacity-0 -translate-y-2 transition-all duration-200 z-[60] bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden
+                                   fixed left-3 right-3 top-16
+                                   md:absolute md:left-auto md:right-0 md:top-full md:mt-2 md:w-80">
+                            <div class="p-3 border-b border-zinc-800 flex items-center justify-between">
+                                <span class="font-bold text-xs tracking-[0.18em] uppercase text-zinc-200">Notificaciones</span>
+                                <button type="button" data-action="close-notifs"
+                                    class="text-zinc-500 hover:text-zinc-200 transition-colors -mr-1 p-1" aria-label="Cerrar notificaciones">
+                                    <i class="fas fa-times" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <div id="notifList" class="max-h-[60vh] md:max-h-72 overflow-y-auto custom-scrollbar">
+                                <p class="p-4 text-xs text-zinc-500 text-center">Sin novedades.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="themeToggle" type="button" class="dashboard-theme-toggle"
+                        aria-label="Cambiar a tema oscuro" aria-pressed="false">
+                        <i id="themeToggleIcon" class="fas fa-moon" aria-hidden="true"></i>
+                        <span id="themeToggleText" class="hidden sm:inline">Oscuro</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-28 md:pb-8">
+        <a href="/"
+            class="hidden md:inline-flex w-auto justify-center items-center gap-2 px-6 py-2.5 mb-6 rounded-xl text-base font-bold bg-amber-500 text-white hover:bg-amber-400 active:bg-amber-600 transition-colors shadow-sm"
+            aria-label="Volver a la tienda">
+            <i class="fas fa-arrow-left text-sm" aria-hidden="true"></i>
+            Volver a la tienda
+        </a>
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] min-h-[calc(100vh-8rem)]">
+            <aside id="dashboard-sidebar"
+                class="dashboard-card rounded-xl p-4 lg:p-5 lg:sticky lg:top-24 lg:h-[calc(100vh-8.5rem)] hidden md:block"></aside>
+            <section class="min-w-0">
+                <div id="dashboard-header" class="mb-6"></div>
+                <div id="dashboard-content" class="space-y-6"></div>
+            </section>
+        </div>
+    </main>
+
+    <div id="dashboard-mobile-nav"></div>
+    <div id="dashboard-modals"></div>
+
+    <script src="/cuenta/dashboard.js" type="module"></script>
+</body>
+
+</html>

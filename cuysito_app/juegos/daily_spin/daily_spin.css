@@ -1,0 +1,1588 @@
+/* ============================================================================
+   MODULO: DAILY SPIN — HOJA DE ESTILOS
+   Diseño alineado a la estética de la tienda (Vía Regalo) y las páginas de
+   objetos (style.css): mismas superficies, tipografía Heading Now, tokens de
+   color globales y el patrón de hover de outline expansivo de los CTA
+   (.item-page__cta) y del botón compartir (.item-page__share).
+
+   Índice:
+     1. Tokens del módulo
+     2. Utilidades (ds-hidden, scroll-lock)
+     3. Overlay y contenedor
+     4. Cabecera y botón cerrar
+     5. Barra de filtros (selector por categoría + descuento activo)
+     6. Ruleta (viewport, cinta, cards, marcador)
+     7. Controles (CTA)
+     8. Pie del modal + selector Todo / Sin Pistas
+     9. Botones de historial
+    10. Panel de historial
+    11. Modal de premio (win) + compartir + aviso de Lotes
+    12. Animaciones
+    13. Responsive
+    14. Accesibilidad (reduced motion)
+   ========================================================================= */
+
+/* ------------------------------------------------------------------ */
+/* 1. Tokens del módulo: mapean a los tokens globales de style.css     */
+/*    con fallbacks para páginas que no lo cargan (p. ej. /juegos).    */
+/* ------------------------------------------------------------------ */
+#ds-modal-overlay,
+#ds-win-modal,
+#ds-warn-modal,
+#ds-confirm-modal {
+    --ds-surface: var(--bg-modal, #18181b);
+    --ds-surface-2: var(--modal-bg-secondary, rgba(255, 255, 255, 0.06));
+    --ds-surface-hover: var(--bg-modal-hover, rgba(255, 255, 255, 0.06));
+    --ds-text: var(--color-text-light, #e4e4e7);
+    --ds-text-muted: var(--color-text-muted, #71717a);
+    --ds-text-dark: rgb(21, 23, 24);
+    --ds-accent: var(--color-primary-amber, #f59e0b);
+    --ds-success: var(--color-success-green, #10b981);
+    --ds-cta-yellow: #f7ff19;
+    --ds-radius: 0.75rem;
+    --ds-radius-sm: 0.5rem;
+    --ds-radius-cta: 1rem;
+    --ds-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --ds-font-bold: var(--font-heading-now-bold, 'Barlow', 'Inter', system-ui, sans-serif);
+    --ds-font-medium: var(--font-heading-now-medium, 'Barlow', 'Inter', system-ui, sans-serif);
+    --ds-font-regular: var(--font-heading-now-regular, 'Barlow', 'Inter', system-ui, sans-serif);
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Utilidades                                                       */
+/* ------------------------------------------------------------------ */
+.ds-hidden {
+    display: none !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Overlay y contenedor                                             */
+/*    #ds-modal-overlay es un cliente de Backdrop (.backdrop-layer en   */
+/*    style.css): velo, scroll-lock y click-outside los gestiona        */
+/*    window.Backdrop; aquí sólo vive la animación de entrada.          */
+/* ------------------------------------------------------------------ */
+#ds-modal-overlay {
+    animation: ds-overlay-in 0.2s var(--ds-ease);
+}
+
+.ds-modal-container {
+    position: relative;
+    width: 100%;
+    max-width: 40rem;
+    max-height: var(--ds-app-height, 100dvh);
+    overflow: hidden;
+    border-radius: var(--ds-radius);
+    background-color: var(--ds-surface);
+    color: var(--ds-text);
+}
+
+.ds-screen-surface {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: inherit;
+    padding: 1.5rem 1.5rem 1.25rem;
+    overflow-y: auto;
+}
+
+.ds-screen-surface.ds-power-on {
+    animation: ds-surface-in 0.25s var(--ds-ease);
+}
+
+.ds-screen-surface.ds-power-off {
+    animation: ds-surface-out 0.45s var(--ds-ease) forwards;
+}
+
+/* Partículas decorativas del diseño anterior: contenedores inertes. */
+.ds-particles {
+    display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Cabecera y botón cerrar                                          */
+/* ------------------------------------------------------------------ */
+.ds-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-right: 2.75rem;
+}
+
+.ds-header h2 {
+    margin: 0;
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+/* Copy contextual (slot): reserva dos líneas para que el cambio de estado
+   no desplace la ruleta. */
+.ds-context {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    min-height: calc(2 * 1.25rem);
+    margin: 0;
+    overflow: hidden;
+    font-family: var(--ds-font-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings, normal);
+    font-size: 0.9375rem;
+    line-height: 1.25rem;
+    color: var(--ds-text-muted);
+}
+
+/* Botón cerrar: mismo lenguaje que .item-page__share (píldora clara,
+   outline expansivo al hover, capa de presión en :active). */
+#ds-close-btn {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.25rem;
+    border: none;
+    border-radius: var(--ds-radius-sm);
+    overflow: hidden;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: var(--ds-text-dark);
+    -webkit-backdrop-filter: blur(32px);
+    backdrop-filter: blur(32px);
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.1s var(--ds-ease), outline-offset 0.1s var(--ds-ease);
+}
+
+#ds-close-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: #000;
+    opacity: 0;
+    transition: opacity 0.1s var(--ds-ease);
+}
+
+#ds-close-btn:active::after {
+    opacity: 0.2;
+}
+
+@media (hover: hover) {
+    #ds-close-btn:hover {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+#ds-close-btn:focus-visible {
+    outline-color: #fff;
+    outline-offset: 4px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Barra de filtros: botón "Filtros" (izquierda) + descuento activo  */
+/*    (derecha), justo sobre la cinta. Mismo lenguaje de píldoras que   */
+/*    .ds-history-mobile; el % usa la tipografía de .ds-meta__value.    */
+/* ------------------------------------------------------------------ */
+.ds-reel-bar {
+    position: relative;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: -0.375rem;
+}
+
+.ds-filter {
+    position: relative;
+    min-width: 0;
+}
+
+/* Píldora base compartida (filtros / modo). */
+.ds-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.25rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid transparent;
+    border-radius: var(--ds-radius-sm);
+    cursor: pointer;
+    background-color: var(--ds-surface-2);
+    color: var(--ds-text);
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.75rem;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s var(--ds-ease), border-color 0.15s var(--ds-ease), color 0.15s var(--ds-ease);
+}
+
+.ds-chip svg {
+    flex: 0 0 auto;
+    width: 1rem;
+    height: 1rem;
+}
+
+.ds-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (hover: hover) {
+    .ds-chip:hover:not(:disabled) {
+        background-color: var(--ds-surface-hover);
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+}
+
+.ds-chip:active:not(:disabled) {
+    background-color: var(--ds-surface-hover);
+}
+
+.ds-chip:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.ds-filter__btn {
+    max-width: 100%;
+}
+
+.ds-filter__btn[aria-expanded="true"],
+.ds-filter__btn.is-active {
+    border-color: rgba(247, 255, 25, 0.55);
+    color: var(--ds-cta-yellow);
+}
+
+.ds-filter__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ds-filter__chevron {
+    transition: transform 0.15s var(--ds-ease);
+}
+
+.ds-filter__btn[aria-expanded="true"] .ds-filter__chevron {
+    transform: rotate(180deg);
+}
+
+/* Desplegable anclado bajo el botón; en móvil ocupa el ancho del modal. */
+.ds-filter__menu {
+    position: absolute;
+    top: calc(100% + 0.375rem);
+    left: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    width: min(22rem, calc(100vw - 2rem));
+    max-height: 15.5rem;
+    padding: 0.375rem;
+    border-radius: var(--ds-radius-sm);
+    overflow-y: auto;
+    background-color: var(--ds-surface);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 16px 32px rgba(0, 0, 0, 0.45);
+    scrollbar-width: thin;
+    scrollbar-color: var(--ds-accent) transparent;
+    animation: ds-menu-in 0.15s var(--ds-ease);
+}
+
+.ds-filter__menu[hidden] {
+    display: none;
+}
+
+.ds-filter__opt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    text-align: left;
+    background-color: transparent;
+    color: var(--ds-text);
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.12s var(--ds-ease);
+}
+
+.ds-filter__opt-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.ds-filter__opt-meta {
+    flex: 0 0 auto;
+    font-family: var(--ds-font-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings, normal);
+    font-size: 0.75rem;
+    color: var(--ds-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.ds-filter__opt-meta b {
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-weight: normal;
+    color: var(--ds-cta-yellow);
+}
+
+@media (hover: hover) {
+    .ds-filter__opt:hover {
+        background-color: var(--ds-surface-hover);
+    }
+}
+
+.ds-filter__opt:active,
+.ds-filter__opt:focus-visible {
+    background-color: var(--ds-surface-hover);
+    outline: none;
+}
+
+.ds-filter__opt[aria-selected="true"] {
+    background-color: rgba(247, 255, 25, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(247, 255, 25, 0.45);
+}
+
+.ds-filter__opt[aria-selected="true"] .ds-filter__opt-name {
+    color: var(--ds-cta-yellow);
+}
+
+/* Indicador minimalista del % vigente (se actualiza al instante). */
+.ds-discount {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    margin: 0;
+}
+
+.ds-discount__label {
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    color: var(--ds-text-muted);
+}
+
+.ds-discount__value {
+    min-width: 3ch;
+    text-align: right;
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-style: italic;
+    font-size: 1.375rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--ds-cta-yellow);
+    transition: color 0.15s var(--ds-ease);
+}
+
+.ds-discount__value.is-bump {
+    animation: ds-bump 0.3s var(--ds-ease);
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Ruleta: viewport, cinta, cards y marcador                        */
+/*    (mismo tratamiento de superficie que .item-page__media)          */
+/* ------------------------------------------------------------------ */
+.ds-reel-viewport {
+    position: relative;
+    width: 100%;
+    height: 11.5rem;
+    border-radius: var(--ds-radius);
+    overflow: hidden;
+    background-color: var(--ds-surface-2);
+}
+
+.ds-reel-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 2;
+    width: 2px;
+    transform: translateX(-50%);
+    background-color: var(--ds-accent);
+    pointer-events: none;
+}
+
+.ds-reel-marker::before,
+.ds-reel-marker::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 0.375rem solid transparent;
+    border-right: 0.375rem solid transparent;
+}
+
+.ds-reel-marker::before {
+    top: 0;
+    border-top: 0.375rem solid var(--ds-accent);
+}
+
+.ds-reel-marker::after {
+    bottom: 0;
+    border-bottom: 0.375rem solid var(--ds-accent);
+}
+
+.ds-tape {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    will-change: transform;
+}
+
+/* Ancho fijo: daily_spin.js usa offsetWidth de la card para el cálculo
+   de aterrizaje. Cambiarlo aquí es seguro (el JS lo mide en runtime). */
+.ds-card {
+    flex: 0 0 auto;
+    width: 200px;
+    height: 100%;
+    padding: 0.5rem 0.125rem;
+}
+
+.ds-card-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--ds-radius-sm);
+    overflow: hidden;
+}
+
+.ds-card-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Controles: CTA principal y secundario                            */
+/* ------------------------------------------------------------------ */
+/* CTA principal y secundario: réplica exacta del patrón .item-page__cta
+   (--buy amarillo / --cart translúcido) con su hover de outline. */
+.ds-btn-primary,
+.ds-btn-secondary {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--ds-radius-cta);
+    overflow: hidden;
+    cursor: pointer;
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.1875rem;
+    line-height: 1;
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.15s var(--ds-ease), outline-offset 0.15s var(--ds-ease);
+}
+
+.ds-btn-primary::after,
+.ds-btn-secondary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s var(--ds-ease);
+}
+
+.ds-btn-primary:active:not(:disabled)::after,
+.ds-btn-secondary:active:not(:disabled)::after {
+    opacity: 1;
+}
+
+@media (hover: hover) {
+
+    .ds-btn-primary:hover:not(:disabled),
+    .ds-btn-secondary:hover:not(:disabled) {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+.ds-btn-primary:focus-visible,
+.ds-btn-secondary:focus-visible {
+    outline-color: #fff;
+    outline-offset: 4px;
+}
+
+.ds-btn-primary:disabled,
+.ds-btn-secondary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ds-btn-primary {
+    background-color: var(--ds-cta-yellow);
+    color: var(--ds-text-dark);
+}
+
+.ds-btn-secondary {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.ds-btn-primary[data-tone="secondary"] {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+/* Bloque de controles: nota (live), CTA y meta. Cada slot reserva su caja. */
+.ds-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ds-note {
+    min-height: 1.125rem;
+    margin: 0;
+    text-align: center;
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    color: var(--ds-text-muted);
+}
+
+.ds-screen-surface[data-state="error"] .ds-note,
+.ds-screen-surface[data-state="paid-insufficient"] .ds-note {
+    color: #f87171;
+}
+
+.ds-screen-surface[data-state="free"] .ds-note,
+.ds-screen-surface[data-state="bonus"] .ds-note {
+    color: var(--ds-success);
+}
+
+.ds-screen-surface[aria-busy="true"] .ds-btn-primary:disabled {
+    animation: ds-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes ds-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.35; }
+}
+
+.ds-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 1.25rem;
+    margin: 0;
+}
+
+.ds-meta__label {
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--ds-text-muted);
+}
+
+.ds-meta__value {
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-size: 1rem;
+    line-height: 1.25rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ds-text);
+}
+
+/* Oferta flash del día: sólo aparece cuando el backend la marca activa. */
+.ds-flash {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--ds-radius-sm);
+    background-color: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.ds-flash[hidden] {
+    display: none;
+}
+
+.ds-flash__text {
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    color: var(--ds-text);
+}
+
+.ds-flash__bar {
+    width: 100%;
+    height: 0.375rem;
+    border: 0;
+    border-radius: 999px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.12);
+    accent-color: var(--ds-accent);
+}
+
+.ds-flash__bar::-webkit-progress-bar {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+}
+
+.ds-flash__bar::-webkit-progress-value {
+    background-color: var(--ds-accent);
+    border-radius: 999px;
+}
+
+.ds-flash__bar::-moz-progress-bar {
+    background-color: var(--ds-accent);
+    border-radius: 999px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 8. Pie del modal                                                    */
+/* ------------------------------------------------------------------ */
+.ds-footer-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--ds-surface-2);
+}
+
+.ds-stats {
+    display: flex;
+    gap: 1.25rem;
+    margin: 0;
+}
+
+.ds-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.ds-stat dt {
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--ds-text-muted);
+}
+
+.ds-stat dd {
+    min-width: 3ch;
+    margin: 0;
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-size: 1rem;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    color: var(--ds-text);
+}
+
+/* Selector Todo / Sin Pistas: control segmentado en la esquina
+   inferior derecha. Activo "Sin Pistas" = amarillo corporativo;
+   activo "Todo" = tono oscuro neutro. */
+.ds-mode {
+    display: inline-flex;
+    margin-left: auto;
+    padding: 0.1875rem;
+    border-radius: var(--ds-radius-sm);
+    background-color: var(--ds-surface-2);
+}
+
+.ds-mode__opt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2rem;
+    padding: 0.375rem 0.75rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--ds-text-muted);
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.75rem;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s var(--ds-ease), color 0.15s var(--ds-ease);
+}
+
+.ds-mode__opt[aria-pressed="true"] {
+    background-color: rgba(255, 255, 255, 0.14);
+    color: var(--ds-text);
+}
+
+.ds-mode__opt[data-mode="no_tracks"][aria-pressed="true"] {
+    background-color: var(--ds-cta-yellow);
+    color: var(--ds-text-dark);
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+}
+
+.ds-mode__opt:disabled {
+    cursor: not-allowed;
+}
+
+.ds-mode[aria-disabled="true"] {
+    opacity: 0.5;
+}
+
+@media (hover: hover) {
+    .ds-mode__opt:hover:not(:disabled):not([aria-pressed="true"]) {
+        color: var(--ds-text);
+    }
+}
+
+.ds-mode__opt:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 9. Botones de historial                                             */
+/* ------------------------------------------------------------------ */
+/* Escritorio: botón icono flotante, estilo .item-page__share. */
+.ds-history-btn {
+    position: absolute;
+    top: 1.25rem;
+    right: 4rem;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.25rem;
+    border: none;
+    border-radius: var(--ds-radius-sm);
+    overflow: visible;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: var(--ds-text-dark);
+    -webkit-backdrop-filter: blur(32px);
+    backdrop-filter: blur(32px);
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition: outline-color 0.1s var(--ds-ease), outline-offset 0.1s var(--ds-ease);
+}
+
+.ds-history-btn svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+@media (hover: hover) {
+    .ds-history-btn:hover {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+
+    .ds-history-btn:hover .ds-history-tip {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.ds-history-btn:focus-visible {
+    outline-color: #fff;
+    outline-offset: 4px;
+}
+
+.ds-history-tip {
+    position: absolute;
+    top: calc(100% + 0.625rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(-0.25rem);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s var(--ds-ease), transform 0.15s var(--ds-ease);
+}
+
+/* Móvil: enlace de texto dentro del footer. */
+.ds-history-mobile {
+    display: none;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    border: none;
+    border-radius: var(--ds-radius-sm);
+    cursor: pointer;
+    background-color: var(--ds-surface-2);
+    color: var(--ds-text);
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    transition: background-color 0.15s var(--ds-ease);
+}
+
+.ds-history-mobile svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.ds-history-mobile:active {
+    background-color: var(--ds-surface-hover);
+}
+
+.ds-history-mobile:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 10. Panel de historial (se desliza sobre el modal)                  */
+/* ------------------------------------------------------------------ */
+.ds-history-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    border-radius: inherit;
+    background-color: var(--ds-surface);
+    transform: translateX(100%);
+    transition: transform 0.28s var(--ds-ease);
+}
+
+.ds-history-panel.ds-history-visible {
+    transform: translateX(0);
+}
+
+.ds-history-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem 0.75rem;
+}
+
+.ds-history-head h3 {
+    margin: 0;
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-style: italic;
+    font-size: 1.125rem;
+    text-transform: uppercase;
+}
+
+.ds-history-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.25rem;
+    border: none;
+    border-radius: var(--ds-radius-sm);
+    cursor: pointer;
+    background-color: var(--ds-surface-2);
+    color: var(--ds-text);
+    transition: background-color 0.15s var(--ds-ease);
+}
+
+.ds-history-back svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+@media (hover: hover) {
+    .ds-history-back:hover {
+        background-color: var(--ds-surface-hover);
+    }
+}
+
+.ds-history-back:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.ds-history-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 1.5rem 1.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ds-accent) transparent;
+}
+
+.ds-history-loading {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.ds-history-spinner {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    border: 3px solid var(--ds-surface-2);
+    border-top-color: var(--ds-accent);
+    animation: ds-spin 0.8s linear infinite;
+}
+
+.ds-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ds-hist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--ds-radius-sm);
+    background-color: var(--ds-surface-2);
+    animation: ds-hist-rise 0.3s var(--ds-ease) backwards;
+}
+
+.ds-hist-item.is-flash {
+    box-shadow: inset 0 0 0 1px var(--ds-accent);
+}
+
+.ds-hist-thumb {
+    flex: 0 0 auto;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background-color: var(--ds-surface);
+}
+
+.ds-hist-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ds-hist-info {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.ds-hist-name {
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ds-hist-meta {
+    font-family: var(--ds-font-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings, normal);
+    font-size: 0.75rem;
+    color: var(--ds-text-muted);
+}
+
+.ds-hist-right {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.125rem;
+}
+
+.ds-hist-discount {
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-size: 0.875rem;
+    color: var(--ds-accent);
+}
+
+.ds-hist-state {
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    color: var(--ds-text-muted);
+}
+
+.ds-hist-state.is-active {
+    color: var(--ds-success);
+}
+
+.ds-hist-state.is-expired {
+    color: var(--ds-text-muted);
+}
+
+.ds-history-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--ds-text-muted);
+}
+
+.ds-history-empty svg {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.ds-history-empty p {
+    margin: 0;
+    font-family: var(--ds-font-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings, normal);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+/* ------------------------------------------------------------------ */
+/* 11. Modal de premio (win) + botón compartir                         */
+/* ------------------------------------------------------------------ */
+#ds-win-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90010;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    animation: ds-overlay-in 0.2s var(--ds-ease);
+}
+
+.ds-win-stage {
+    width: 100%;
+    max-width: 26rem;
+}
+
+.ds-win-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem 1.75rem 1.75rem;
+    border-radius: var(--ds-radius);
+    background-color: var(--ds-surface);
+    color: var(--ds-text);
+    animation: ds-surface-in 0.25s var(--ds-ease);
+}
+
+.ds-win-container h3 {
+    margin: 0;
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-style: italic;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    color: var(--ds-cta-yellow);
+}
+
+.ds-win-container h4 {
+    margin: 0;
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 1rem;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.ds-win-container>p {
+    margin: 0;
+    font-family: var(--ds-font-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings, normal);
+    font-size: 0.8125rem;
+    text-align: center;
+    color: var(--ds-text-muted);
+}
+
+#ds-win-item-img {
+    width: 100%;
+}
+
+.ds-win-card-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-height: 15rem;
+    border-radius: var(--ds-radius);
+    overflow: hidden;
+}
+
+.ds-win-card-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.ds-discount-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 2;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.375rem;
+    background-color: var(--ds-cta-yellow);
+    color: var(--ds-text-dark);
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+    font-style: italic;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.ds-discount-badge.flash-win {
+    background-color: var(--ds-accent);
+    color: var(--ds-text-dark);
+}
+
+.ds-win-pricing {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    font-family: var(--ds-font-bold);
+    font-variation-settings: var(--font-heading-now-bold--font-variation-settings, normal);
+}
+
+.ds-price-original {
+    font-size: 0.9375rem;
+    text-decoration: line-through;
+    color: var(--ds-text-muted);
+}
+
+.ds-price-final {
+    font-size: 1.25rem;
+    color: var(--ds-success);
+}
+
+/* Vigencia del cupón bajo el precio: informativa (24 h) o de advertencia
+   cuando el objeto sale de la tienda antes y acorta el descuento. */
+.ds-win-expiry {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--ds-surface-2);
+    color: var(--ds-text-muted);
+    font-family: var(--ds-font-regular);
+    font-variation-settings: var(--font-heading-now-regular--font-variation-settings, normal);
+    font-size: 0.75rem;
+    line-height: 1.35;
+    text-align: left;
+}
+
+.ds-win-expiry[hidden] {
+    display: none;
+}
+
+.ds-win-expiry__icon {
+    flex: 0 0 auto;
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.05rem;
+}
+
+.ds-win-expiry.is-warning {
+    background-color: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: var(--ds-accent);
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+}
+
+/* Botón compartir premio: la estética la aporta .item-page__share
+   (clase reutilizada en el markup); aquí solo posicionamiento. */
+.ds-win__share {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 5;
+}
+
+.ds-win__share:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* Fallback de .item-page__share para páginas sin style.css (/juegos). */
+.ds-win__share.item-page__share {
+    border: none;
+}
+
+/* Aviso de Lotes y confirmación de giro pagado: mismo overlay/contenedor
+   que el modal de premio. */
+#ds-warn-modal,
+#ds-confirm-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90011;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    animation: ds-overlay-in 0.2s var(--ds-ease);
+}
+
+#ds-warn-modal[hidden],
+#ds-confirm-modal[hidden] {
+    display: none;
+}
+
+.ds-warn-container {
+    gap: 0.625rem;
+    text-align: center;
+}
+
+.ds-warn-container h3 {
+    font-size: 1.25rem;
+}
+
+.ds-warn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: rgba(245, 158, 11, 0.14);
+    color: var(--ds-accent);
+}
+
+.ds-warn-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.ds-warn-icon--coins {
+    background-color: rgba(247, 255, 25, 0.14);
+    color: var(--ds-cta-yellow);
+}
+
+.ds-warn-container .ds-warn-text {
+    font-family: var(--ds-font-medium);
+    font-variation-settings: var(--font-heading-now-medium--font-variation-settings, normal);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+    color: var(--ds-text);
+}
+
+.ds-warn-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.ds-warn-actions .ds-btn-primary,
+.ds-warn-actions .ds-btn-secondary {
+    min-height: 2.875rem;
+    font-size: 1rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* 12. Animaciones                                                     */
+/* ------------------------------------------------------------------ */
+@keyframes ds-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes ds-surface-in {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes ds-surface-out {
+    to {
+        opacity: 0.35;
+    }
+}
+
+@keyframes ds-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ds-menu-in {
+    from {
+        opacity: 0;
+        transform: translateY(-0.25rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes ds-bump {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+
+@keyframes ds-hist-rise {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Usada por daily_spin.js para el confetti del premio. */
+@keyframes ds-confettiFall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(24rem) rotate(540deg);
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* 13. Responsive                                                      */
+/* ------------------------------------------------------------------ */
+@media (max-width: 640px) {
+    /* Móvil: el modal usa el 100% del ancho (sin márgenes laterales) y se
+       ancla abajo como hoja; el gutter interno vive en --ds-gutter. */
+    #ds-modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .ds-modal-container {
+        --ds-gutter: 1rem;
+        max-width: none;
+        border-radius: var(--ds-radius) var(--ds-radius) 0 0;
+    }
+
+    .ds-screen-surface {
+        gap: 0.875rem;
+        padding: 1.125rem var(--ds-gutter) calc(0.875rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    #ds-close-btn {
+        top: 1rem;
+        right: var(--ds-gutter);
+    }
+
+    .ds-header {
+        padding-right: 2.5rem;
+    }
+
+    .ds-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .ds-reel-viewport {
+        height: 9.5rem;
+    }
+
+    .ds-card {
+        width: 150px;
+    }
+
+    .ds-history-btn {
+        display: none;
+    }
+
+    .ds-history-mobile {
+        display: inline-flex;
+    }
+
+    /* Barra sobre la cinta: el botón Filtros crece con el espacio libre y
+       el % queda pegado a la derecha, sin recortes. */
+    .ds-reel-bar {
+        gap: 0.625rem;
+    }
+
+    .ds-filter {
+        flex: 1 1 auto;
+    }
+
+    .ds-filter__btn {
+        width: 100%;
+        min-height: 2.5rem;
+        justify-content: space-between;
+    }
+
+    .ds-filter__label {
+        flex: 1 1 auto;
+        text-align: left;
+    }
+
+    /* Desplegable a todo el ancho útil del modal (100vw menos gutters). */
+    .ds-filter__menu {
+        width: calc(100vw - 2 * var(--ds-gutter, 1rem));
+        max-width: none;
+        max-height: min(15rem, 45dvh);
+    }
+
+    .ds-filter__opt {
+        min-height: 3rem;
+    }
+
+    .ds-discount__value {
+        font-size: 1.25rem;
+    }
+
+    /* Pie en dos filas: saldo + historial arriba; selector TODO / Sin Pistas
+       a todo el ancho abajo (zona táctil cómoda, sin solapamientos). */
+    .ds-footer-info {
+        gap: 0.625rem 1rem;
+    }
+
+    .ds-history-mobile {
+        margin-left: auto;
+        min-height: 2.5rem;
+    }
+
+    .ds-mode {
+        flex: 1 1 100%;
+        margin-left: 0;
+    }
+
+    .ds-mode__opt {
+        flex: 1 1 0;
+        min-height: 2.75rem;
+        font-size: 0.8125rem;
+    }
+
+    /* Overlays secundarios (premio / aviso / confirmación): mismo criterio
+       de ancho útil. */
+    #ds-win-modal,
+    #ds-warn-modal,
+    #ds-confirm-modal {
+        padding: 0.75rem;
+    }
+
+    .ds-win-stage {
+        max-width: none;
+    }
+
+    .ds-win-container {
+        padding: 1.75rem 1.25rem 1.25rem;
+    }
+
+    .ds-history-head {
+        padding: 1rem 1rem 0.5rem;
+    }
+
+    .ds-history-scroll {
+        padding: 0 1rem 1rem;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* 14. Accesibilidad                                                   */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+
+    #ds-modal-overlay,
+    #ds-win-modal,
+    #ds-warn-modal,
+    #ds-confirm-modal,
+    .ds-screen-surface.ds-power-on,
+    .ds-screen-surface.ds-power-off,
+    .ds-win-container,
+    .ds-hist-item,
+    .ds-filter__menu,
+    .ds-discount__value.is-bump {
+        animation: none;
+    }
+
+    .ds-history-panel,
+    .ds-filter__chevron {
+        transition: none;
+    }
+
+    .ds-screen-surface[aria-busy="true"] .ds-btn-primary:disabled {
+        animation: none;
+    }
+}

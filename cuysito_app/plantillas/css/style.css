@@ -1,0 +1,35 @@
+/* === Settings === */
+@import url("src/settings/tokens.css");
+@import url("src/settings/themes.css");
+
+/* === Generic === */
+@import url("src/generic/reset.css");
+@import url("src/generic/fonts.css");
+@import url("src/generic/interactions.css");
+
+/* === Elements === */
+@import url("src/elements/base.css");
+@import url("src/elements/forms.css");
+
+/* === Objects === */
+@import url("src/objects/layout.css");
+
+/* === Components === */
+@import url("src/components/cart-recipients.css");
+@import url("src/components/collage.css");
+@import url("src/components/color-picker.css");
+@import url("src/components/command-bar.css");
+@import url("src/components/corner-hud.css");
+@import url("src/components/dialogs.css");
+@import url("src/components/add-cards-dialog.css");
+@import url("src/components/ghost-card.css");
+@import url("src/components/export-modal.css");
+@import url("src/components/fabs.css");
+@import url("src/components/inspector.css");
+@import url("src/components/item-picker.css");
+@import url("src/components/layers.css");
+@import url("src/components/tabs.css");
+@import url("src/components/visibility-toggle.css");
+
+/* === Utilities === */
+@import url("src/utilities/utilities.css");

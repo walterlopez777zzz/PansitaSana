@@ -1,0 +1,23 @@
+{
+  "rarities": [
+    { "id": "common",        "name": "Común",            "colors": { "mainColor": "#b1b1b1" } },
+    { "id": "uncommon",      "name": "Poco Común",       "colors": { "mainColor": "#60b91d" } },
+    { "id": "rare",          "name": "Raro",             "colors": { "mainColor": "#26a0e3" } },
+    { "id": "epic",          "name": "Épico",            "colors": { "mainColor": "#b13aff" } },
+    { "id": "legendary",     "name": "Legendario",       "colors": { "mainColor": "#e87f2f" } },
+    { "id": "mythic",        "name": "Mítico",           "colors": { "mainColor": "#e7c14b" } },
+    { "id": "exotic",        "name": "Exótico",          "colors": { "mainColor": "#5bf4f4" } },
+    { "id": "transcendent",  "name": "Trascendente",     "colors": { "mainColor": "#ff5b8a" } },
+    { "id": "marvel",        "name": "Serie Marvel",     "colors": { "mainColor": "#ed1c24" } },
+    { "id": "dc",            "name": "Serie DC",         "colors": { "mainColor": "#007af1" } },
+    { "id": "icon",          "name": "Serie de Ídolos",  "colors": { "mainColor": "#3df0f7" } },
+    { "id": "gaming",        "name": "Leyendas del Juego","colors": { "mainColor": "#6c5ce7" } },
+    { "id": "starwars",      "name": "Serie Star Wars",  "colors": { "mainColor": "#ffe81f" } },
+    { "id": "frozen",        "name": "Serie Glacial",    "colors": { "mainColor": "#b3e6ff" } },
+    { "id": "lava",          "name": "Serie Lávica",     "colors": { "mainColor": "#ff7a3c" } },
+    { "id": "shadow",        "name": "Serie Sombría",    "colors": { "mainColor": "#5a5a5a" } },
+    { "id": "slurp",         "name": "Serie Néctar",     "colors": { "mainColor": "#1ad1c4" } },
+    { "id": "dark",          "name": "Serie Oscura",     "colors": { "mainColor": "#d40fc4" } },
+    { "id": "platform",      "name": "Serie Multimedia", "colors": { "mainColor": "#8078ff" } }
+  ]
+}

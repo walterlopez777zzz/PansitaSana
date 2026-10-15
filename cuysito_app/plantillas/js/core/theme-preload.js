@@ -1,0 +1,1 @@
+(()=>{const t=(()=>{try{const t=localStorage.getItem("theme");return"light"===t||"dark"===t?t:null}catch(t){return null}})()||((()=>{try{return!!window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches}catch(t){return!1}})()?"dark":"light");try{document.documentElement.setAttribute("data-theme",t)}catch(t){}})();

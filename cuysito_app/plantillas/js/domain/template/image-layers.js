@@ -1,0 +1,1 @@
+export function findLayer(r,i){return(Array.isArray(r?.imageLayers)?r.imageLayers:[]).find(r=>String(r?.id)===String(i))||null}

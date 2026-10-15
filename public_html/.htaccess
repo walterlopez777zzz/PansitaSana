@@ -1,0 +1,98 @@
+# ============================================================================
+# CUYSITO.COM - PRODUCTION .HTACCESS
+# Minimalist config: serve public static, send everything else to router.php
+# ============================================================================
+
+# --- PASSENGER CONFIGURATION (Python/Node.js Apps) ---
+<IfModule passenger.c>
+    PassengerAppRoot "/home/zkckhehj/public_html/api"
+    PassengerBaseURI "/api"
+    PassengerNodejs "/home/zkckhehj/nodevenv/public_html/api/10/bin/node"
+    PassengerAppType node
+    PassengerStartupFile api-watcher.js
+
+    PassengerAppRoot "/home/zkckhehj/fortnite_fetcher"
+    PassengerBaseURI "/fortnite_fetcher"
+    PassengerPython "/home/zkckhehj/virtualenv/fortnite_fetcher/3.9/bin/python"
+
+    PassengerAppRoot "/home/zkckhehj/app/tools"
+    PassengerBaseURI "/tools"
+    PassengerPython "/home/zkckhehj/virtualenv/app/tools/3.13/bin/python"
+</IfModule>
+
+# --- ENVIRONMENT VARIABLES ---
+# Secrets are NOT versioned here. Optional fortnite-api.com key: set
+# BANANO_FORTNITE_API_KEY in the server environment (cPanel → Software →
+# Setup Node.js/PHP env, or a SetEnv line in a non-versioned .htaccess).
+
+# --- REWRITE ENGINE ---
+RewriteEngine On
+RewriteBase /
+DirectoryIndex index.php
+
+# --- SECURITY: Block sensitive files ---
+<FilesMatch "^(\.htaccess|\.env|composer\.(json|lock)|package(-lock)?\.json)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# --- SECURITY: Block direct access to cuysito_app/ ---
+RewriteCond %{REQUEST_URI} ^/cuysito_app/ [NC]
+RewriteRule ^ - [F,L]
+
+# --- LEGACY REDIRECTS ---
+# Old canonical → new canonical (SEO-safe 301s).
+RewriteRule ^tienda/?$ /via-regalo [R=301,L]
+RewriteRule ^viaregalo/?$ /via-regalo [R=301,L]
+RewriteRule ^viacuenta/?$ /via-cuenta [R=301,L]
+RewriteRule ^objeto/(.+)$ /via-regalo/$1 [R=301,L]
+RewriteRule ^producto/(.+)$ /via-cuenta/$1 [R=301,L]
+
+# --- STAGING: never serve public_html/ assets straight from disk ---
+# On any host other than banano.pe, existing static files also go through
+# router.php so the origin lock (Cloudflare-only) and X-Robots-Tag noindex
+# apply to the unminified JS/CSS as well. PHP entry points check it themselves.
+RewriteCond %{HTTP_HOST} !^(www\.)?banano\.pe$ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} !\.php$ [NC]
+RewriteRule ^ /router.php [L,QSA]
+
+# --- STATIC FILES IN PUBLIC_HTML: Serve directly if they exist ---
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# --- EVERYTHING ELSE: router.php handles it ---
+# Note: Passenger handles Node.js /api/ at module level (before rewrites).
+# PHP API files in cuysito_app/api/ are served by router.php.
+RewriteRule ^ /router.php [L,QSA]
+
+# --- PERFORMANCE ---
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+<IfModule mod_setenvif.c>
+    SetEnvIfNoCase Host "^(www\.)?banano\.pe$" BANANO_PROD=1
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Staging must never be indexed (belt-and-braces with the router header).
+    Header set X-Robots-Tag "noindex, nofollow, noarchive" env=!BANANO_PROD
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

@@ -1,0 +1,1 @@
+import{injectVisibilityToggle as t}from"../components/visibility-toggle.js";export function createAccentVisibilityControls(i={}){const{accentVisibilityEl:n,isHidden:e}=i,c="function"==typeof e?e:()=>!1,o=t(n,!1);return{syncAccentVisibilityButton:t=>{if(!n)return;const i=c(t,"accent");o.setHidden(i),n.setAttribute("aria-label",i?"Mostrar acento":"Ocultar acento")}}}

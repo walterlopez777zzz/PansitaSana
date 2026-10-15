@@ -1,0 +1,1 @@
+export function scheduleIdle(e){"function"!=typeof requestIdleCallback?setTimeout(()=>e(),0):requestIdleCallback(()=>e(),{timeout:700})}

@@ -1,0 +1,1 @@
+export function attachDialogDismiss(e,t){if(!e||"function"!=typeof t)return{destroy:()=>{}};const n=n=>{n.target===e&&t()},r=e=>{e.preventDefault(),t()};return e.addEventListener("click",n),e.addEventListener("cancel",r),{destroy:()=>{e.removeEventListener("click",n),e.removeEventListener("cancel",r)}}}

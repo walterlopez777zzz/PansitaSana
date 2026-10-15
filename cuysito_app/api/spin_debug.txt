@@ -1,0 +1,1091 @@
+[2026-02-08 21:23:54] --------------------------------------------------
+[2026-02-08 21:23:54] INICIO DE SOLICITUD DE GIRO
+[2026-02-08 21:23:54] Usuario ID: 1 intentando girar.
+[2026-02-08 21:23:54] Usuario encontrado: Cubonuel123 | Verificado: 1 | Saldo: 3350.23
+[2026-02-08 21:23:54] Tipo de tiro: PAGADO (50 monedas)
+[2026-02-08 21:23:54] Buscando JSON en: /home/zkckhehj/public_html/cache/tienda_actual.json
+[2026-02-08 21:23:54] Archivo leído. Tamaño: 266869 bytes.
+[2026-02-08 21:23:54] JSON decodificado correctamente. Items encontrados: 1
+[2026-02-08 22:00:07] --------------------------------------------------
+[2026-02-08 22:00:07] INICIO DE SOLICITUD DE GIRO
+[2026-02-08 22:00:07] Usuario ID: 1 intentando girar.
+[2026-02-08 22:00:07] Usuario encontrado: Cubonuel123 | Verificado: 1 | Saldo: 3350.23
+[2026-02-08 22:00:07] Tipo de tiro: PAGADO (50 monedas)
+[2026-02-08 22:00:07] Buscando JSON en: /home/zkckhehj/public_html/cache/tienda_actual.json
+[2026-02-08 22:00:07] Archivo leído. Tamaño: 266869 bytes.
+[2026-02-08 22:00:07] JSON decodificado correctamente. Items encontrados: 1
+[2026-02-08 22:04:06] --------------------------------------------------
+[2026-02-08 22:04:06] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-08 22:04:06] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-08 22:04:06] Items finales cargados: 197
+[2026-02-08 22:04:06] Claves del primer item: offerId, displayName, displayAssets, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-09 20:13:01] --------------------------------------------------
+[2026-02-09 20:13:01] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-10 12:37:03] --------------------------------------------------
+[2026-02-10 12:37:03] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-10 12:37:34] --------------------------------------------------
+[2026-02-10 12:37:34] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-10 12:37:34] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-10 12:37:34] Items finales cargados: 165
+[2026-02-10 12:37:34] Claves del primer item: offerId, displayName, displayAssets, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-10 14:58:09] --------------------------------------------------
+[2026-02-10 14:58:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-10 14:58:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-10 14:58:09] Items finales cargados: 165
+[2026-02-10 14:58:09] Claves del primer item: offerId, displayName, displayAssets, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-10 19:55:21] --------------------------------------------------
+[2026-02-10 19:55:21] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-14 00:19:11] --------------------------------------------------
+[2026-02-14 00:19:11] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-14 00:19:11] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-14 00:19:11] Items finales cargados: 202
+[2026-02-14 00:19:11] Claves del primer item: offerId, displayName, displayAssets, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-14 01:00:10] --------------------------------------------------
+[2026-02-14 01:00:10] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-14 01:00:10] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-14 01:00:10] Items finales cargados: 202
+[2026-02-14 01:00:10] Claves del primer item: offerId, displayName, displayAssets, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-14 01:00:30] --------------------------------------------------
+[2026-02-14 01:00:30] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-14 01:00:30] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-14 01:00:30] Items finales cargados: 202
+[2026-02-14 01:00:30] Claves del primer item: offerId, displayName, displayAssets, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-14 12:38:16] --------------------------------------------------
+[2026-02-14 12:38:16] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-14 12:38:28] --------------------------------------------------
+[2026-02-14 12:38:28] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-14 13:10:01] --------------------------------------------------
+[2026-02-14 13:10:01] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-14 19:52:10] --------------------------------------------------
+[2026-02-14 19:52:10] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 16:10:37] --------------------------------------------------
+[2026-02-15 16:10:37] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 16:10:37] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 16:10:37] Items finales cargados: 241
+[2026-02-15 16:10:37] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 16:10:47] --------------------------------------------------
+[2026-02-15 16:10:47] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 16:10:47] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 16:10:47] Items finales cargados: 241
+[2026-02-15 16:10:47] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 16:10:57] --------------------------------------------------
+[2026-02-15 16:10:57] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 16:10:57] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 16:10:57] Items finales cargados: 241
+[2026-02-15 16:10:57] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 16:11:33] --------------------------------------------------
+[2026-02-15 16:11:33] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 16:11:33] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 16:11:33] Items finales cargados: 241
+[2026-02-15 16:11:33] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 16:14:38] --------------------------------------------------
+[2026-02-15 16:14:38] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 16:14:38] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 16:14:38] Items finales cargados: 241
+[2026-02-15 16:14:38] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 17:17:59] --------------------------------------------------
+[2026-02-15 17:17:59] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 17:17:59] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 17:17:59] Items finales cargados: 241
+[2026-02-15 17:17:59] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 17:20:03] --------------------------------------------------
+[2026-02-15 17:20:03] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 17:20:03] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 17:20:03] Items finales cargados: 241
+[2026-02-15 17:20:03] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 17:54:34] --------------------------------------------------
+[2026-02-15 17:54:34] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 17:54:34] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 17:54:34] Items finales cargados: 241
+[2026-02-15 17:54:34] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 17:55:09] --------------------------------------------------
+[2026-02-15 17:55:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 17:55:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 17:55:09] Items finales cargados: 241
+[2026-02-15 17:55:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-15 18:09:16] --------------------------------------------------
+[2026-02-15 18:09:16] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-15 18:09:16] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-15 18:09:16] Items finales cargados: 241
+[2026-02-15 18:09:16] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-16 22:45:34] --------------------------------------------------
+[2026-02-16 22:45:34] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-16 22:45:34] FALLBACK ACTIVADO: No se pudieron cargar items.
+[2026-02-17 00:29:15] --------------------------------------------------
+[2026-02-17 00:29:15] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 00:29:15] FALLBACK ACTIVADO: No se pudieron cargar items.
+[2026-02-17 00:29:29] --------------------------------------------------
+[2026-02-17 00:29:29] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 00:29:29] FALLBACK ACTIVADO: No se pudieron cargar items.
+[2026-02-17 00:37:08] --------------------------------------------------
+[2026-02-17 00:37:08] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 00:37:08] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-17 00:37:08] Items finales cargados: 218
+[2026-02-17 00:37:08] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-17 00:37:55] --------------------------------------------------
+[2026-02-17 00:37:55] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 00:37:55] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-17 00:37:55] Items finales cargados: 218
+[2026-02-17 00:37:55] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-17 12:52:33] --------------------------------------------------
+[2026-02-17 12:52:33] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 12:52:33] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-17 12:52:33] Items finales cargados: 218
+[2026-02-17 12:52:33] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-17 12:55:20] --------------------------------------------------
+[2026-02-17 12:55:20] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 12:55:20] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-17 12:55:20] Items finales cargados: 218
+[2026-02-17 12:55:20] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-17 13:00:23] --------------------------------------------------
+[2026-02-17 13:00:23] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 13:00:23] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-17 13:00:23] Items finales cargados: 218
+[2026-02-17 13:00:23] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-17 13:08:19] --------------------------------------------------
+[2026-02-17 13:08:19] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 13:08:19] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-17 13:08:19] Items finales cargados: 218
+[2026-02-17 13:08:19] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-17 13:15:44] --------------------------------------------------
+[2026-02-17 13:15:44] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 13:15:44] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-17 13:15:44] Items finales cargados: 218
+[2026-02-17 13:15:44] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-17 13:17:13] --------------------------------------------------
+[2026-02-17 13:17:13] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-17 13:17:13] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-17 13:17:13] Items finales cargados: 218
+[2026-02-17 13:17:13] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 00:16:32] --------------------------------------------------
+[2026-02-18 00:16:32] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 00:16:32] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 00:16:32] Items finales cargados: 244
+[2026-02-18 00:16:32] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 16:32:06] --------------------------------------------------
+[2026-02-18 16:32:06] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 16:32:06] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 16:32:06] Items finales cargados: 244
+[2026-02-18 16:32:06] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 16:34:09] --------------------------------------------------
+[2026-02-18 16:34:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 16:34:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 16:34:09] Items finales cargados: 244
+[2026-02-18 16:34:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 17:08:48] --------------------------------------------------
+[2026-02-18 17:08:48] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 17:08:48] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 17:08:48] Items finales cargados: 244
+[2026-02-18 17:08:48] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 22:03:40] --------------------------------------------------
+[2026-02-18 22:03:40] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 22:03:40] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 22:03:40] Items finales cargados: 226
+[2026-02-18 22:03:40] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 22:04:49] --------------------------------------------------
+[2026-02-18 22:04:49] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 22:04:49] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 22:04:49] Items finales cargados: 226
+[2026-02-18 22:04:49] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 22:05:09] --------------------------------------------------
+[2026-02-18 22:05:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 22:05:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 22:05:09] Items finales cargados: 226
+[2026-02-18 22:05:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 22:06:47] --------------------------------------------------
+[2026-02-18 22:06:47] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 22:06:47] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 22:06:47] Items finales cargados: 226
+[2026-02-18 22:06:47] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 22:19:46] --------------------------------------------------
+[2026-02-18 22:19:46] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 22:19:46] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 22:19:46] Items finales cargados: 226
+[2026-02-18 22:19:46] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 22:20:43] --------------------------------------------------
+[2026-02-18 22:20:43] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 22:20:43] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 22:20:43] Items finales cargados: 226
+[2026-02-18 22:20:43] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 23:37:35] --------------------------------------------------
+[2026-02-18 23:37:35] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 23:37:35] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 23:37:35] Items finales cargados: 226
+[2026-02-18 23:37:35] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-18 23:39:15] --------------------------------------------------
+[2026-02-18 23:39:15] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-18 23:39:15] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-18 23:39:15] Items finales cargados: 226
+[2026-02-18 23:39:15] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-19 00:00:47] --------------------------------------------------
+[2026-02-19 00:00:47] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-19 00:00:47] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-19 00:00:47] Items finales cargados: 226
+[2026-02-19 00:00:47] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 12:23:27] --------------------------------------------------
+[2026-02-22 12:23:27] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 12:23:27] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 12:23:27] Items finales cargados: 165
+[2026-02-22 12:23:27] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 12:23:49] --------------------------------------------------
+[2026-02-22 12:23:49] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 12:23:50] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 12:23:50] Items finales cargados: 165
+[2026-02-22 12:23:50] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 12:26:17] --------------------------------------------------
+[2026-02-22 12:26:17] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 12:26:17] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 12:26:17] Items finales cargados: 165
+[2026-02-22 12:26:17] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 12:43:21] --------------------------------------------------
+[2026-02-22 12:43:21] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 12:43:21] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 12:43:21] Items finales cargados: 165
+[2026-02-22 12:43:21] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 12:55:33] --------------------------------------------------
+[2026-02-22 12:55:33] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 12:55:33] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 12:55:33] Items finales cargados: 165
+[2026-02-22 12:55:33] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 12:55:41] --------------------------------------------------
+[2026-02-22 12:55:41] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 12:55:41] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 12:55:41] Items finales cargados: 165
+[2026-02-22 12:55:41] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 13:07:14] --------------------------------------------------
+[2026-02-22 13:07:14] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 13:07:14] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 13:07:14] Items finales cargados: 165
+[2026-02-22 13:07:14] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 13:07:24] --------------------------------------------------
+[2026-02-22 13:07:24] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 13:07:24] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 13:07:24] Items finales cargados: 165
+[2026-02-22 13:07:24] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-22 13:07:33] --------------------------------------------------
+[2026-02-22 13:07:33] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-22 13:07:33] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-22 13:07:33] Items finales cargados: 165
+[2026-02-22 13:07:33] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 15:23:18] --------------------------------------------------
+[2026-02-24 15:23:18] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 15:23:18] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 15:23:18] Items finales cargados: 232
+[2026-02-24 15:23:18] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 15:23:27] --------------------------------------------------
+[2026-02-24 15:23:27] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 15:23:27] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 15:23:27] Items finales cargados: 232
+[2026-02-24 15:23:27] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 15:23:37] --------------------------------------------------
+[2026-02-24 15:23:37] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 15:23:37] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 15:23:37] Items finales cargados: 232
+[2026-02-24 15:23:37] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 15:23:46] --------------------------------------------------
+[2026-02-24 15:23:46] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 15:23:46] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 15:23:46] Items finales cargados: 232
+[2026-02-24 15:23:46] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:28:43] --------------------------------------------------
+[2026-02-24 16:28:43] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:28:43] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:28:43] Items finales cargados: 232
+[2026-02-24 16:28:43] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:31:00] --------------------------------------------------
+[2026-02-24 16:31:00] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:31:00] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:31:00] Items finales cargados: 232
+[2026-02-24 16:31:00] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:33:24] --------------------------------------------------
+[2026-02-24 16:33:24] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:33:24] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:33:24] Items finales cargados: 232
+[2026-02-24 16:33:24] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:44:55] --------------------------------------------------
+[2026-02-24 16:44:55] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:44:55] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:44:55] Items finales cargados: 232
+[2026-02-24 16:44:55] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:45:11] --------------------------------------------------
+[2026-02-24 16:45:11] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:45:11] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:45:11] Items finales cargados: 232
+[2026-02-24 16:45:11] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:45:45] --------------------------------------------------
+[2026-02-24 16:45:45] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:45:45] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:45:45] Items finales cargados: 232
+[2026-02-24 16:45:45] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:57:56] --------------------------------------------------
+[2026-02-24 16:57:56] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:57:56] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:57:56] Items finales cargados: 232
+[2026-02-24 16:57:56] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:58:45] --------------------------------------------------
+[2026-02-24 16:58:45] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:58:45] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:58:45] Items finales cargados: 232
+[2026-02-24 16:58:45] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:58:55] --------------------------------------------------
+[2026-02-24 16:58:55] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:58:55] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:58:55] Items finales cargados: 232
+[2026-02-24 16:58:55] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 16:59:50] --------------------------------------------------
+[2026-02-24 16:59:50] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 16:59:50] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 16:59:50] Items finales cargados: 232
+[2026-02-24 16:59:50] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:16:20] --------------------------------------------------
+[2026-02-24 17:16:20] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:16:20] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:16:20] Items finales cargados: 232
+[2026-02-24 17:16:20] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:16:34] --------------------------------------------------
+[2026-02-24 17:16:34] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:16:34] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:16:34] Items finales cargados: 232
+[2026-02-24 17:16:34] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:18:41] --------------------------------------------------
+[2026-02-24 17:18:41] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:18:41] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:18:41] Items finales cargados: 232
+[2026-02-24 17:18:41] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:20:36] --------------------------------------------------
+[2026-02-24 17:20:36] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:20:36] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:20:36] Items finales cargados: 232
+[2026-02-24 17:20:36] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:28:07] --------------------------------------------------
+[2026-02-24 17:28:07] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:28:07] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:28:07] Items finales cargados: 232
+[2026-02-24 17:28:07] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:28:33] --------------------------------------------------
+[2026-02-24 17:28:33] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:28:33] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:28:33] Items finales cargados: 232
+[2026-02-24 17:28:33] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:28:43] --------------------------------------------------
+[2026-02-24 17:28:43] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:28:43] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:28:43] Items finales cargados: 232
+[2026-02-24 17:28:43] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:34:09] --------------------------------------------------
+[2026-02-24 17:34:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:34:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:34:09] Items finales cargados: 232
+[2026-02-24 17:34:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:36:59] --------------------------------------------------
+[2026-02-24 17:36:59] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:36:59] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:36:59] Items finales cargados: 232
+[2026-02-24 17:36:59] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:41:38] --------------------------------------------------
+[2026-02-24 17:41:38] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:41:38] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:41:38] Items finales cargados: 232
+[2026-02-24 17:41:38] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:41:55] --------------------------------------------------
+[2026-02-24 17:41:55] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:41:55] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:41:55] Items finales cargados: 232
+[2026-02-24 17:41:55] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:44:09] --------------------------------------------------
+[2026-02-24 17:44:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:44:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:44:09] Items finales cargados: 232
+[2026-02-24 17:44:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:45:19] --------------------------------------------------
+[2026-02-24 17:45:19] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:45:19] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:45:19] Items finales cargados: 232
+[2026-02-24 17:45:19] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:45:37] --------------------------------------------------
+[2026-02-24 17:45:37] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:45:37] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:45:37] Items finales cargados: 232
+[2026-02-24 17:45:37] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:50:56] --------------------------------------------------
+[2026-02-24 17:50:56] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:50:56] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:50:56] Items finales cargados: 232
+[2026-02-24 17:50:56] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:57:06] --------------------------------------------------
+[2026-02-24 17:57:06] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:57:06] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:57:06] Items finales cargados: 232
+[2026-02-24 17:57:06] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:57:37] --------------------------------------------------
+[2026-02-24 17:57:37] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:57:37] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:57:37] Items finales cargados: 232
+[2026-02-24 17:57:37] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:57:50] --------------------------------------------------
+[2026-02-24 17:57:50] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:57:50] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:57:50] Items finales cargados: 232
+[2026-02-24 17:57:50] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:57:50] --------------------------------------------------
+[2026-02-24 17:57:50] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:57:50] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:57:50] Items finales cargados: 232
+[2026-02-24 17:57:50] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:58:03] --------------------------------------------------
+[2026-02-24 17:58:03] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:58:03] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:58:03] Items finales cargados: 232
+[2026-02-24 17:58:03] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:58:03] --------------------------------------------------
+[2026-02-24 17:58:03] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:58:03] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:58:03] Items finales cargados: 232
+[2026-02-24 17:58:03] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:58:17] --------------------------------------------------
+[2026-02-24 17:58:17] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:58:17] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:58:17] Items finales cargados: 232
+[2026-02-24 17:58:17] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:58:31] --------------------------------------------------
+[2026-02-24 17:58:31] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:58:31] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:58:31] Items finales cargados: 232
+[2026-02-24 17:58:31] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:58:42] --------------------------------------------------
+[2026-02-24 17:58:42] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:58:42] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:58:42] Items finales cargados: 232
+[2026-02-24 17:58:42] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 17:58:44] --------------------------------------------------
+[2026-02-24 17:58:44] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 17:58:44] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 17:58:44] Items finales cargados: 232
+[2026-02-24 17:58:44] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:00:24] --------------------------------------------------
+[2026-02-24 18:00:24] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:00:24] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:00:24] Items finales cargados: 232
+[2026-02-24 18:00:24] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:00:41] --------------------------------------------------
+[2026-02-24 18:00:41] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:00:41] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:00:41] Items finales cargados: 232
+[2026-02-24 18:00:41] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:00:52] --------------------------------------------------
+[2026-02-24 18:00:52] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:00:52] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:00:52] Items finales cargados: 232
+[2026-02-24 18:00:52] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:01:03] --------------------------------------------------
+[2026-02-24 18:01:03] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:01:03] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:01:03] Items finales cargados: 232
+[2026-02-24 18:01:03] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:01:14] --------------------------------------------------
+[2026-02-24 18:01:14] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:01:14] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:01:14] Items finales cargados: 232
+[2026-02-24 18:01:14] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:01:25] --------------------------------------------------
+[2026-02-24 18:01:25] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:01:25] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:01:25] Items finales cargados: 232
+[2026-02-24 18:01:25] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:01:45] --------------------------------------------------
+[2026-02-24 18:01:45] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:01:45] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:01:45] Items finales cargados: 232
+[2026-02-24 18:01:45] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:01:57] --------------------------------------------------
+[2026-02-24 18:01:57] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:01:57] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:01:57] Items finales cargados: 232
+[2026-02-24 18:01:57] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:02:11] --------------------------------------------------
+[2026-02-24 18:02:11] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:02:11] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:02:11] Items finales cargados: 232
+[2026-02-24 18:02:11] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:02:30] --------------------------------------------------
+[2026-02-24 18:02:30] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:02:30] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:02:30] Items finales cargados: 232
+[2026-02-24 18:02:30] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:02:58] --------------------------------------------------
+[2026-02-24 18:02:58] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:02:58] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:02:58] Items finales cargados: 232
+[2026-02-24 18:02:58] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:03:12] --------------------------------------------------
+[2026-02-24 18:03:12] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:03:12] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:03:12] Items finales cargados: 232
+[2026-02-24 18:03:12] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:03:52] --------------------------------------------------
+[2026-02-24 18:03:52] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:03:52] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:03:52] Items finales cargados: 232
+[2026-02-24 18:03:52] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:04:19] --------------------------------------------------
+[2026-02-24 18:04:19] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:04:19] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:04:19] Items finales cargados: 232
+[2026-02-24 18:04:19] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:25:47] --------------------------------------------------
+[2026-02-24 18:25:47] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:25:47] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:25:47] Items finales cargados: 232
+[2026-02-24 18:25:47] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:40:32] --------------------------------------------------
+[2026-02-24 18:40:32] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:40:32] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:40:32] Items finales cargados: 232
+[2026-02-24 18:40:32] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:44:55] --------------------------------------------------
+[2026-02-24 18:44:55] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:44:55] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:44:55] Items finales cargados: 232
+[2026-02-24 18:44:55] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 18:45:10] --------------------------------------------------
+[2026-02-24 18:45:10] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 18:45:10] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 18:45:10] Items finales cargados: 232
+[2026-02-24 18:45:10] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 21:11:39] --------------------------------------------------
+[2026-02-24 21:11:39] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 21:11:39] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 21:11:39] Items finales cargados: 242
+[2026-02-24 21:11:39] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 21:22:41] --------------------------------------------------
+[2026-02-24 21:22:41] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 21:22:41] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 21:22:41] Items finales cargados: 242
+[2026-02-24 21:22:41] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 21:23:03] --------------------------------------------------
+[2026-02-24 21:23:03] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 21:23:03] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 21:23:03] Items finales cargados: 242
+[2026-02-24 21:23:03] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 21:52:09] --------------------------------------------------
+[2026-02-24 21:52:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 21:52:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 21:52:09] Items finales cargados: 242
+[2026-02-24 21:52:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 21:52:20] --------------------------------------------------
+[2026-02-24 21:52:20] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 21:52:20] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 21:52:20] Items finales cargados: 242
+[2026-02-24 21:52:20] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 21:52:31] --------------------------------------------------
+[2026-02-24 21:52:31] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 21:52:31] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 21:52:31] Items finales cargados: 242
+[2026-02-24 21:52:31] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:04:00] --------------------------------------------------
+[2026-02-24 22:04:00] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:04:00] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:04:00] Items finales cargados: 242
+[2026-02-24 22:04:00] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:09:29] --------------------------------------------------
+[2026-02-24 22:09:29] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:09:29] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:09:29] Items finales cargados: 242
+[2026-02-24 22:09:29] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:09:49] --------------------------------------------------
+[2026-02-24 22:09:49] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:09:49] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:09:49] Items finales cargados: 242
+[2026-02-24 22:09:49] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:10:00] --------------------------------------------------
+[2026-02-24 22:10:00] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:10:00] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:10:00] Items finales cargados: 242
+[2026-02-24 22:10:00] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:10:21] --------------------------------------------------
+[2026-02-24 22:10:21] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:10:21] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:10:21] Items finales cargados: 242
+[2026-02-24 22:10:21] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:10:30] --------------------------------------------------
+[2026-02-24 22:10:30] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:10:30] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:10:30] Items finales cargados: 242
+[2026-02-24 22:10:30] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:48:36] --------------------------------------------------
+[2026-02-24 22:48:36] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:48:36] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:48:36] Items finales cargados: 242
+[2026-02-24 22:48:36] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:48:48] --------------------------------------------------
+[2026-02-24 22:48:48] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:48:48] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:48:48] Items finales cargados: 242
+[2026-02-24 22:48:48] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:48:53] --------------------------------------------------
+[2026-02-24 22:48:53] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:48:53] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:48:53] Items finales cargados: 242
+[2026-02-24 22:48:53] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 22:49:07] --------------------------------------------------
+[2026-02-24 22:49:07] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 22:49:07] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 22:49:07] Items finales cargados: 242
+[2026-02-24 22:49:07] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-24 23:28:04] --------------------------------------------------
+[2026-02-24 23:28:04] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-24 23:28:04] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-24 23:28:04] Items finales cargados: 242
+[2026-02-24 23:28:04] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-02-25 15:16:07] --------------------------------------------------
+[2026-02-25 15:16:07] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-02-25 15:16:07] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-02-25 15:16:07] Items finales cargados: 242
+[2026-02-25 15:16:07] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-25 20:32:24] --------------------------------------------------
+[2026-03-25 20:32:24] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-26 01:32:24] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-26 01:32:24] Items finales cargados: 207
+[2026-03-26 01:32:24] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-25 20:32:58] --------------------------------------------------
+[2026-03-25 20:32:58] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-26 01:32:58] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-26 01:32:58] Items finales cargados: 207
+[2026-03-26 01:32:58] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-25 20:40:31] --------------------------------------------------
+[2026-03-25 20:40:31] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-26 01:40:31] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-26 01:40:31] Items finales cargados: 207
+[2026-03-26 01:40:31] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-27 14:11:09] --------------------------------------------------
+[2026-03-27 14:11:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-27 19:11:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-27 19:11:09] Items finales cargados: 207
+[2026-03-27 19:11:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-27 14:50:51] --------------------------------------------------
+[2026-03-27 14:50:51] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-27 19:50:51] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-27 19:50:51] Items finales cargados: 207
+[2026-03-27 19:50:51] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-27 14:51:02] --------------------------------------------------
+[2026-03-27 14:51:02] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-27 19:51:02] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-27 19:51:02] Items finales cargados: 207
+[2026-03-27 19:51:02] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-27 14:51:12] --------------------------------------------------
+[2026-03-27 14:51:12] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-27 19:51:12] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-27 19:51:12] Items finales cargados: 207
+[2026-03-27 19:51:12] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-27 14:51:21] --------------------------------------------------
+[2026-03-27 14:51:21] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-27 19:51:21] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-27 19:51:21] Items finales cargados: 207
+[2026-03-27 19:51:21] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-27 14:51:33] --------------------------------------------------
+[2026-03-27 14:51:33] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-27 19:51:33] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-27 19:51:33] Items finales cargados: 207
+[2026-03-27 19:51:33] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-27 14:51:42] --------------------------------------------------
+[2026-03-27 14:51:42] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-27 19:51:42] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-27 19:51:42] Items finales cargados: 207
+[2026-03-27 19:51:42] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-27 14:51:52] --------------------------------------------------
+[2026-03-27 14:51:52] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-27 19:51:52] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-27 19:51:52] Items finales cargados: 207
+[2026-03-27 19:51:52] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 12:36:00] --------------------------------------------------
+[2026-03-28 12:36:00] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 17:36:00] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 17:36:00] Items finales cargados: 207
+[2026-03-28 17:36:00] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 12:37:48] --------------------------------------------------
+[2026-03-28 12:37:48] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 17:37:48] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 17:37:48] Items finales cargados: 207
+[2026-03-28 17:37:48] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 12:38:52] --------------------------------------------------
+[2026-03-28 12:38:52] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 17:38:52] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 17:38:52] Items finales cargados: 207
+[2026-03-28 17:38:52] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 12:39:01] --------------------------------------------------
+[2026-03-28 12:39:01] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 17:39:01] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 17:39:01] Items finales cargados: 207
+[2026-03-28 17:39:01] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:17:10] --------------------------------------------------
+[2026-03-28 14:17:10] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:17:10] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:17:10] Items finales cargados: 207
+[2026-03-28 19:17:10] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:17:20] --------------------------------------------------
+[2026-03-28 14:17:20] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:17:20] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:17:20] Items finales cargados: 207
+[2026-03-28 19:17:20] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:18:07] --------------------------------------------------
+[2026-03-28 14:18:07] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:18:07] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:18:07] Items finales cargados: 207
+[2026-03-28 19:18:07] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:18:27] --------------------------------------------------
+[2026-03-28 14:18:27] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:18:27] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:18:27] Items finales cargados: 207
+[2026-03-28 19:18:27] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:18:36] --------------------------------------------------
+[2026-03-28 14:18:36] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:18:36] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:18:36] Items finales cargados: 207
+[2026-03-28 19:18:36] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:18:45] --------------------------------------------------
+[2026-03-28 14:18:45] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:18:45] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:18:45] Items finales cargados: 207
+[2026-03-28 19:18:45] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:18:54] --------------------------------------------------
+[2026-03-28 14:18:54] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:18:54] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:18:54] Items finales cargados: 207
+[2026-03-28 19:18:54] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:19:23] --------------------------------------------------
+[2026-03-28 14:19:23] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:19:23] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:19:23] Items finales cargados: 207
+[2026-03-28 19:19:23] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:19:32] --------------------------------------------------
+[2026-03-28 14:19:32] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:19:32] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:19:32] Items finales cargados: 207
+[2026-03-28 19:19:32] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:19:41] --------------------------------------------------
+[2026-03-28 14:19:41] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:19:41] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:19:41] Items finales cargados: 207
+[2026-03-28 19:19:41] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:19:50] --------------------------------------------------
+[2026-03-28 14:19:50] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:19:50] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:19:50] Items finales cargados: 207
+[2026-03-28 19:19:50] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:20:00] --------------------------------------------------
+[2026-03-28 14:20:00] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:20:00] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:20:00] Items finales cargados: 207
+[2026-03-28 19:20:00] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:20:19] --------------------------------------------------
+[2026-03-28 14:20:19] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:20:19] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:20:19] Items finales cargados: 207
+[2026-03-28 19:20:19] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:20:29] --------------------------------------------------
+[2026-03-28 14:20:29] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:20:29] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:20:29] Items finales cargados: 207
+[2026-03-28 19:20:29] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:20:38] --------------------------------------------------
+[2026-03-28 14:20:38] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:20:38] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:20:38] Items finales cargados: 207
+[2026-03-28 19:20:38] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:20:50] --------------------------------------------------
+[2026-03-28 14:20:50] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:20:50] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:20:50] Items finales cargados: 207
+[2026-03-28 19:20:50] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:20:59] --------------------------------------------------
+[2026-03-28 14:20:59] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:20:59] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:20:59] Items finales cargados: 207
+[2026-03-28 19:20:59] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 14:21:08] --------------------------------------------------
+[2026-03-28 14:21:08] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 19:21:08] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 19:21:08] Items finales cargados: 207
+[2026-03-28 19:21:08] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 15:15:13] --------------------------------------------------
+[2026-03-28 15:15:13] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 20:15:13] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 20:15:13] Items finales cargados: 207
+[2026-03-28 20:15:13] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 15:15:30] --------------------------------------------------
+[2026-03-28 15:15:30] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 20:15:30] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 20:15:30] Items finales cargados: 207
+[2026-03-28 20:15:30] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 15:16:23] --------------------------------------------------
+[2026-03-28 15:16:23] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 20:16:23] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 20:16:23] Items finales cargados: 207
+[2026-03-28 20:16:23] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 15:29:02] --------------------------------------------------
+[2026-03-28 15:29:02] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 20:29:02] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 20:29:02] Items finales cargados: 207
+[2026-03-28 20:29:02] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 15:29:17] --------------------------------------------------
+[2026-03-28 15:29:17] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 20:29:17] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 20:29:17] Items finales cargados: 207
+[2026-03-28 20:29:17] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 16:12:09] --------------------------------------------------
+[2026-03-28 16:12:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 21:12:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 21:12:09] Items finales cargados: 207
+[2026-03-28 21:12:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 16:12:19] --------------------------------------------------
+[2026-03-28 16:12:19] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 21:12:19] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 21:12:19] Items finales cargados: 207
+[2026-03-28 21:12:19] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 17:35:05] --------------------------------------------------
+[2026-03-28 17:35:05] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 22:35:05] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 22:35:05] Items finales cargados: 207
+[2026-03-28 22:35:05] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 17:35:15] --------------------------------------------------
+[2026-03-28 17:35:15] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 22:35:15] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 22:35:15] Items finales cargados: 207
+[2026-03-28 22:35:15] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 17:35:23] --------------------------------------------------
+[2026-03-28 17:35:23] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 22:35:23] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 22:35:23] Items finales cargados: 207
+[2026-03-28 22:35:23] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 17:35:32] --------------------------------------------------
+[2026-03-28 17:35:32] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 22:35:32] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 22:35:32] Items finales cargados: 207
+[2026-03-28 22:35:32] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 17:35:41] --------------------------------------------------
+[2026-03-28 17:35:41] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 22:35:41] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 22:35:41] Items finales cargados: 207
+[2026-03-28 22:35:41] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 17:35:50] --------------------------------------------------
+[2026-03-28 17:35:50] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 22:35:50] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 22:35:50] Items finales cargados: 207
+[2026-03-28 22:35:50] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-28 17:35:59] --------------------------------------------------
+[2026-03-28 17:35:59] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-28 22:35:59] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-28 22:35:59] Items finales cargados: 207
+[2026-03-28 22:35:59] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 00:52:30] --------------------------------------------------
+[2026-03-29 00:52:30] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 05:52:30] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 05:52:30] Items finales cargados: 197
+[2026-03-29 05:52:30] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 00:59:09] --------------------------------------------------
+[2026-03-29 00:59:09] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 05:59:09] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 05:59:09] Items finales cargados: 197
+[2026-03-29 05:59:09] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 00:59:42] --------------------------------------------------
+[2026-03-29 00:59:42] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 05:59:42] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 05:59:42] Items finales cargados: 197
+[2026-03-29 05:59:42] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 01:00:24] --------------------------------------------------
+[2026-03-29 01:00:24] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 06:00:24] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 06:00:24] Items finales cargados: 197
+[2026-03-29 06:00:24] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 01:00:33] --------------------------------------------------
+[2026-03-29 01:00:33] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 06:00:33] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 06:00:33] Items finales cargados: 197
+[2026-03-29 06:00:33] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 14:57:03] --------------------------------------------------
+[2026-03-29 14:57:03] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 19:57:03] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 19:57:03] Items finales cargados: 197
+[2026-03-29 19:57:03] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 14:57:17] --------------------------------------------------
+[2026-03-29 14:57:17] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 19:57:17] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 19:57:17] Items finales cargados: 197
+[2026-03-29 19:57:17] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 14:58:31] --------------------------------------------------
+[2026-03-29 14:58:31] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 19:58:31] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 19:58:31] Items finales cargados: 197
+[2026-03-29 19:58:31] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 15:28:10] --------------------------------------------------
+[2026-03-29 15:28:10] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 20:28:10] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 20:28:10] Items finales cargados: 197
+[2026-03-29 20:28:10] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 16:03:42] --------------------------------------------------
+[2026-03-29 16:03:42] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 21:03:42] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 21:03:42] Items finales cargados: 197
+[2026-03-29 21:03:42] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 16:06:07] --------------------------------------------------
+[2026-03-29 16:06:07] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 21:06:07] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 21:06:07] Items finales cargados: 197
+[2026-03-29 21:06:07] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 16:27:37] --------------------------------------------------
+[2026-03-29 16:27:37] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 21:27:37] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 21:27:37] Items finales cargados: 197
+[2026-03-29 21:27:37] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 16:27:50] --------------------------------------------------
+[2026-03-29 16:27:50] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 21:27:50] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 21:27:50] Items finales cargados: 197
+[2026-03-29 21:27:50] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 16:28:57] --------------------------------------------------
+[2026-03-29 16:28:57] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 21:28:57] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 21:28:57] Items finales cargados: 197
+[2026-03-29 21:28:57] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 16:44:20] --------------------------------------------------
+[2026-03-29 16:44:20] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 21:44:20] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 21:44:20] Items finales cargados: 197
+[2026-03-29 21:44:20] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-29 17:24:07] --------------------------------------------------
+[2026-03-29 17:24:07] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-29 22:24:07] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-29 22:24:07] Items finales cargados: 197
+[2026-03-29 22:24:07] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-30 12:23:36] --------------------------------------------------
+[2026-03-30 12:23:36] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-30 17:23:36] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-30 17:23:36] Items finales cargados: 221
+[2026-03-30 17:23:36] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-30 14:25:14] --------------------------------------------------
+[2026-03-30 14:25:14] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-30 19:25:14] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-30 19:25:14] Items finales cargados: 221
+[2026-03-30 19:25:14] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-30 14:26:42] --------------------------------------------------
+[2026-03-30 14:26:42] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-30 19:26:42] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-30 19:26:42] Items finales cargados: 221
+[2026-03-30 19:26:42] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-30 14:26:54] --------------------------------------------------
+[2026-03-30 14:26:54] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-30 19:26:54] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-30 19:26:54] Items finales cargados: 221
+[2026-03-30 19:26:54] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-30 14:27:07] --------------------------------------------------
+[2026-03-30 14:27:07] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-30 19:27:07] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-30 19:27:07] Items finales cargados: 221
+[2026-03-30 19:27:07] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-03-30 14:34:40] --------------------------------------------------
+[2026-03-30 14:34:40] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-03-30 19:34:40] Wrapper detectado y eliminado. Clave oculta: shop
+[2026-03-30 19:34:40] Items finales cargados: 221
+[2026-03-30 19:34:40] Claves del primer item: offerId, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, colors, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-06-15 23:54:50] --------------------------------------------------
+[2026-06-15 23:54:50] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-06-16 04:54:50] Items finales cargados: 341
+[2026-06-16 04:54:50] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileBackgroundMaterial, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, instruments, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-08-20 18:37:04] --------------------------------------------------
+[2026-08-20 18:37:04] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-08-20 23:37:04] Items finales cargados: 254
+[2026-08-20 23:37:04] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileBackgroundMaterial, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-08-20 18:38:42] --------------------------------------------------
+[2026-08-20 18:38:42] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-08-20 23:38:42] Items finales cargados: 254
+[2026-08-20 23:38:42] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileBackgroundMaterial, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-08-20 18:39:51] --------------------------------------------------
+[2026-08-20 18:39:51] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-08-20 23:39:51] Items finales cargados: 254
+[2026-08-20 23:39:51] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileBackgroundMaterial, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-08-20 18:40:02] --------------------------------------------------
+[2026-08-20 18:40:02] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-08-20 23:40:02] Items finales cargados: 254
+[2026-08-20 23:40:02] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileBackgroundMaterial, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-08-20 18:40:15] --------------------------------------------------
+[2026-08-20 18:40:15] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-08-20 23:40:15] Items finales cargados: 254
+[2026-08-20 23:40:15] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileBackgroundMaterial, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-08-20 18:46:20] --------------------------------------------------
+[2026-08-20 18:46:20] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-08-20 23:46:20] Items finales cargados: 254
+[2026-08-20 23:46:20] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileBackgroundMaterial, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-08-20 20:37:12] --------------------------------------------------
+[2026-08-20 20:37:12] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-08-21 01:37:12] Items finales cargados: 254
+[2026-08-21 01:37:12] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileSize, newDisplayAssetPath, tracks, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-08-21 23:17:51] --------------------------------------------------
+[2026-08-21 23:17:51] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-08-22 04:17:51] Items finales cargados: 286
+[2026-08-22 04:17:51] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileSize, newDisplayAssetPath, tracks, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-09-11 16:02:44] --------------------------------------------------
+[2026-09-11 16:02:44] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-11 21:02:44] Items finales cargados: 311
+[2026-09-11 21:02:44] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-09-11 16:04:37] --------------------------------------------------
+[2026-09-11 16:04:37] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-11 21:04:37] Items finales cargados: 311
+[2026-09-11 21:04:37] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-09-11 16:04:46] --------------------------------------------------
+[2026-09-11 16:04:46] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-11 21:04:46] Items finales cargados: 311
+[2026-09-11 21:04:46] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-09-11 16:06:59] --------------------------------------------------
+[2026-09-11 16:06:59] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-11 21:06:59] Items finales cargados: 311
+[2026-09-11 21:06:59] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileSize, newDisplayAssetPath, newDisplayAsset, brItems, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-09-12 17:09:49] --------------------------------------------------
+[2026-09-12 17:09:49] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-12 22:09:49] Items finales cargados: 306
+[2026-09-12 22:09:49] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileSize, newDisplayAssetPath, tracks, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-09-12 23:34:02] --------------------------------------------------
+[2026-09-12 23:34:02] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-12 23:34:02] Items finales cargados: 306
+[2026-09-12 23:34:02] Claves del primer item: regularPrice, finalPrice, devName, offerId, inDate, outDate, giftable, refundable, sortPriority, layoutId, layout, colors, tileSize, newDisplayAssetPath, tracks, displayName, displayAssets, images, offerDates, vbucks, displayType, rarity, section_name, store_rank, precio_base_soles, precio_oferta_soles, tiene_oferta_nuestra
+[2026-09-13 07:47:36] --------------------------------------------------
+[2026-09-13 07:47:36] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-13 07:47:36] Pool: mode=all filter=atuendo items=48 percent=5
+[2026-09-13 07:47:36] Items finales cargados: 48
+[2026-09-13 07:51:46] --------------------------------------------------
+[2026-09-13 07:51:46] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-13 07:51:46] Pool: mode=all filter=gesto items=24 percent=5
+[2026-09-13 07:51:46] Items finales cargados: 24
+[2026-09-13 07:56:07] --------------------------------------------------
+[2026-09-13 07:56:07] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-13 07:56:07] Pool: mode=all filter=gesto items=24 percent=5
+[2026-09-13 07:56:07] Items finales cargados: 24
+[2026-09-13 08:28:39] --------------------------------------------------
+[2026-09-13 08:28:39] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-13 08:28:39] Pool: mode=no_tracks filter=atuendo items=48 percent=5
+[2026-09-13 08:28:39] Items finales cargados: 48
+[2026-09-13 08:28:52] --------------------------------------------------
+[2026-09-13 08:28:52] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-13 08:28:52] Pool: mode=no_tracks filter=atuendo items=48 percent=5
+[2026-09-13 08:28:52] Items finales cargados: 48
+[2026-09-13 08:30:34] --------------------------------------------------
+[2026-09-13 08:30:34] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-13 08:30:34] Pool: mode=no_tracks filter=atuendo items=48 percent=5
+[2026-09-13 08:30:34] Items finales cargados: 48
+[2026-09-13 08:33:34] --------------------------------------------------
+[2026-09-13 08:33:34] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-13 08:33:34] Pool: mode=all filter=- items=300 percent=15
+[2026-09-13 08:33:34] Items finales cargados: 300
+[2026-09-13 08:35:58] --------------------------------------------------
+[2026-09-13 08:35:58] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-13 08:35:58] Pool: mode=all filter=- items=300 percent=15
+[2026-09-13 08:35:58] Items finales cargados: 300
+[2026-09-14 00:52:00] --------------------------------------------------
+[2026-09-14 00:52:00] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-14 00:52:00] Pool: mode=no_tracks filter=- items=152 percent=10
+[2026-09-14 00:52:00] Items finales cargados: 152
+[2026-09-14 00:52:00] Expiración cupón: 2026-09-15 00:52:00 UTC (motivo=spin_24h)
+[2026-09-14 00:53:04] --------------------------------------------------
+[2026-09-14 00:53:04] INICIO DE SOLICITUD DE GIRO (v3.0 Auto-Unwrap)
+[2026-09-14 00:53:04] Pool: mode=all filter=- items=272 percent=15
+[2026-09-14 00:53:04] Items finales cargados: 272
+[2026-09-14 00:53:04] Expiración cupón: 2026-09-15 00:53:04 UTC (motivo=spin_24h)

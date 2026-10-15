@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- ── SESSION GUARD ─────────────────────────────────────────
+         Runs before ANYTHING renders. If the PIN session is missing,
+         the browser redirects immediately — no content ever loads.
+    ──────────────────────────────────────────────────────────── -->
+    <script>
+        if (sessionStorage.getItem('gtarjetas_lock_v2') !== '1') {
+            window.location.replace('./index.html');
+        }
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Card Manager — Rotación &amp; Cooldown</title>
+    <link rel="icon" href="/gestion-tarjetas/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/gestion-tarjetas/favicon.ico" sizes="32x32">
+    <link rel="apple-touch-icon" href="/gestion-tarjetas/apple-touch-icon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ── HEADER ─────────────────────────────────────────── -->
+    <header class="app-header">
+        <div class="header-inner">
+            <div class="brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+                    <rect x="2" y="5" width="20" height="14" rx="3"/>
+                    <path d="M2 10h20"/>
+                </svg>
+                <h1 class="brand-title">Card Manager</h1>
+            </div>
+            <div class="header-actions">
+                <button id="groups-toggle" class="btn-icon" type="button" aria-label="Gestionar grupos" data-tooltip="Grupos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true">
+                        <!-- Layers icon -->
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                        <polyline points="2 17 12 22 22 17"/>
+                        <polyline points="2 12 12 17 22 12"/>
+                    </svg>
+                </button>
+                <button id="card-edit-toggle" class="btn-icon" type="button" aria-label="Modo edición">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <path d="M17 3a2.85 2.85 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                        <path d="m15 5 4 4"/>
+                    </svg>
+                </button>
+                <button id="edit-toggle" class="btn-icon" type="button" aria-label="Modo selección">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+                <button id="theme-toggle" class="btn-icon" type="button" aria-label="Cambiar tema">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── MAIN ───────────────────────────────────────────── -->
+    <main class="app-main">
+
+        <!-- Add Card Section -->
+        <section class="add-card-section">
+            <button id="form-toggle" type="button" class="form-toggle" aria-expanded="false" aria-controls="add-card-form">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                Agregar Tarjeta
+            </button>
+            <div class="form-collapse" id="form-collapse">
+            <form id="add-card-form" class="add-card-form" autocomplete="off" novalidate>
+
+                <!-- Card Type Selector (Segmented Control) -->
+                <fieldset class="type-selector" id="type-selector">
+                    <legend class="type-selector__legend">Tipo de tarjeta</legend>
+                    <div class="type-selector__track">
+                        <div class="type-selector__indicator" id="type-indicator"></div>
+
+                        <label class="type-selector__option" data-value="dollarapp">
+                            <input
+                                type="radio"
+                                name="card_type"
+                                value="dollarapp"
+                                class="type-selector__radio"
+                                checked
+                            >
+                            <span class="type-selector__content">
+                                <span class="type-selector__icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="440" height="336" viewBox="0 0 440 336"><path fill="currentColor" d="M406.512 27.8712C412.806 27.859 415.864 27.3002 419.975 32.6665C420.287 37.1548 420.093 43.3862 420.086 48.0099L420.081 74.5099L420.076 158.588L420.076 233.861L420.102 256.998C420.112 261.09 420.299 266.725 419.974 270.619C415.658 275.401 408.049 274.877 402.072 275.341C396.518 275.783 390.972 276.312 385.434 276.928C369.948 278.716 355.722 280.383 340.256 282.979C317.406 286.943 294.784 292.125 272.487 298.504C262.526 301.379 252.645 304.521 242.853 307.927C233.034 311.334 214.458 319.93 204.335 314.718C199.266 312.109 201.659 305.394 204.372 301.824C207.42 297.813 211.509 293.446 215.464 290.233C215.626 290.339 216.91 291.029 216.966 291.027C228.167 290.513 247.606 282.676 257.398 279.649C280.726 272.436 303.609 265.752 327.169 261.21C331.572 260.122 336.421 259.566 340.909 258.655C344.501 257.925 348.328 257.282 351.961 256.785C353.337 234.287 362.862 217.748 384.761 209.899C386.974 209.106 394.612 207.721 395.777 206.855C396.094 204.826 395.962 198.175 395.962 195.81L395.962 174.224L395.957 95.1628C374.772 92.6048 356.175 78.0152 353.758 55.9465C345.794 56.3834 334.289 58.3233 326.252 59.6413C299.049 64.1024 271.456 70.36 245.485 79.6619C240.734 81.3639 234.128 83.5582 229.996 86.2253C229.981 83.8599 229.587 61.5062 230.347 60.2112C231.419 58.3834 244.129 54.3931 247.429 53.2836C270.668 45.4695 294.449 40.3355 318.627 36.3107C339.127 32.8919 359.781 30.4716 380.516 29.0582C381.986 28.9665 383.584 28.9262 385.06 28.9383C392.288 28.9979 399.272 28.0141 406.512 27.8712Z"/><path fill="currentColor" d="M184.621 28.1028C187.369 27.6429 197.473 27.9583 200.617 27.9285C207.15 27.8666 221.372 29.7466 226.016 34.6192C229.966 38.7637 229.093 52.9277 229.008 58.4509C224.947 54.418 223.17 53.8769 217.483 52.6247C206.733 50.2573 196.758 50.8719 185.968 51.7885C160.667 53.9376 135.461 60.5204 111.271 68.0528C106.516 69.5335 92.0535 73.5717 88.3011 76.0185L88.0138 78.5619C85.9349 96.2478 77.4992 109.74 62.2683 119.303C58.5355 121.646 54.3396 122.927 50.6047 125.093C49.631 125.657 50.0404 133.597 50.0538 134.992C50.0904 139.527 50.1015 144.063 50.0869 148.599L50.0777 203.591L50.1004 220.447C50.1122 223.681 50.2435 227.844 50.0197 230.984C53.1345 230.906 56.1812 230.832 59.2887 231.121C77.3033 232.798 92.2162 242.714 95.597 261.284C103.061 258.389 111.248 256.47 118.989 254.422C133.487 250.584 148.013 246.996 162.841 244.622C173.507 242.914 184.192 241.946 194.95 241.089C204.444 240.334 219.52 241.088 226.994 247.482C227.34 251.702 227.1 259.084 227.088 263.495C227.1 263.888 227.309 269.845 227.408 269.63C227.163 269.416 225.619 268.066 225.416 267.953C218.576 264.292 210.177 265.206 202.738 265.002C180.193 264.384 158.481 268.944 136.755 274.578C115.074 280.201 93.777 287.594 72.4835 294.708L49.9081 302.247C44.7938 303.966 39.5632 305.925 34.2555 306.901C30.1366 307.657 26.2432 303.918 26.0647 299.864C25.9029 296.19 25.949 292.483 25.9499 288.786L25.9535 268.327L25.9561 202.046L25.9587 118.712L25.9391 92.8066C25.9297 87.9304 25.7013 82.9527 26.0166 78.0929C26.1452 76.1109 27.0644 74.6008 28.325 73.1108C31.8095 68.9921 45.5118 64.8863 50.9836 62.821C88.961 48.4869 128.395 35.3317 168.73 29.7339C173.987 29.0043 179.334 28.5733 184.621 28.1028Z"/><path fill="currentColor" d="M208.276 78.0846C209.832 77.9109 211.401 77.8583 212.966 77.9273C218.099 78.1811 226.829 80.3454 227.851 86.3315C229.122 93.7818 229.431 102.425 229.011 109.975C252.236 109.369 270.358 127.468 275.667 149.107C283.472 180.918 274.11 223.319 242.272 238.403C238.185 240.355 234.853 241.054 230.374 241.101C229.476 237.712 229.065 232.617 228.575 229.142C225.42 206.733 214.297 209.522 198.979 198.403C185.112 188.337 178.259 173.555 175.999 156.803C173.291 136.738 175.162 107.376 187.361 90.4829C192.746 83.0256 199.333 79.4004 208.276 78.0846Z"/></svg>
+                                </span>
+                                <span class="type-selector__label">DollarApp</span>
+                            </span>
+                        </label>
+
+                        <label class="type-selector__option" data-value="astropay">
+                            <input
+                                type="radio"
+                                name="card_type"
+                                value="astropay"
+                                class="type-selector__radio"
+                            >
+                            <span class="type-selector__content">
+                                <span class="type-selector__icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512"><path fill="currentColor" d="M217.522 98.2912C222.97 98.5041 230.069 98.2575 235.672 98.2545L273.556 98.2395C279.383 98.2332 288.387 97.9594 293.971 98.404C299.9 112.406 305.339 126.448 311.071 140.504L355.153 249.239C343.093 245.957 290.33 246.838 279.33 251.003C277.654 248.7 273.606 238.015 272.335 234.845L261.747 208.661C260.132 204.646 256.541 197.106 255.683 193.318C254.893 195.496 253.972 197.697 253.082 199.841C247.033 214.41 241.386 229.217 235.284 243.757L230.989 254.532C226.243 266.523 227.265 263.61 215.823 268.307C210.252 270.632 204.746 273.109 199.311 275.734C181.765 284.093 163.721 295.748 148.446 307.59C141.313 313.119 134.49 318.853 128.214 325.328C127.316 326.255 125.727 327.806 124.505 328.125L124.208 327.864C124.215 327.506 127.27 320.533 127.69 319.506L141.716 284.981L194.492 154.101L208.489 119.604L213.804 106.258C214.522 104.459 216.214 99.4775 217.522 98.2912Z"/><path fill="currentColor" d="M317.773 271.095C324.34 270.682 329.642 271.002 336.118 271.733C339.065 272.066 342.816 271.853 345.921 272.122C352.164 272.662 358.534 273.711 364.76 274.01C367.382 281.771 371.905 291.51 375.056 299.37C382.707 318.721 390.505 338.014 398.449 357.246C395.349 355.951 392.825 354.747 389.581 353.534C372.145 347.01 353.933 343.546 335.415 342.111C331.577 341.949 327.703 342.068 323.865 342.018C279.358 341.445 234.4 358.601 200.495 387.236C192.905 393.646 187.285 398.881 180.98 406.578C179.124 408.756 176.975 410.502 175.227 412.972C170.444 413.179 165.047 413.047 160.22 413.046L133.712 413.044L107.704 413.045C102.409 413.049 96.6726 413.177 91.4247 412.947C94.0749 408.782 96.2242 404.388 98.7436 400.125C103.799 391.397 109.406 383.001 115.532 374.988C154.632 323.178 211.635 287.797 275.415 275.75C284.192 274.127 293.042 272.917 301.933 272.126C307.813 271.652 311.27 271.963 317.773 271.095Z"/></svg>
+                                </span>
+                                <span class="type-selector__label">AstroPay</span>
+                            </span>
+                        </label>
+
+                    </div>
+                </fieldset>
+
+                <!-- ── Group Selector ─────────────────────────────── -->
+                <div class="group-selector-row" id="group-selector-row">
+                    <label class="input-label group-selector-label" for="group-select">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" aria-hidden="true">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                            <polyline points="2 17 12 22 22 17"/>
+                            <polyline points="2 12 12 17 22 12"/>
+                        </svg>
+                        Grupo
+                    </label>
+                    <div class="group-select-wrapper">
+                        <select id="group-select" class="group-select group-select-el" aria-label="Seleccionar grupo">
+                            <option value="">— Sin grupo —</option>
+                        </select>
+                        <svg class="group-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <label for="card-input" class="input-label">Número de tarjeta</label>
+                        <input id="card-input" type="text" inputmode="numeric" placeholder="0000 0000 0000 0000" maxlength="19" class="card-number-input" autocomplete="cc-number" required>
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="cvc-input" class="input-label">CVC</label>
+                        <input id="cvc-input" type="text" inputmode="numeric" placeholder="123" maxlength="4" class="card-number-input" autocomplete="cc-csc" required>
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="expiration-input" class="input-label">Vencimiento</label>
+                        <input id="expiration-input" type="text" inputmode="numeric" placeholder="MM/AA" maxlength="5" class="card-number-input" autocomplete="cc-exp" required>
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="cvu-input" class="input-label">CVU <span class="input-optional">(opcional)</span></label>
+                        <input id="cvu-input" type="text" inputmode="numeric" placeholder="Ej: 0000003100099912345678" maxlength="22" class="card-number-input" autocomplete="off">
+                    </div>
+                    <div class="input-wrapper input-wrapper--full">
+                        <label for="titular-input" class="input-label">Titular</label>
+                        <input id="titular-input" type="text" placeholder="Ej: Juan Pérez" maxlength="100" class="titular-input" autocomplete="cc-name" required>
+                    </div>
+                </div>
+                <button id="add-card-btn" type="submit" class="btn btn-primary" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Agregar tarjeta
+                </button>
+            </form>
+            </div>
+        </section>
+
+        <!-- Cards Dashboard -->
+        <section class="cards-section">
+            <div id="cards-container" class="cards-container"></div>
+
+            <div id="empty-state" class="empty-state hidden">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" width="64" height="64" class="empty-icon">
+                    <rect x="2" y="5" width="20" height="14" rx="3"/>
+                    <path d="M2 10h20"/>
+                </svg>
+                <p class="empty-title">Sin tarjetas registradas</p>
+                <p class="empty-subtitle">Agrega tu primera tarjeta usando el formulario de arriba.</p>
+            </div>
+
+            <div id="loading-state" class="loading-state">
+                <div class="spinner"></div>
+                <p>Cargando tarjetas...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ── SELECTION ACTION BAR ──────────────────────────── -->
+    <div id="selection-bar" class="selection-bar" role="toolbar" aria-label="Acciones de selección">
+        <div class="selection-bar__inner">
+            <span id="selection-count" class="selection-bar__count">Seleccionadas: 0</span>
+            <div class="selection-bar__actions">
+                <button id="selection-cancel" type="button" class="btn btn-ghost btn-sm">Cancelar</button>
+                <button id="selection-delete" type="button" class="btn btn-danger btn-sm">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TOAST CONTAINER ────────────────────────────────── -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- ── CONFIRM MODAL ──────────────────────────────────── -->
+    <div id="confirm-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="modal-card">
+            <h3 id="confirm-title" class="modal-title">Confirmar acción</h3>
+            <p id="confirm-message" class="modal-message"></p>
+            <div class="modal-actions">
+                <button id="confirm-cancel" type="button" class="btn btn-ghost">Cancelar</button>
+                <button id="confirm-accept" type="button" class="btn btn-danger">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── EDIT CARD MODAL ──────────────────────────────────── -->
+    <div id="edit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+        <div class="modal-card modal-card--edit">
+            <h3 id="edit-modal-title" class="modal-title">Editar tarjeta</h3>
+            <form id="edit-card-form" autocomplete="off" novalidate>
+                <input type="hidden" id="edit-card-id">
+
+                <!-- Edit modal -->
+                <div class="edit-field">
+                    <label class="input-label group-selector-label" for="edit-group-select">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" aria-hidden="true">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                            <polyline points="2 17 12 22 22 17"/>
+                            <polyline points="2 12 12 17 22 12"/>
+                        </svg>
+                        Grupo
+                    </label>
+                    <div class="group-select-wrapper">
+                        <select id="edit-group-select" class="group-select group-select-el" aria-label="Seleccionar grupo">
+                            <option value="">— Sin grupo —</option>
+                        </select>
+                        <svg class="group-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="edit-field">
+                    <label class="input-label">Tipo de tarjeta</label>
+                    <div class="edit-type-row">
+                        <label class="edit-type-option">
+                            <input type="radio" name="edit_card_type" value="dollarapp" class="edit-type-radio" checked>
+                            <span class="edit-type-label">DollarApp</span>
+                        </label>
+                        <label class="edit-type-option">
+                            <input type="radio" name="edit_card_type" value="astropay" class="edit-type-radio">
+                            <span class="edit-type-label">AstroPay</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="edit-field">
+                    <label for="edit-card-number" class="input-label">Número de tarjeta</label>
+                    <input id="edit-card-number" type="text" class="card-number-input" inputmode="numeric" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                </div>
+
+                <div class="edit-field">
+                    <label for="edit-cvc" class="input-label">CVC</label>
+                    <input id="edit-cvc" type="text" class="card-number-input" inputmode="numeric" placeholder="123" maxlength="4" autocomplete="cc-csc" required>
+                </div>
+
+                <div class="edit-field">
+                    <label for="edit-expiration" class="input-label">Vencimiento</label>
+                    <input id="edit-expiration" type="text" class="card-number-input" inputmode="numeric" placeholder="MM/AA" maxlength="5" autocomplete="cc-exp" required>
+                </div>
+
+                <div class="edit-field">
+                    <label for="edit-cvu" class="input-label">CVU <span class="input-optional">(opcional)</span></label>
+                    <input id="edit-cvu" type="text" class="card-number-input" inputmode="numeric" placeholder="Ej: 0000003100099912345678" maxlength="22" autocomplete="off">
+                </div>
+
+                <div class="edit-field">
+                    <label for="edit-titular" class="input-label">Titular</label>
+                    <input id="edit-titular" type="text" class="titular-input" placeholder="Ej: Juan Pérez" maxlength="100" required>
+                </div>
+
+                <!-- ── State Controls (uses + cooldown) ──────── -->
+                <div class="edit-state-divider"></div>
+
+                <div class="edit-field">
+                    <label class="input-label">Usos restantes</label>
+                    <div class="edit-uses-selector" id="edit-uses-selector">
+                        <div class="edit-uses-dots" id="edit-uses-dots"></div>
+                        <span class="edit-uses-count" id="edit-uses-count">5/5</span>
+                    </div>
+                </div>
+
+                <div class="edit-field">
+                    <label class="input-label">Cooldown</label>
+                    <div class="edit-cooldown-field" id="edit-cooldown-field"></div>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="edit-cancel" type="button" class="btn btn-ghost">Cancelar</button>
+                    <button id="edit-save" type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── GROUPS DRAWER ─────────────────────────────────────── -->
+    <div id="groups-drawer" class="groups-drawer hidden" role="dialog" aria-modal="true" aria-label="Gestión de grupos" aria-hidden="true">
+        <div class="groups-drawer__backdrop" id="groups-drawer-backdrop"></div>
+        <div class="groups-drawer__panel">
+            <div class="groups-drawer__header">
+                <div class="groups-drawer__title-row">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                        <polyline points="2 17 12 22 22 17"/>
+                        <polyline points="2 12 12 17 22 12"/>
+                    </svg>
+                    <h2 class="groups-drawer__title">Grupos de tarjetas</h2>
+                </div>
+                <button id="groups-drawer-close" class="btn-icon groups-drawer__close" type="button" aria-label="Cerrar drawer de grupos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="groups-drawer__body">
+                <div id="groups-list" class="groups-list" role="list">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div id="groups-empty" class="groups-empty hidden">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="40" height="40">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                        <polyline points="2 17 12 22 22 17"/>
+                        <polyline points="2 12 12 17 22 12"/>
+                    </svg>
+                    <p>Sin grupos creados aún.</p>
+                </div>
+
+                <!-- Inline create/edit form -->
+                <div id="group-form-panel" class="group-form-panel hidden" role="form" aria-label="Formulario de grupo">
+                    <h3 class="group-form-panel__title" id="group-form-title">Nuevo grupo</h3>
+                    <div class="group-form-fields">
+                        <div class="group-form-field">
+                            <label class="input-label" for="gf-name">Nombre</label>
+                            <input id="gf-name" type="text" class="card-number-input" placeholder="Ej: Mi DollarApp principal" maxlength="80" autocomplete="off">
+                        </div>
+                        <div class="group-form-field">
+                            <label class="input-label" for="gf-type">Tipo</label>
+                            <div class="group-select-wrapper">
+                                <select id="gf-type" class="group-select">
+                                    <option value="dollarapp">DollarApp</option>
+                                    <option value="astropay">AstroPay</option>
+                                </select>
+                                <svg class="group-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="group-form-field">
+                            <label class="input-label" for="gf-titular">Titular</label>
+                            <input id="gf-titular" type="text" class="card-number-input" placeholder="Ej: Juan Pérez" maxlength="100" autocomplete="off">
+                        </div>
+                        <div class="group-form-field">
+                            <label class="input-label" for="gf-cvu">CVU <span class="input-required" aria-label="obligatorio">*</span></label>
+                            <input id="gf-cvu" type="text" class="card-number-input" inputmode="numeric" placeholder="Ej: 0000003100099912345678" maxlength="22" autocomplete="off">
+                        </div>
+                        <!-- Color de sección (bg_color) -->
+                        <div class="group-form-field">
+                            <label class="input-label" for="gf-bg-color">Color de grupo</label>
+                            <div class="gf-color-row">
+                                <input id="gf-bg-color" type="color" class="gf-color-input" title="Color de fondo del grupo">
+                                <button id="gf-bg-random" type="button" class="btn btn-ghost btn-sm gf-random-btn" title="Generar color aleatorio">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+                                    Aleatorio
+                                </button>
+                                <span class="gf-color-preview" id="gf-bg-preview"></span>
+                            </div>
+                        </div>
+                        <!-- Color de tarjetas del grupo (card_color, opcional) -->
+                        <div class="group-form-field">
+                            <div class="gf-card-color-toggle-row">
+                                <input id="gf-card-color-check" type="checkbox" class="gf-checkbox">
+                                <label for="gf-card-color-check" class="input-label gf-checkbox-label">Color de tarjetas <span class="input-optional">(opcional)</span></label>
+                            </div>
+                            <div id="gf-card-color-wrap" class="gf-color-row hidden">
+                                <input id="gf-card-color" type="color" class="gf-color-input" title="Color de las tarjetas de este grupo">
+                                <button id="gf-card-color-derive" type="button" class="btn btn-ghost btn-sm gf-random-btn" title="Derivar del color de grupo">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                    Auto
+                                </button>
+                                <span class="gf-color-preview" id="gf-card-preview"></span>
+                            </div>
+                        </div>
+
+                        <!-- ══ Reset window editor (DollarApp only) ══════════════ -->
+                        <div id="gf-resets-panel" class="gf-resets-panel" style="display:none">
+                            <div class="gf-resets-panel__title">
+                                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1ZM2 8a6 6 0 1 1 12 0A6 6 0 0 1 2 8Zm6-3v3.25l2.25 2.25-.75.75L7 8.75V5h1Z" fill="currentColor"/></svg>
+                                Control de reseteos (ventana mensual)
+                            </div>
+                            <div class="gf-resets-grid">
+                                <div class="group-form-field">
+                                    <label class="input-label" for="gf-resets-total">Total restantes <span class="input-optional">(de 30)</span></label>
+                                    <input id="gf-resets-total" type="number" class="card-number-input" min="0" max="999" step="1" value="30" inputmode="numeric" autocomplete="off">
+                                </div>
+                                <div class="group-form-field">
+                                    <label class="input-label" for="gf-resets-monthly">Usados este mes <span class="input-optional">(de 10)</span></label>
+                                    <input id="gf-resets-monthly" type="number" class="card-number-input" min="0" max="10" step="1" value="0" inputmode="numeric" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="group-form-field">
+                                <label class="input-label" for="gf-resets-window">Inicio de ventana actual <span class="input-optional">(UTC)</span></label>
+                                <input id="gf-resets-window" type="datetime-local" class="card-number-input" autocomplete="off">
+                                <div class="gf-resets-shortcuts">
+                                    <button type="button" id="gf-resets-window-now" class="btn btn-ghost btn-xs">Reiniciar ahora</button>
+                                    <button type="button" id="gf-resets-window-clear" class="btn btn-ghost btn-xs">Sin ventana (nueva con próx. reset)</button>
+                                </div>
+                            </div>
+                            <p class="input-hint">Los reseteos se decrementan al agregar la tarjeta #4+. Ventana de 30 días desde el primer reset del ciclo. Edita si hay desincronización.</p>
+                        </div>
+                    </div>
+                    <div class="group-form-actions">
+                        <button id="gf-cancel" type="button" class="btn btn-ghost btn-sm">Cancelar</button>
+                        <button id="gf-save" type="button" class="btn btn-primary btn-sm">Guardar grupo</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="groups-drawer__footer">
+                <button id="groups-add-btn" type="button" class="btn btn-primary groups-add-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Nuevo grupo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── JS MODULES ─────────────────────────────────────── -->
+    <script src="js/state.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/dom.js"></script>
+    <script src="js/groups.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>

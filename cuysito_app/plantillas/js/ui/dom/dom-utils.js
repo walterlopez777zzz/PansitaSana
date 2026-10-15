@@ -1,0 +1,1 @@
+export function $(n,e){const t=document.getElementById(n),r=e&&e.optional;if(!t){if(r)return null;throw new Error(`Missing element: ${n}`)}return t}

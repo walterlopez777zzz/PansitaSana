@@ -1,0 +1,16 @@
+{
+  "name": "api-watcher",
+  "version": "1.0.0",
+  "description": "Servicio vigilante para la tienda de Fortnite.",
+  "main": "api-watcher.js",
+  "scripts": {
+    "start": "node api-watcher.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "ws": "^8.17.0",
+    "zod": "^3.23.8"
+  }
+}

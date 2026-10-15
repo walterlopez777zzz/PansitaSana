@@ -1,0 +1,1 @@
+import{createDefaultDiscountConfig as o}from"../pricing/discounts.js";export function createDefaultCollageItemDiscount(){return{useGlobalDiscount:!0,config:o()}}

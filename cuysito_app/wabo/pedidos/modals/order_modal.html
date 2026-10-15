@@ -1,0 +1,198 @@
+<!-- Order Detail Modal -->
+<div id="order-modal" class="fixed inset-0 overflow-y-auto z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true" data-modal-backdrop>
+    <div class="flex items-start justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-black/70 backdrop-blur-[8px] transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+        <div class="inline-block align-bottom bg-zinc-950 rounded-lg text-left overflow-hidden shadow-2xl transform transition-all sm:my-4 sm:align-middle sm:max-w-4xl sm:w-full animate-slide-up border border-zinc-800">
+            <div class="bg-zinc-950 px-4 pt-5 pb-4 sm:p-5 sm:pb-4 min-h-[300px] relative text-base">
+
+                <!-- Indicador de Carga (NUEVO) -->
+                <div id="modal-loader" class="absolute inset-0 bg-zinc-950/70 flex items-center justify-center hidden z-10">
+                    <i class="fas fa-spinner fa-spin text-4xl text-fortnite-blue"></i>
+                </div>
+
+                <!-- Contenedor Principal del Contenido (NUEVO) -->
+                <div id="modal-content-wrapper">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between gap-4 mb-5">
+                        <div class="flex items-center gap-2 text-zinc-100">
+                            <span class="text-[11px] font-bold tracking-[0.22em] uppercase font-mono text-zinc-500">Pedido:</span>
+                            <button id="modal-order-id" type="button" class="font-mono text-sm font-semibold text-zinc-100 hover:underline underline-offset-4 transition" title="Click para copiar"></button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div id="modal-order-status" class="inline-flex items-center gap-2 px-2 py-1 rounded-md border border-slate-800 text-slate-100"></div>
+                            <span id="modal-user-tag" class="hidden px-2 py-1 rounded-md text-[11px] font-semibold border"></span>
+                            <span id="modal-reserva-tag" class="hidden px-2 py-1 rounded-md text-[11px] font-semibold border border-teal-500/40 bg-teal-500/15 text-teal-300">RESERVA</span>
+                            <button id="modal-ban-hammer" type="button" class="hidden h-7 w-7 rounded-md border border-slate-800 text-slate-300 hover:text-red-300 hover:border-red-500/40 transition flex items-center justify-center" title="Banear usuario">
+                                <i class="fas fa-gavel text-[12px]"></i>
+                            </button>
+                            <button id="modal-header-ip" type="button" class="h-7 px-2 rounded-md border border-slate-700 text-[11px] font-semibold text-slate-300 hover:text-slate-100 hover:border-slate-500 transition" title="Ver detalles de IP">IP</button>
+                            <button data-close-button type="button" class="h-7 w-7 rounded-md border border-slate-800 text-slate-300 hover:text-slate-100 hover:border-slate-600 transition flex items-center justify-center" aria-label="Cerrar">
+                                <i class="fas fa-times text-[12px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Content -->
+                    <div class="mt-4 space-y-6">
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="text-sm font-bold tracking-[0.22em] uppercase text-zinc-400 flex items-center"><i class="fas fa-user mr-2"></i> Datos del Usuario</div>
+                            <div class="text-[12px] font-semibold text-zinc-200 normal-case tracking-normal text-right">
+                                <span id="modal-user-stats-registered"></span>
+                            </div>
+                        </div>
+                        <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                                <div class="flex items-start gap-3 min-w-0">
+                                    <div class="shrink-0">
+                                        <div class="w-14 h-14 rounded-lg bg-zinc-900/60 border border-zinc-800 overflow-hidden flex items-center justify-center">
+                                            <img id="modal-user-avatar-img" class="hidden w-full h-full object-cover" alt="Avatar">
+                                            <i id="modal-user-avatar-fallback" class="fas fa-user text-zinc-400 text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <div id="modal-user-display-name" class="min-w-0 text-sm font-bold tracking-[0.22em] uppercase text-zinc-200 truncate"></div>
+                                        </div>
+                                        <div class="mt-2 grid grid-cols-2 gap-x-5 gap-y-1.5">
+                                            <div class="flex items-center justify-between gap-3">
+                                                <div class="text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-500">COMPLETADOS</div>
+                                                <div id="modal-user-stats-completed" class="text-[12px] font-semibold text-zinc-100 text-right"></div>
+                                            </div>
+                                            <div class="flex items-center justify-between gap-3">
+                                                <button id="modal-user-history-toggle" type="button" class="text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-500 hover:text-zinc-300 transition inline-flex items-center gap-1 disabled:hover:text-zinc-500 disabled:cursor-default" title="Ver pedidos anteriores">PEDIDOS <i class="fas fa-chevron-down text-[8px] transition-transform"></i></button>
+                                                <div id="modal-user-stats-orders" class="text-[12px] font-semibold text-zinc-100 text-right"></div>
+                                            </div>
+                                            <div class="flex items-center justify-between gap-3">
+                                                <div class="text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-500">GASTADO</div>
+                                                <div id="modal-user-stats-spent" class="text-[12px] font-semibold text-zinc-100 text-right"></div>
+                                            </div>
+                                            <div id="modal-user-verification-row" class="hidden flex items-center justify-between gap-3">
+                                                <div class="text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-500">VERIF.</div>
+                                                <div class="flex items-center gap-2 min-w-0" id="modal-user-verification-wrap" title="">
+                                                    <div class="w-14 h-1 rounded-full bg-zinc-800 overflow-hidden"><div id="modal-user-verification-bar" class="h-full bg-amber-400 rounded-full" style="width:0%"></div></div>
+                                                    <span id="modal-user-verification-pct" class="text-[12px] font-semibold text-amber-300 tabular-nums"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2 h-full">
+                                    <div id="modal-whatsapp-number-box" class="data-badge inline-flex items-center h-9 px-3 gap-2 w-fit max-w-full hover:brightness-110 transition" role="button" tabindex="0" title="Click para copiar">
+                                        <button id="modal-whatsapp-open" type="button" class="shrink-0 text-emerald-400 hover:text-emerald-300 transition" title="Abrir WhatsApp">
+                                            <i class="fab fa-whatsapp text-[18px]"></i>
+                                        </button>
+                                        <span id="modal-whatsapp-number" class="text-[15px] font-semibold text-zinc-100 tracking-wide whitespace-nowrap"></span>
+                                    </div>
+                                    <div class="flex items-center gap-2 max-w-full">
+                                        <div id="modal-bananos-projection" class="data-badge hidden inline-flex items-center h-9 px-3 gap-2 w-fit text-[12px] font-semibold whitespace-nowrap" title="Proyección de Bananos"></div>
+                                        <div id="modal-bananos-balance" class="data-badge inline-flex items-center h-9 px-3 gap-2 w-fit" role="button" tabindex="-1" title="Saldo actual de Bananos">
+                                            <img src="https://res.cloudinary.com/dq3xsjgwi/image/upload/v1768631193/bananos_cfqagf.webp" class="w-4 h-4" alt="Bananos">
+                                            <span id="modal-bananos-balance-text" class="text-[15px] font-semibold text-zinc-100 tracking-wide"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="modal-user-history" class="hidden mt-3 pt-3 border-t border-zinc-800">
+                                <div id="modal-user-history-list" class="max-h-36 overflow-y-auto pr-1 space-y-1 text-[12px]"></div>
+                            </div>
+                        </div>
+
+                        <!-- Products -->
+                        <div>
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <h4 class="text-sm font-bold tracking-[0.22em] uppercase text-zinc-400 flex items-center"><i class="fas fa-gift mr-2"></i> Productos Solicitados</h4>
+                                <div class="flex items-center gap-2">
+                                    <button id="modal-products-edit-btn" type="button" class="hidden h-7 w-7 rounded-md border border-zinc-800 text-zinc-500 hover:text-zinc-100 hover:border-zinc-600 transition flex items-center justify-center" title="Editar productos del pedido">
+                                        <i class="fas fa-pencil-alt text-[11px]"></i>
+                                    </button>
+                                    <div id="modal-products-edit-bar" class="hidden flex items-center gap-2">
+                                        <button id="modal-products-add-btn" type="button" class="h-7 px-2.5 rounded-md border border-zinc-700 text-[11px] font-semibold text-zinc-200 hover:border-cyan-500/60 hover:text-cyan-300 transition inline-flex items-center gap-1.5" title="Añadir producto"><i class="fas fa-plus text-[10px]"></i> Añadir</button>
+                                        <button id="modal-products-edit-cancel" type="button" class="h-7 px-2.5 rounded-md border border-zinc-800 text-[11px] font-semibold text-zinc-400 hover:text-zinc-100 hover:border-zinc-600 transition">Cancelar</button>
+                                        <button id="modal-products-edit-save" type="button" class="h-7 px-3 rounded-md bg-cyan-500 hover:bg-cyan-400 text-[11px] font-semibold text-white transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>Guardar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="modal-products-picker" class="hidden mb-3 border border-zinc-800 rounded-lg bg-zinc-950 overflow-hidden">
+                                <div class="flex items-center gap-2 px-3 py-2 border-b border-zinc-800 bg-zinc-900/40">
+                                    <i class="fas fa-search text-zinc-500 text-[11px]"></i>
+                                    <input id="modal-picker-search" type="text" placeholder="Buscar en la tienda de hoy o estáticos…" class="flex-1 bg-transparent text-[13px] text-zinc-100 placeholder-zinc-600 outline-none" autocomplete="off">
+                                    <div class="flex items-center gap-1 text-[10px] font-bold tracking-[0.16em] uppercase">
+                                        <button type="button" data-picker-tab="all" class="picker-tab px-2 py-1 rounded border border-zinc-700 text-zinc-100">Todo</button>
+                                        <button type="button" data-picker-tab="shop" class="picker-tab px-2 py-1 rounded border border-transparent text-zinc-500 hover:text-zinc-300">Tienda</button>
+                                        <button type="button" data-picker-tab="static" class="picker-tab px-2 py-1 rounded border border-transparent text-zinc-500 hover:text-zinc-300">Estáticos</button>
+                                    </div>
+                                    <button id="modal-picker-close" type="button" class="h-6 w-6 rounded border border-zinc-800 text-zinc-500 hover:text-zinc-100 hover:border-zinc-600 transition flex items-center justify-center" aria-label="Cerrar buscador"><i class="fas fa-times text-[10px]"></i></button>
+                                </div>
+                                <div id="modal-picker-recipient" class="hidden flex items-center gap-1.5 flex-wrap px-3 py-1.5 border-b border-zinc-800 text-[11px]">
+                                    <span class="text-[10px] font-bold tracking-[0.16em] uppercase text-zinc-500 mr-1">Para</span>
+                                </div>
+                                <div id="modal-picker-results" class="max-h-56 overflow-y-auto divide-y divide-zinc-800/60"></div>
+                            </div>
+                            <div id="modal-products-container"></div>
+                            <div id="modal-edit-preview" class="hidden mt-3"></div>
+                        </div>
+                        <div id="modal-summary-container"></div>
+                        <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-4">
+                            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-sm font-bold tracking-[0.22em] uppercase text-zinc-400 mb-4 flex items-center"><i class="fas fa-calendar-alt mr-2"></i> Fechas</div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-0 border border-zinc-800 rounded-lg overflow-hidden divide-y divide-zinc-800 sm:divide-y-0 sm:divide-x">
+                                        <div class="flex flex-col">
+                                            <div class="px-4 py-2 bg-zinc-900/40 text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-500 border-b border-zinc-800 text-center">SOLICITUD</div>
+                                            <div class="px-4 py-3 text-center">
+                                                <p id="modal-request-date" class="text-sm font-semibold text-zinc-100"></p>
+                                                <p id="modal-request-time" class="mt-1 text-xs font-semibold text-zinc-500"></p>
+                                                <p id="modal-request-elapsed" class="mt-1 text-xs font-semibold text-cyan-300 hidden"></p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <div class="px-4 py-2 bg-zinc-900/40 text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-500 border-b border-zinc-800 text-center">NOTIFICADO</div>
+                                            <div class="px-4 py-3 text-center">
+                                                <p id="modal-notified-date" class="text-sm font-semibold text-zinc-100"></p>
+                                                <p id="modal-notified-time" class="mt-1 text-xs font-semibold text-zinc-500"></p>
+                                                <p id="modal-notified-elapsed" class="mt-1 text-xs font-semibold text-cyan-300 hidden"></p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <div class="px-4 py-2 bg-zinc-900/40 text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-500 border-b border-zinc-800 text-center">PAGO</div>
+                                            <div class="px-4 py-3 text-center">
+                                                <p id="modal-paid-date" class="text-sm font-semibold text-zinc-100"></p>
+                                                <p id="modal-paid-time" class="mt-1 text-xs font-semibold text-zinc-500"></p>
+                                                <p id="modal-paid-elapsed" class="mt-1 text-xs font-semibold text-cyan-300 hidden"></p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <div class="px-4 py-2 bg-zinc-900/40 text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-500 border-b border-zinc-800 text-center">COMPLETADO</div>
+                                            <div class="px-4 py-3 text-center">
+                                                <p id="modal-completed-date" class="text-sm font-semibold text-zinc-100"></p>
+                                                <p id="modal-completed-time" class="mt-1 text-xs font-semibold text-zinc-500"></p>
+                                                <p id="modal-completed-elapsed" class="mt-1 text-xs font-semibold text-cyan-300 hidden"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full lg:w-56 shrink-0 border-t border-zinc-800 pt-4 lg:pt-0 lg:border-t-0 lg:border-l lg:pl-4">
+                                    <div class="text-sm font-bold tracking-[0.22em] uppercase text-zinc-400 mb-4 flex items-center"><i class="fas fa-cog mr-2"></i> Acciones</div>
+                                    <div class="space-y-4">
+                                        <div id="modal-status-buttons" class="grid grid-cols-2 gap-2">
+                                            <button type="button" data-status="pendiente" class="modal-status-btn h-9 rounded-lg border border-zinc-800 bg-zinc-950 text-[12px] font-semibold text-zinc-200 hover:border-zinc-600 hover:bg-zinc-900/50 transition">Pendiente</button>
+                                            <button type="button" data-status="pagado" class="modal-status-btn h-9 rounded-lg border border-zinc-800 bg-zinc-950 text-[12px] font-semibold text-zinc-200 hover:border-zinc-600 hover:bg-zinc-900/50 transition">Pagado</button>
+                                            <button type="button" data-status="completado" class="modal-status-btn h-9 rounded-lg border border-zinc-800 bg-zinc-950 text-[12px] font-semibold text-zinc-200 hover:border-zinc-600 hover:bg-zinc-900/50 transition">Completado</button>
+                                            <button type="button" data-status="cancelado" class="modal-status-btn h-9 rounded-lg border border-zinc-800 bg-zinc-950 text-[12px] font-semibold text-zinc-200 hover:border-zinc-600 hover:bg-zinc-900/50 transition">Cancelado</button>
+                                        </div>
+                                        <button id="confirm-action-btn-modal" class="w-full bg-cyan-500 hover:bg-cyan-400 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-md shadow-cyan-500/20">Confirmar Acción</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="bg-zinc-950 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-zinc-800">
+                <button data-close-button type="button" class="w-full inline-flex justify-center rounded-lg border border-zinc-800 shadow-sm px-4 py-2 bg-zinc-900 text-base font-semibold text-zinc-200 hover:bg-zinc-800 sm:ml-3 sm:w-auto sm:text-sm transition">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

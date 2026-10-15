@@ -1,0 +1,1 @@
+export function safeIdFromTitle(e){return String(e||"").trim().replace(/\W+/g,"-").toLowerCase()}

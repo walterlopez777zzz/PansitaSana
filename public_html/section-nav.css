@@ -1,0 +1,640 @@
+/**
+ * SectionNav.css — Hardware-Accelerated IntersectionObserver-Driven Navigation
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════════════════
+ * ARCHITECTURAL PARADIGM: DIRECT NODE MUTATION WITH ARIA SEMANTICS
+ * ═══════════════════════════════════════════════════════════════════════════════════════════
+ *
+ * CORE PRINCIPLES:
+ * ================
+ * 1. DIRECT ATTRIBUTE TARGETING: CSS targets data-active="true" and aria-current="page"
+ * 2. ZERO HARDCODED ID MAPPINGS: Universal selectors work with any section ID
+ * 3. O(1) DOM MUTATION: JavaScript mutates specific nodes, not parent containers
+ * 4. GPU-ACCELERATED TRANSITIONS: opacity, transform, background-color only
+ * 5. DYNAMIC HYDRATION RESILIENT: No structural ID dependencies
+ *
+ * STATE MUTATION MECHANISM:
+ * ===========================
+ * JavaScript (SectionNav.js) executes direct node mutations:
+ *   previousActiveLink.removeAttribute('data-active')
+ *   previousActiveLink.removeAttribute('aria-current')
+ *   newActiveLink.setAttribute('data-active', 'true')
+ *   newActiveLink.setAttribute('aria-current', 'page')
+ *
+ * CSS reacts universally:
+ *   .section-nav__link[data-active="true"] {
+ *     background-color: var(--nav-link-bg-active);
+ *   }
+ *
+ * BENEFITS:
+ * =========
+ * - Zero iteration overhead (cached node references)
+ * - Zero hardcoded section IDs (works with volatile Web Worker IDs)
+ * - Graceful async hydration tolerance
+ * - GPU-accelerated visual updates
+ * - IntersectionObserver-driven geometry (zero manual boundary computation)
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES — State Matrix Tokens
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+    /* Dimensional tokens */
+    --nav-width-expanded: 280px;
+    --nav-width-collapsed: 60px;
+    --nav-dot-size: 8px;
+    --nav-dot-active-size: 10px;
+    --nav-link-min-height: 2.25rem;
+    
+    /* Timing functions */
+    --nav-transition-duration: 0.3s;
+    --nav-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    --nav-state-transition: 0.15s ease-out;
+    
+    /* State matrix */
+    --nav-link-bg-rest: transparent;
+    --nav-link-bg-hover: rgba(255, 255, 255, 0.08);
+    --nav-link-bg-active: rgba(255, 255, 255, 0.15);
+    --nav-link-bg-active-hover: rgba(255, 255, 255, 0.22);
+    
+    --nav-dot-rest: rgba(255, 255, 255, 0.2);
+    --nav-dot-active: #ffffff;
+    
+    --nav-text-color: #ffffff;
+    
+    /* GPU-Accelerated Dynamic Scroll Masking */
+    --mask-top-alpha: 1;
+    --mask-bottom-alpha: 1;
+    --mask-threshold: 32px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARENT WRAPPER — Unified Width Choreography
+   ═══════════════════════════════════════════════════════════════ */
+#side-nav-wrapper {
+    /* Passive coordinate rail — NO dimensional control or clipping */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: visible;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DESKTOP FILTER CONTAINER — Isolated Component with Independent Breakpoint
+   ═══════════════════════════════════════════════════════════════ */
+#desktop-filter-container {
+    /* Flex constraint: Never shrink */
+    flex-shrink: 0;
+    
+    /* Invisible coordinate boundary — NO visual styles */
+    background: transparent;
+    width: max-content;
+    
+    /* Hardware acceleration: Isolate compositor layer */
+    contain: layout paint style;
+    will-change: transform;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER ACTIONS CONTAINER — Filter Button Encapsulation
+   ═══════════════════════════════════════════════════════════════ */
+.section-nav__header-actions {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    z-index: 50;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE NAVIGATION CONTAINER — Isolated Component
+   ═══════════════════════════════════════════════════════════════ */
+.section-nav {
+    /* Flex constraints for viewport height safety */
+    flex: 1 1 auto;
+    min-height: 0;
+    
+    /* Viewport height constraint */
+    max-height: 50vh;
+    
+    /* Independent glassmorphism — Terminal leaf node styling */
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    /* Dimensional ownership: Nav pillar controls its own width */
+    width: var(--nav-width-expanded);
+    transition: width var(--nav-transition-duration) var(--nav-transition-easing);
+    
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    /* Hardware acceleration: Isolate compositor layer */
+    contain: layout style;
+    will-change: transform;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INDEPENDENT BREAKPOINT CHOREOGRAPHY
+   Filter: ~1530px (stays expanded until close to 1400px content boundary)
+   Navigation: 1840px (original pillar collapse point)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ───────────────────────────────────────────────────────────────
+   FILTER BUTTON INDEPENDENT COLLAPSE — 1530px Breakpoint
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 1530px) {
+    /* Filter button collapses — direct node targeting */
+    #filter-btn-desktop {
+        width: var(--nav-width-collapsed);
+        justify-content: center;
+        transition: width var(--nav-transition-duration) var(--nav-transition-easing);
+    }
+    
+    /* Filter button expands on parent hover/focus — intrinsic content width */
+    #desktop-filter-container:hover #filter-btn-desktop,
+    #desktop-filter-container:focus-within #filter-btn-desktop {
+        width: max-content;
+        justify-content: flex-start;
+    }
+    
+    /* Hide filter text in collapsed state */
+    #filter-btn-desktop span {
+        opacity: 0;
+        width: 0;
+        margin: 0;
+        overflow: hidden;
+        transition: opacity 0.15s ease-out, width 0.2s ease-out, margin 0.2s ease-out;
+    }
+    
+    /* Show filter text on expansion */
+    #desktop-filter-container:hover #filter-btn-desktop span,
+    #desktop-filter-container:focus-within #filter-btn-desktop span {
+        opacity: 1;
+        width: auto;
+        margin-right: 0.5rem;
+        transition: opacity 0.2s ease-in 0.1s, width 0.2s ease-in 0.1s, margin 0.2s ease-in 0.1s;
+    }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   NAVIGATION PILLAR COLLAPSE — 1840px Breakpoint (Original)
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 1840px) {
+    /* Nav pillar collapses independently */
+    .section-nav {
+        width: var(--nav-width-collapsed);
+        overflow-y: hidden;
+    }
+    
+    /* Hover expansion: Nav pillar expands independently */
+    #side-nav-wrapper:hover .section-nav,
+    #side-nav-wrapper:focus-within .section-nav {
+        width: var(--nav-width-expanded);
+        overflow-y: auto;
+    }
+    
+    /* Collapsed state: Disable dynamic masking (JavaScript will set alphas to 1) */
+    .section-nav__scroll-container {
+        --mask-top-alpha: 1;
+        --mask-bottom-alpha: 1;
+    }
+    
+    /* Expanded state: Enable dynamic masking (JavaScript orchestrator controls alphas) */
+    #side-nav-wrapper:hover .section-nav__scroll-container,
+    #side-nav-wrapper:focus-within .section-nav__scroll-container {
+        /* Alphas controlled by ScrollMaskOrchestrator */
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       PHASE 1: STATE MATRIX — Background Gating in Collapsed Mode
+       Enforce transparent backgrounds for ALL link states when collapsed
+       ═══════════════════════════════════════════════════════════════ */
+    
+    /* Default collapsed state: All backgrounds transparent */
+    .section-nav__link,
+    .section-nav__link:hover,
+    .section-nav__link[data-active="true"],
+    .section-nav__link[aria-current="page"],
+    .section-nav__link[data-active="true"]:hover,
+    .section-nav__link[aria-current="page"]:hover {
+        background-color: transparent !important;
+        /* Collapse phase: Instant background removal (0s transition) */
+        transition: background-color 0s;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       PHASE 2: TRANSITION CHOREOGRAPHY — Asymmetric Background Restitution
+       Restore backgrounds ONLY when parent expands via :hover or :focus-within
+       Expansion phase: Delayed fade-in after width transition completes
+       ═══════════════════════════════════════════════════════════════ */
+    
+    /* Parent hover expansion: Restore link backgrounds with delayed transition */
+    #side-nav-wrapper:hover .section-nav__link,
+    #side-nav-wrapper:focus-within .section-nav__link {
+        background-color: var(--nav-link-bg-rest) !important;
+        /* Expansion phase: Delayed fade-in (0.1s delay after width expansion) */
+        transition: background-color 0.2s ease-in 0.1s;
+    }
+    
+    #side-nav-wrapper:hover .section-nav__link:hover,
+    #side-nav-wrapper:focus-within .section-nav__link:hover {
+        background-color: var(--nav-link-bg-hover) !important;
+        transition: background-color 0.2s ease-in 0.1s;
+    }
+    
+    /* Active state in expanded mode - Universal Pattern */
+    #side-nav-wrapper:hover .section-nav__link[data-active="true"],
+    #side-nav-wrapper:hover .section-nav__link[aria-current="page"],
+    #side-nav-wrapper:focus-within .section-nav__link[data-active="true"],
+    #side-nav-wrapper:focus-within .section-nav__link[aria-current="page"] {
+        background-color: var(--nav-link-bg-active) !important;
+        transition: background-color 0.2s ease-in 0.1s;
+    }
+    
+    /* Active + Hover state in expanded mode - Universal Pattern */
+    #side-nav-wrapper:hover .section-nav__link[data-active="true"]:hover,
+    #side-nav-wrapper:hover .section-nav__link[aria-current="page"]:hover,
+    #side-nav-wrapper:focus-within .section-nav__link[data-active="true"]:hover,
+    #side-nav-wrapper:focus-within .section-nav__link[aria-current="page"]:hover {
+        background-color: var(--nav-link-bg-active-hover) !important;
+        transition: background-color 0.2s ease-in 0.1s;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL CONTAINER — GPU-Accelerated Dynamic Gradient Fade
+   ═══════════════════════════════════════════════════════════════ */
+.section-nav__scroll-container {
+    width: 100%;
+    height: 100%;
+    
+    /* Dynamic gradient mask controlled by JavaScript via CSS custom properties */
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        rgba(0,0,0, var(--mask-top-alpha, 1)) 0%,
+        rgba(0,0,0, 1) var(--mask-threshold, 32px),
+        rgba(0,0,0, 1) calc(100% - var(--mask-threshold, 32px)),
+        rgba(0,0,0, var(--mask-bottom-alpha, 1)) 100%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(0,0,0, var(--mask-top-alpha, 1)) 0%,
+        rgba(0,0,0, 1) var(--mask-threshold, 32px),
+        rgba(0,0,0, 1) calc(100% - var(--mask-threshold, 32px)),
+        rgba(0,0,0, var(--mask-bottom-alpha, 1)) 100%
+    );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION ITEMS CONTAINER — Densified Spacing
+   ═══════════════════════════════════════════════════════════════ */
+.section-nav__items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.25rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION LINK — 4-Tier State Matrix (Universal Selectors)
+   ═══════════════════════════════════════════════════════════════ */
+.section-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.375rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    color: var(--nav-text-color);
+    position: relative;
+    
+    /* Y-axis immutability: Prevent height collapse when text is absolutely positioned */
+    min-height: var(--nav-link-min-height);
+    
+    /* State 1: Rest */
+    background-color: var(--nav-link-bg-rest);
+    
+    /* GPU-accelerated background transition */
+    transition: background-color var(--nav-state-transition);
+    
+    /* Rendering isolation: Enforce immutable stacking context */
+    contain: paint;
+}
+
+/* Phase 3: Perfect horizontal symmetry in collapsed state */
+@media (max-width: 1840px) {
+    .section-nav__link {
+        justify-content: center;
+        padding-left: 0.375rem;
+        padding-right: 0.375rem;
+    }
+    
+    /* Restore normal layout on expansion */
+    #side-nav-wrapper:hover .section-nav__link,
+    #side-nav-wrapper:focus-within .section-nav__link {
+        justify-content: flex-start;
+    }
+}
+
+/* State 2: Hover (inactive element) */
+.section-nav__link:hover {
+    background-color: var(--nav-link-bg-hover);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DIRECT NODE MUTATION — Universal Attribute Targeting
+   ═══════════════════════════════════════════════════════════════
+   
+   ARCHITECTURAL PARADIGM:
+   JavaScript directly mutates specific navigation link nodes:
+   link.setAttribute('data-active', 'true')
+   link.setAttribute('aria-current', 'page')
+   
+   CSS reacts universally via attribute selectors.
+   This eliminates ALL hardcoded section ID dependencies.
+   
+   SCALABILITY:
+   Works with ANY section ID, including volatile Web Worker-generated IDs
+   like "section-bestsellers-carousel", "section-dynamic-123", etc.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* State 3: Active (currently intersected section) - Universal Pattern */
+.section-nav__link[data-active="true"],
+.section-nav__link[aria-current="page"],
+.section-nav__link.is-selected {
+    background-color: var(--nav-link-bg-active);
+}
+
+/* State 4: Active + Hover (additive visual response) */
+.section-nav__link[data-active="true"]:hover,
+.section-nav__link[aria-current="page"]:hover,
+.section-nav__link.is-selected:hover {
+    background-color: var(--nav-link-bg-active-hover);
+}
+
+/* Focus state for keyboard navigation */
+.section-nav__link:focus-visible {
+    outline: 2px solid var(--nav-text-color);
+    outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DOT INDICATOR — Mutually Exclusive Visibility
+   ═══════════════════════════════════════════════════════════════ */
+.section-nav__dot {
+    width: var(--nav-dot-size);
+    height: var(--nav-dot-size);
+    border-radius: 50%;
+    flex-shrink: 0;
+    
+    /* Default: Inactive dot */
+    background-color: var(--nav-dot-rest);
+    
+    /* GPU-accelerated transitions */
+    transition: opacity var(--nav-state-transition),
+                transform 0.2s var(--nav-transition-easing),
+                background-color var(--nav-state-transition);
+    
+    /* Default: Visible on large screens */
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Active dot: High-contrast indicator - Universal Pattern */
+.section-nav__link[data-active="true"] .section-nav__dot,
+.section-nav__link[aria-current="page"] .section-nav__dot {
+    background-color: var(--nav-dot-active);
+    transform: scale(1.25);
+}
+
+/* Collapsed state (<1840px): Dots visible, text hidden */
+@media (max-width: 1840px) {
+    .section-nav__dot {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    /* Active dot in collapsed state - Universal Pattern */
+    .section-nav__link[data-active="true"] .section-nav__dot,
+    .section-nav__link[aria-current="page"] .section-nav__dot {
+        transform: scale(1.25);
+    }
+    
+    /* On hover expansion: Dots completely hidden */
+    #side-nav-wrapper:hover .section-nav__dot,
+    #side-nav-wrapper:focus-within .section-nav__dot {
+        opacity: 0;
+        transform: scale(0);
+        transition: opacity 0.15s ease-out,
+                    transform 0.15s ease-out;
+    }
+}
+
+/* Large screens (>1840px): Dots hidden, text visible */
+@media (min-width: 1841px) {
+    .section-nav__dot {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEXT LABEL — Mutually Exclusive Visibility
+   ═══════════════════════════════════════════════════════════════ */
+.section-nav__text {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    
+    /* Prevent text wrapping during expansion */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* Default: Visible on large screens */
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.2s ease-in 0.1s,
+                transform 0.2s ease-in 0.1s;
+}
+
+/* Collapsed state (<1840px): Text hidden and removed from layout flow */
+@media (max-width: 1840px) {
+    .section-nav__text {
+        position: absolute;
+        top: 50%;
+        width: 0;
+        opacity: 0;
+        transform: translateY(-50%) scale(0.8);
+        overflow: hidden;
+        transition: opacity 0.15s ease-out,
+                    transform 0.15s ease-out,
+                    width 0.15s ease-out;
+    }
+    
+    /* On hover expansion: Text visible with staggered delay */
+    #side-nav-wrapper:hover .section-nav__text,
+    #side-nav-wrapper:focus-within .section-nav__text {
+        position: static;
+        top: auto;
+        width: auto;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        transition: opacity 0.2s ease-in 0.1s,
+                    transform 0.2s ease-in 0.1s,
+                    width 0.2s ease-in 0.1s;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FILTER BUTTON CHOREOGRAPHY — 1530px-1840px Range
+   Filter stays expanded, only nav collapses
+   ═══════════════════════════════════════════════════════════════ */
+@media (min-width: 1531px) and (max-width: 1840px) {
+    /* Filter button stays expanded in this range */
+    #filter-btn-desktop {
+        width: auto;
+        justify-content: flex-start;
+    }
+    
+    #filter-btn-desktop span {
+        opacity: 1;
+        width: auto;
+        margin-right: 0.5rem;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CUSTOM SCROLLBAR STYLING
+   ═══════════════════════════════════════════════════════════════ */
+.section-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.section-nav::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.section-nav::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+/* Firefox scrollbar */
+.section-nav {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCESSIBILITY & REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    .section-nav,
+    .section-nav__dot,
+    .section-nav__text,
+    .section-nav__link {
+        transition: none !important;
+    }
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+    .section-nav {
+        border: 1px solid CanvasText;
+    }
+    
+    .section-nav__link:focus-visible {
+        outline: 2px solid Highlight;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE BEHAVIOR — Mobile (< 768px)
+   El rail lateral se oculta y toma el relevo el dropdown
+   #section-dropdown (barra fija arriba + panel desplegable).
+
+   Geometría del dropdown: el <nav> es una columna flex fija al
+   viewport. Cerrado sólo ocupa la barra (bottom: auto); abierto
+   ocupa todo el viewport (inset: 0) y el panel absorbe el resto
+   (flex: 1), así llega siempre al borde inferior sin depender de
+   la altura de la barra ni de unidades de viewport.
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+    .section-nav {
+        display: none;
+    }
+
+    #section-dropdown {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: var(--z-dropdown, 20);
+        display: flex;
+        flex-direction: column;
+    }
+
+    #section-dropdown.is-open {
+        inset: 0;
+    }
+
+    #section-dropdown-bar {
+        flex: none;
+        background-color: rgba(28, 28, 30, 0.7);
+        -webkit-backdrop-filter: blur(48px);
+        backdrop-filter: blur(48px);
+        border-bottom: 1px solid rgba(82, 82, 91, 0.5);
+    }
+
+    #section-dropdown-label {
+        min-width: 0;
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    #section-dropdown.is-open #section-dropdown-caret {
+        transform: rotate(180deg);
+    }
+
+    #section-dropdown-overlay {
+        display: none;
+        flex: 1 1 auto;
+        min-height: 0;
+        background-color: rgba(28, 28, 30, 0.85);
+        -webkit-backdrop-filter: blur(40px);
+        backdrop-filter: blur(40px);
+    }
+
+    #section-dropdown.is-open #section-dropdown-overlay {
+        display: block;
+    }
+
+    #section-dropdown-list {
+        height: 100%;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding-top: 1rem;
+        /* Deja visible el último ítem por encima de #mobile-nav (60px). */
+        padding-bottom: 80px;
+    }
+
+    #section-dropdown-list .section-link-item {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    #section-dropdown-list .section-link-item:hover {
+        background-color: rgba(245, 158, 11, 0.1);
+    }
+}

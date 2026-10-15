@@ -1,0 +1,1 @@
+export function createDerivedSubscriber(e,t,r,c={}){const s=c.equals||Object.is;let n=t(e.getState());return r(n,n),e.subscribe((e,c)=>{const i=t(e);if(s(i,n))return;const u=n;n=i,r(i,u)})}

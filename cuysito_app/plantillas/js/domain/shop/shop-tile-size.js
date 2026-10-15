@@ -1,0 +1,1 @@
+import{clamp as i}from"../../utils/number-utils.js";export function parseTileSizeWidthUnits(t){const r=String(t||"").trim();if(!r)return 1;const e=/size[_-]?(\d+)/i.exec(r),n=Number(e?e[1]:r);return i(Math.round(Number.isFinite(n)?n:1),1,4)}

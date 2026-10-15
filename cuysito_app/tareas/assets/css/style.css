@@ -1,0 +1,1819 @@
+/* ============================================================
+   Tareas — Estilos del módulo
+   Diseño propio y autocontenido. Soporta tema claro/oscuro via
+   data-theme en <html> y prefers-color-scheme.
+   ============================================================ */
+
+/* ── Tokens ─────────────────────────────────────────────────── */
+:root {
+    --tk-bg:            #0f0f14;
+    --tk-bg-soft:       #15151d;
+    --tk-surface:       #1a1a24;
+    --tk-surface-2:     #20202c;
+    --tk-border:        rgba(255, 255, 255, .08);
+    --tk-border-strong: rgba(255, 255, 255, .16);
+    --tk-text:          #f0f0f5;
+    --tk-text-muted:    #8e8ea8;
+    --tk-text-faint:    #5f5f78;
+    --tk-accent:        #6c63ff;
+    --tk-accent-2:      #8b7bff;
+    --tk-accent-glow:   rgba(108, 99, 255, .32);
+    --tk-success:       #3ecf8e;
+    --tk-warning:       #f5a524;
+    --tk-danger:        #ff5c5c;
+
+    --tk-radius:    1rem;
+    --tk-radius-sm: .6rem;
+    --tk-radius-xs: .4rem;
+    --tk-shadow:    0 18px 48px rgba(0, 0, 0, .45);
+    --tk-shadow-sm: 0 6px 20px rgba(0, 0, 0, .35);
+    --tk-font:      'Inter', system-ui, -apple-system, sans-serif;
+    --tk-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Acentos de las tarjetas de ideas */
+    --acc-violet: #8b7bff;
+    --acc-blue:   #4d9dff;
+    --acc-green:  #3ecf8e;
+    --acc-amber:  #f5a524;
+    --acc-rose:   #ff6b9d;
+    --acc-cyan:   #2dd4d4;
+}
+
+[data-theme="light"] {
+    --tk-bg:            #f4f4fb;
+    --tk-bg-soft:       #ececf6;
+    --tk-surface:       #ffffff;
+    --tk-surface-2:     #f7f7fc;
+    --tk-border:        rgba(15, 15, 30, .09);
+    --tk-border-strong: rgba(15, 15, 30, .16);
+    --tk-text:          #15151f;
+    --tk-text-muted:    #5f5f78;
+    --tk-text-faint:    #9a9ab0;
+    --tk-shadow:        0 18px 48px rgba(40, 40, 80, .14);
+    --tk-shadow-sm:     0 6px 20px rgba(40, 40, 80, .10);
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+        --tk-bg:            #f4f4fb;
+        --tk-bg-soft:       #ececf6;
+        --tk-surface:       #ffffff;
+        --tk-surface-2:     #f7f7fc;
+        --tk-border:        rgba(15, 15, 30, .09);
+        --tk-border-strong: rgba(15, 15, 30, .16);
+        --tk-text:          #15151f;
+        --tk-text-muted:    #5f5f78;
+        --tk-text-faint:    #9a9ab0;
+        --tk-shadow:        0 18px 48px rgba(40, 40, 80, .14);
+        --tk-shadow-sm:     0 6px 20px rgba(40, 40, 80, .10);
+    }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--tk-bg);
+    color: var(--tk-text);
+    font-family: var(--tk-font);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--tk-accent); outline-offset: 2px; }
+
+/* App oculta hasta que se valida el acceso */
+.tk-app { display: none; }
+.tk-app.is-ready { display: block; }
+
+/* ── Layout ─────────────────────────────────────────────────── */
+.tk-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem;
+}
+
+.tk-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.tk-brand { display: flex; align-items: center; gap: .75rem; }
+
+.tk-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: linear-gradient(135deg, var(--tk-accent), var(--tk-accent-2));
+    box-shadow: 0 6px 18px var(--tk-accent-glow);
+}
+
+.tk-brand h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -.01em;
+}
+.tk-brand p {
+    margin: 0;
+    font-size: .78rem;
+    color: var(--tk-text-muted);
+}
+
+.tk-header-actions { margin-left: auto; display: flex; gap: .5rem; }
+
+.tk-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface);
+    color: var(--tk-text-muted);
+    display: grid;
+    place-items: center;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.tk-icon-btn:hover { color: var(--tk-text); border-color: var(--tk-border-strong); }
+.tk-icon-btn:disabled { opacity: .4; cursor: not-allowed; }
+.tk-icon-btn:disabled:hover { color: var(--tk-text-muted); border-color: var(--tk-border); }
+
+/* Grupo Deshacer/Rehacer: par segmentado separado del resto de acciones. */
+.tk-history-controls { display: flex; gap: .35rem; padding-right: .5rem; margin-right: .15rem; border-right: 1px solid var(--tk-border); }
+
+/* Texto accesible sólo para lectores de pantalla. */
+.tk-sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── Tabs ───────────────────────────────────────────────────── */
+.tk-tabs {
+    display: inline-flex;
+    padding: .3rem;
+    gap: .25rem;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+}
+.tk-tab {
+    border: 0;
+    background: transparent;
+    color: var(--tk-text-muted);
+    font-weight: 600;
+    font-size: .9rem;
+    padding: .5rem 1.1rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    transition: color .15s, background .15s;
+}
+.tk-tab .tk-count {
+    font-size: .72rem;
+    background: var(--tk-surface-2);
+    color: var(--tk-text-muted);
+    padding: .05rem .45rem;
+    border-radius: 999px;
+}
+.tk-tab.is-active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--tk-accent), var(--tk-accent-2));
+    box-shadow: 0 6px 16px var(--tk-accent-glow);
+}
+.tk-tab.is-active .tk-count { background: rgba(255, 255, 255, .22); color: #fff; }
+/* Rayo de "Ideas": contorno cuando el tab está inactivo, relleno al activarse. */
+.tk-tab[data-view="ideas"] svg path { transition: fill .15s ease; }
+.tk-tab.is-active[data-view="ideas"] svg path { fill: currentColor; }
+/* Diana de "Misiones": único icono con el anillo más grueso, para igualar
+   visualmente el grosor del punto central relleno. */
+.tk-tab[data-view="misiones"] svg { stroke-width: 3; }
+
+.tk-view { display: none; animation: tk-fade .25s ease both; }
+.tk-view.is-active { display: block; }
+
+/* ── Composer (captura rápida de ideas) ─────────────────────── */
+.tk-composer {
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius);
+    padding: 1rem;
+    box-shadow: var(--tk-shadow-sm);
+    margin-bottom: 1.5rem;
+    transition: border-color .2s, box-shadow .2s;
+}
+.tk-composer.is-focused {
+    border-color: var(--tk-accent);
+    box-shadow: 0 0 0 4px var(--tk-accent-glow);
+}
+.tk-composer textarea {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--tk-text);
+    font-family: inherit;
+    font-size: 1rem;
+    resize: none;
+    min-height: 52px;
+    line-height: 1.5;
+}
+.tk-composer textarea::placeholder { color: var(--tk-text-faint); }
+.tk-composer textarea:focus { outline: none; }
+
+.tk-composer-bar {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-top: .5rem;
+    flex-wrap: wrap;
+}
+.tk-swatches { display: flex; gap: .4rem; }
+.tk-swatch {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    padding: 0;
+    transition: transform .12s, border-color .12s;
+}
+.tk-swatch:hover { transform: scale(1.15); }
+.tk-swatch.is-selected { border-color: var(--tk-text); transform: scale(1.15); }
+.tk-swatch:focus-visible { outline: 2px solid var(--tk-accent); outline-offset: 2px; }
+.tk-hint { font-size: .75rem; color: var(--tk-text-faint); margin-left: auto; }
+/* El atajo "Ctrl + Enter" no aplica sin teclado físico: ocultarlo en
+   dispositivos táctiles o pantallas angostas (el botón pasa a la derecha). */
+@media (hover: none) and (pointer: coarse), (max-width: 560px) {
+    .tk-hint { display: none; }
+    .tk-composer-bar .tk-btn--primary { margin-left: auto; }
+}
+
+/* ── Botones ────────────────────────────────────────────────── */
+.tk-btn {
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface-2);
+    color: var(--tk-text);
+    font-weight: 600;
+    font-size: .88rem;
+    padding: .5rem .9rem;
+    border-radius: var(--tk-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    transition: background .15s, border-color .15s, transform .1s, opacity .15s;
+}
+.tk-btn:hover { border-color: var(--tk-border-strong); }
+.tk-btn:active { transform: translateY(1px); }
+.tk-btn[disabled] { opacity: .5; cursor: not-allowed; }
+.tk-btn--primary {
+    background: linear-gradient(135deg, var(--tk-accent), var(--tk-accent-2));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 6px 16px var(--tk-accent-glow);
+}
+.tk-btn--ghost { background: transparent; border-color: transparent; color: var(--tk-text-muted); padding: .4rem .55rem; }
+.tk-btn--ghost:hover { color: var(--tk-text); background: var(--tk-surface-2); }
+.tk-btn--danger:hover { color: var(--tk-danger); border-color: var(--tk-danger); }
+.tk-btn--sm { font-size: .8rem; padding: .35rem .65rem; }
+
+/* ── Ideas grid ─────────────────────────────────────────────── */
+.tk-ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+    gap: 1rem;
+    /* Ancla para las tarjetas que el reconciliador saca del flujo (absolute)
+       mientras se desvanecen, para que no empujen a sus vecinas. */
+    position: relative;
+}
+.tk-idea {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius);
+    padding: 1rem 1rem .85rem;
+    box-shadow: var(--tk-shadow-sm);
+    overflow: hidden;
+    transition: transform .18s cubic-bezier(.22, .68, 0, 1.2), box-shadow .18s, border-color .18s;
+}
+/* Animación de entrada sólo en altas reales (la marca el reconciliador);
+   actualizar una idea ya visible no la dispara. */
+.tk-idea.is-entering { animation: tk-pop .28s cubic-bezier(.22, .68, 0, 1.2) both; }
+.tk-idea::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--idea-accent, var(--acc-violet));
+}
+.tk-idea:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--tk-shadow);
+    border-color: var(--tk-border-strong);
+}
+.tk-idea.is-pinned { border-color: var(--idea-accent, var(--acc-violet)); }
+.tk-idea-text {
+    font-size: .95rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0 0 .75rem;
+    min-height: 2.5em;
+}
+.tk-idea-foot {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    margin-top: auto;
+}
+/* La fecha es metadato pasivo: siempre visible (no compite por ancho con las
+   acciones) y se trunca con elipsis si el contenedor es muy estrecho, en vez
+   de empujar las acciones fuera de la tarjeta. */
+.tk-idea-date {
+    font-size: .72rem;
+    color: var(--tk-text-faint);
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* Acciones: clúster de ancho fijo, anclado a la derecha. Se revelan al pasar
+   el cursor o al enfocar dentro de la tarjeta; en táctil (sin hover) y con el
+   menú "⋯" abierto permanecen visibles. */
+.tk-idea-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: .15rem;
+    margin-left: auto;
+    flex: none;
+    opacity: 0;
+    transition: opacity .15s;
+}
+.tk-idea:hover .tk-idea-actions,
+.tk-idea:focus-within .tk-idea-actions,
+.tk-idea-actions:has(.tk-menu.is-open) { opacity: 1; }
+.tk-idea .tk-drag-handle { opacity: 0; transition: opacity .15s; }
+.tk-idea:hover .tk-drag-handle,
+.tk-idea:focus-within .tk-drag-handle { opacity: 1; }
+@media (hover: none) {
+    .tk-idea-actions,
+    .tk-idea .tk-drag-handle { opacity: 1; }
+}
+.tk-idea-pin {
+    position: absolute;
+    top: .55rem; right: .55rem;
+    color: var(--idea-accent, var(--acc-violet));
+    display: none;
+}
+.tk-idea.is-pinned .tk-idea-pin { display: block; }
+/* ── Misiones ───────────────────────────────────────────────── */
+.tk-toolbar {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+.tk-filter { display: inline-flex; gap: .25rem; flex-wrap: wrap; }
+.tk-chip {
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface);
+    color: var(--tk-text-muted);
+    font-size: .8rem;
+    font-weight: 600;
+    padding: .35rem .75rem;
+    border-radius: 999px;
+    transition: color .15s, border-color .15s, background .15s;
+}
+.tk-chip.is-active { color: var(--tk-text); border-color: var(--tk-accent); background: var(--tk-accent-glow); }
+
+.tk-missions { display: flex; flex-direction: column; gap: .85rem; position: relative; }
+.tk-mission {
+    position: relative;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius);
+    box-shadow: var(--tk-shadow-sm);
+    overflow: hidden;
+}
+/* Animación de entrada sólo en altas reales (la marca el reconciliador);
+   actualizar una misión ya visible no la dispara. */
+.tk-mission.is-entering { animation: tk-fade .25s ease both; }
+.tk-mission::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--mission-accent, var(--acc-violet));
+}
+.tk-mission.is-done::before { opacity: .45; }
+.tk-mission-head {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .9rem 1rem;
+}
+.tk-check {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    margin-top: 2px;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid var(--tk-border-strong);
+    background: transparent;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    transition: background .15s, border-color .15s;
+}
+.tk-check svg { opacity: 0; }
+.tk-mission.is-done .tk-check { background: var(--tk-success); border-color: var(--tk-success); }
+.tk-mission.is-done .tk-check svg { opacity: 1; }
+
+/* Glyph de check compartido por las dos insignias de "completado"
+   (misión y ítem de checklist): mismo tamaño y grosor para que sean
+   visualmente idénticos. `display:block` elimina el corrimiento de la
+   línea base del SVG inline; el padding del <button> se neutraliza en
+   cada insignia. Así el check queda centrado de forma fiable. */
+.tk-check svg,
+.tk-checklist-item .tk-mini-check svg,
+.tk-select-box svg {
+    display: block;
+    width: 13px;
+    height: 13px;
+    stroke-width: 3.2px;
+}
+
+/* ── Mini-dashboard / resumen de misiones ───────────────────── */
+.tk-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) minmax(140px, 1.4fr);
+    gap: .6rem;
+    margin-bottom: 1.25rem;
+}
+.tk-stat {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    text-align: left;
+    padding: .7rem .85rem;
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius-sm);
+    background: var(--tk-surface);
+    color: var(--tk-text);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, transform .1s;
+}
+.tk-stat:hover { border-color: var(--tk-border-strong); }
+.tk-stat:active { transform: translateY(1px); }
+.tk-stat.is-active {
+    border-color: var(--tk-accent);
+    background: color-mix(in srgb, var(--tk-accent) 10%, var(--tk-surface));
+}
+.tk-stat-num { font-size: 1.4rem; font-weight: 700; line-height: 1.1; }
+.tk-stat-label { font-size: .74rem; color: var(--tk-text-muted); font-weight: 500; }
+.tk-stat--pendiente .tk-stat-num { color: var(--tk-warning); }
+.tk-stat--en_progreso .tk-stat-num { color: var(--tk-accent); }
+.tk-stat--completada .tk-stat-num { color: var(--tk-success); }
+.tk-stat--progress { cursor: default; justify-content: center; gap: .5rem; }
+.tk-stat--progress:hover { border-color: var(--tk-border); }
+.tk-stat--progress:active { transform: none; }
+.tk-stat-progresshead { display: flex; align-items: baseline; gap: .4rem; }
+.tk-stat--progress .tk-progress { margin: 0; height: 6px; }
+@media (max-width: 620px) {
+    .tk-stats { grid-template-columns: repeat(2, 1fr); }
+    .tk-stat--progress { grid-column: 1 / -1; }
+    .tk-stat-num { font-size: 1.2rem; }
+}
+
+/* ── Selección múltiple (acciones en lote) ──────────────────── */
+.tk-select-box {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    margin-top: 2px;
+    padding: 0;
+    border-radius: 6px;
+    border: 2px solid var(--tk-border-strong);
+    background: transparent;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    transition: background .15s, border-color .15s;
+}
+.tk-select-box svg { opacity: 0; }
+.tk-select-box.is-checked { background: var(--tk-accent); border-color: var(--tk-accent); }
+.tk-select-box.is-checked svg { opacity: 1; }
+.tk-mission.is-selected {
+    border-color: var(--tk-accent);
+    box-shadow: inset 0 0 0 1px var(--tk-accent), var(--tk-shadow-sm);
+}
+
+.tk-bulkbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem .75rem;
+    margin-top: .75rem;
+    padding: .55rem .75rem;
+    border: 1px solid var(--tk-accent);
+    border-radius: var(--tk-radius-sm);
+    background: color-mix(in srgb, var(--tk-accent) 8%, var(--tk-surface));
+    animation: tk-fade .2s ease both;
+}
+.tk-bulkbar-count { font-size: .82rem; font-weight: 600; color: var(--tk-text); }
+.tk-bulkbar-actions { display: inline-flex; align-items: center; flex-wrap: wrap; gap: .4rem; }
+.tk-bulkbar-actions.is-disabled { opacity: .5; pointer-events: none; }
+.tk-bulkbar > .tk-icon-btn { margin-left: auto; }
+
+.tk-mission-main { flex: 1; min-width: 0; }
+.tk-mission-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    word-break: break-word;
+}
+.tk-mission.is-done .tk-mission-title { text-decoration: line-through; color: var(--tk-text-muted); }
+.tk-mission-desc {
+    font-size: .85rem;
+    color: var(--tk-text-muted);
+    margin: .3rem 0 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.tk-mission-meta { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-top: .55rem; }
+
+.tk-pill {
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    border: 1px solid var(--tk-border);
+    color: var(--tk-text-muted);
+}
+.tk-pill--alta   { color: var(--tk-danger);  border-color: color-mix(in srgb, var(--tk-danger) 40%, transparent); }
+.tk-pill--media  { color: var(--tk-warning); border-color: color-mix(in srgb, var(--tk-warning) 40%, transparent); }
+.tk-pill--baja   { color: var(--tk-success); border-color: color-mix(in srgb, var(--tk-success) 40%, transparent); }
+.tk-pill--status { text-transform: capitalize; }
+.tk-pill--origin {
+    color: var(--tk-accent);
+    border-color: color-mix(in srgb, var(--tk-accent) 40%, transparent);
+    background: color-mix(in srgb, var(--tk-accent) 8%, transparent);
+}
+
+/* ── Vencimiento y recurrencia ─────────────────────────── */
+.tk-due--overdue {
+    color: var(--tk-danger);
+    border-color: color-mix(in srgb, var(--tk-danger) 45%, transparent);
+    background: color-mix(in srgb, var(--tk-danger) 12%, transparent);
+}
+.tk-due--today {
+    color: var(--tk-warning);
+    border-color: color-mix(in srgb, var(--tk-warning) 45%, transparent);
+    background: color-mix(in srgb, var(--tk-warning) 12%, transparent);
+}
+.tk-due--soon {
+    color: var(--tk-accent);
+    border-color: color-mix(in srgb, var(--tk-accent) 40%, transparent);
+}
+.tk-due--upcoming { color: var(--tk-text-muted); }
+.tk-pill--recur { color: var(--tk-text-muted); }
+
+/* ── Banner de recordatorios in-app ────────────────────── */
+.tk-reminder {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .55rem .75rem;
+    margin-bottom: .9rem;
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius-sm);
+    background: var(--tk-surface);
+}
+.tk-reminder.is-overdue {
+    border-color: color-mix(in srgb, var(--tk-danger) 45%, transparent);
+    background: color-mix(in srgb, var(--tk-danger) 10%, transparent);
+}
+.tk-reminder.is-overdue > svg { color: var(--tk-danger); }
+.tk-reminder.is-today {
+    border-color: color-mix(in srgb, var(--tk-warning) 45%, transparent);
+    background: color-mix(in srgb, var(--tk-warning) 10%, transparent);
+}
+.tk-reminder.is-today > svg { color: var(--tk-warning); }
+.tk-reminder > svg { flex-shrink: 0; }
+.tk-reminder-text { margin: 0; flex: 1 1 auto; font-size: .86rem; color: var(--tk-text); }
+.tk-reminder-close { flex-shrink: 0; }
+
+.tk-avatar {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.tk-assignee { display: inline-flex; align-items: center; gap: .35rem; font-size: .76rem; color: var(--tk-text-muted); }
+.tk-unassigned { font-size: .74rem; color: var(--tk-text-faint); font-style: italic; }
+
+.tk-mission-actions { display: flex; gap: .2rem; align-items: center; }
+.tk-progress {
+    height: 4px;
+    background: var(--tk-surface-2);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 0 1rem;
+}
+.tk-progress span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--tk-accent), var(--tk-accent-2));
+    transition: width .3s ease;
+}
+.tk-progress-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin: 0 1rem;
+}
+.tk-progress-row .tk-progress { flex: 1; margin: 0; }
+.tk-progress-text {
+    flex-shrink: 0;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--tk-text-faint);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Checklist */
+.tk-checklist { padding: .25rem 1rem 1rem; }
+.tk-checklist-item {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .3rem 0;
+    font-size: .88rem;
+}
+.tk-checklist-item .tk-mini-check {
+    width: 18px; height: 18px;
+    padding: 0;
+    border-radius: 5px;
+    border: 2px solid var(--tk-border-strong);
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: transparent;
+    transition: background .15s, border-color .15s;
+}
+.tk-checklist-item .tk-mini-check svg { opacity: 0; }
+.tk-checklist-item.is-done .tk-mini-check { background: var(--tk-accent); border-color: var(--tk-accent); }
+.tk-checklist-item.is-done .tk-mini-check svg { opacity: 1; }
+.tk-checklist-item.is-done .tk-item-text { text-decoration: line-through; color: var(--tk-text-faint); }
+.tk-item-text { flex: 1; word-break: break-word; }
+/* El texto del ítem es un botón que abre la edición inline (P1): se muestra
+   como texto plano, pero con afordancia al pasar el cursor. */
+.tk-item-text--btn {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    padding: .1rem .25rem;
+    margin: -.1rem -.25rem;
+    border-radius: var(--tk-radius-xs);
+    cursor: text;
+}
+.tk-item-text--btn:hover { background: var(--tk-surface-2); }
+.tk-item-edit {
+    flex: 1;
+    border: 1px solid var(--tk-accent);
+    background: var(--tk-surface-2);
+    color: var(--tk-text);
+    border-radius: var(--tk-radius-xs);
+    padding: .25rem .5rem;
+    font-family: inherit;
+    font-size: .88rem;
+}
+.tk-item-edit:focus { outline: none; }
+.tk-item-del { opacity: 0; }
+.tk-checklist-item:hover .tk-item-del,
+.tk-checklist-item:focus-within .tk-item-del { opacity: 1; }
+.tk-add-item {
+    display: flex;
+    gap: .5rem;
+    margin-top: .5rem;
+}
+.tk-add-item input {
+    flex: 1;
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface-2);
+    color: var(--tk-text);
+    border-radius: var(--tk-radius-xs);
+    padding: .4rem .6rem;
+    font-family: inherit;
+    font-size: .85rem;
+}
+.tk-add-item input:focus { outline: none; border-color: var(--tk-accent); }
+
+/* ── Empty states ───────────────────────────────────────────── */
+.tk-empty {
+    text-align: center;
+    padding: 3.5rem 1rem;
+    color: var(--tk-text-muted);
+}
+.tk-empty svg { color: var(--tk-text-faint); margin-bottom: 1rem; }
+.tk-empty h3 { margin: 0 0 .35rem; color: var(--tk-text); font-size: 1.05rem; }
+.tk-empty p { margin: 0; font-size: .9rem; }
+
+/* ── Estados de carga (skeletons) y error (#11) ─────────────── */
+/* Marcadores de posición durante la carga inicial: misma silueta que las
+   tarjetas reales para evitar el salto de layout al llegar los datos. */
+.tk-skel {
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius);
+    background: var(--tk-surface);
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+}
+.tk-skel--mission { min-height: 92px; }
+.tk-skel--idea { min-height: 132px; }
+.tk-skel-bar {
+    height: .7rem;
+    border-radius: var(--tk-radius-xs);
+    /* Degradado animado (shimmer) sobre un tono base de superficie. */
+    background: linear-gradient(
+        90deg,
+        var(--tk-surface-2) 25%,
+        var(--tk-border-strong) 37%,
+        var(--tk-surface-2) 63%
+    );
+    background-size: 400% 100%;
+    animation: tk-shimmer 1.4s ease-in-out infinite;
+}
+.tk-skel-bar--title { height: .95rem; width: 60%; }
+.tk-skel-bar--short { width: 40%; }
+
+.tk-loaderror {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1.25rem;
+    color: var(--tk-text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .55rem;
+}
+.tk-loaderror svg { color: var(--tk-danger); }
+.tk-loaderror-title { margin: .25rem 0 0; color: var(--tk-text); font-size: 1.05rem; font-weight: 600; }
+.tk-loaderror-hint { margin: 0 0 .6rem; font-size: .9rem; }
+
+@keyframes tk-shimmer {
+    from { background-position: 100% 0; }
+    to   { background-position: 0 0; }
+}
+
+/* ── Modal ──────────────────────────────────────────────────── */
+.tk-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(8, 8, 14, .6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+}
+.tk-modal-backdrop.is-open { display: flex; animation: tk-fade .2s ease both; }
+.tk-modal {
+    width: 100%;
+    max-width: 460px;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius);
+    box-shadow: var(--tk-shadow);
+    padding: 1.5rem;
+    animation: tk-pop .25s cubic-bezier(.22, .68, 0, 1.2) both;
+}
+.tk-modal h2 { margin: 0 0 1.1rem; font-size: 1.1rem; }
+.tk-field { margin-bottom: .9rem; }
+.tk-field label { display: block; font-size: .78rem; font-weight: 600; color: var(--tk-text-muted); margin-bottom: .35rem; }
+.tk-field input,
+.tk-field textarea,
+.tk-field select {
+    width: 100%;
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface-2);
+    color: var(--tk-text);
+    border-radius: var(--tk-radius-sm);
+    padding: .55rem .7rem;
+    font-family: inherit;
+    font-size: .92rem;
+}
+.tk-field textarea { resize: vertical; min-height: 80px; }
+.tk-field input:focus,
+.tk-field textarea:focus,
+.tk-field select:focus { outline: none; border-color: var(--tk-accent); }
+.tk-modal-actions { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1.25rem; }
+
+/* ── Paleta de comandos (Ctrl/⌘-K) ──────────────────────────── */
+.tk-cmd-backdrop { align-items: flex-start; padding: clamp(3rem, 12vh, 8rem) 1rem 1rem; }
+.tk-cmd {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    max-height: min(70vh, 560px);
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius);
+    box-shadow: var(--tk-shadow);
+    overflow: hidden;
+    animation: tk-pop .2s cubic-bezier(.22, .68, 0, 1.2) both;
+}
+.tk-cmd-head {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .85rem 1rem;
+    border-bottom: 1px solid var(--tk-border);
+    color: var(--tk-text-muted);
+}
+.tk-cmd-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--tk-text);
+    font-size: 1rem;
+    font-family: inherit;
+}
+.tk-cmd-input:focus { outline: none; }
+.tk-cmd-input::placeholder { color: var(--tk-text-muted); }
+.tk-cmd-list {
+    list-style: none;
+    margin: 0;
+    padding: .35rem;
+    overflow-y: auto;
+    flex: 1;
+}
+.tk-cmd-group {
+    padding: .55rem .75rem .3rem;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--tk-text-muted);
+}
+.tk-cmd-opt {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .55rem .75rem;
+    border-radius: var(--tk-radius-sm);
+    cursor: pointer;
+    color: var(--tk-text);
+}
+.tk-cmd-opt[aria-selected="true"] { background: color-mix(in srgb, var(--tk-accent) 14%, var(--tk-surface)); }
+.tk-cmd-opt-icon { display: inline-flex; color: var(--tk-text-muted); flex-shrink: 0; }
+.tk-cmd-opt[aria-selected="true"] .tk-cmd-opt-icon { color: var(--tk-accent); }
+.tk-cmd-opt-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tk-cmd-opt-hint {
+    flex-shrink: 0;
+    font-size: .72rem;
+    color: var(--tk-text-muted);
+    font-family: var(--tk-font-mono);
+}
+.tk-cmd-empty { padding: 1.5rem; text-align: center; color: var(--tk-text-muted); }
+.tk-cmd-foot {
+    display: flex;
+    gap: 1rem;
+    padding: .55rem 1rem;
+    border-top: 1px solid var(--tk-border);
+    font-size: .72rem;
+    color: var(--tk-text-muted);
+}
+.tk-cmd-foot-item { display: inline-flex; align-items: center; gap: .35rem; }
+
+/* Resalte temporal al navegar a una tarjeta desde la paleta. */
+.tk-flash { animation: tk-flash 1.5s ease both; }
+@keyframes tk-flash {
+    0%, 18% { box-shadow: 0 0 0 2px var(--tk-accent), 0 0 0 6px color-mix(in srgb, var(--tk-accent) 35%, transparent); }
+    100% { box-shadow: 0 0 0 2px transparent, 0 0 0 6px transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tk-cmd, .tk-flash { animation: none; }
+}
+
+/* ── Dropdown personalizado (tk-select) ─────────────────────── */
+.tk-select { position: relative; display: inline-block; }
+.tk-select-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface-2);
+    color: var(--tk-text);
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+.tk-select-trigger:hover { border-color: var(--tk-border-strong); }
+.tk-select.is-open .tk-select-trigger { border-color: var(--tk-accent); }
+.tk-select-trigger svg { flex-shrink: 0; color: var(--tk-text-muted); transition: transform .18s ease; }
+.tk-select.is-open .tk-select-trigger svg { transform: rotate(180deg); }
+.tk-select-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Variante "pill" (meta de cada misión) */
+.tk-select--pill .tk-select-trigger {
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .15rem .4rem .15rem .6rem;
+    border-radius: 999px;
+    color: var(--tk-text-muted);
+}
+
+/* Variante "bloque" (formularios / modal) */
+.tk-select--block { display: block; }
+.tk-select--block .tk-select-trigger {
+    width: 100%;
+    justify-content: space-between;
+    font-size: .92rem;
+    padding: .55rem .7rem;
+    border-radius: var(--tk-radius-sm);
+}
+
+/* Panel desplegable (montado en <body>, position:fixed) */
+.tk-select-list {
+    position: fixed;
+    z-index: 320;
+    margin: 0;
+    padding: .3rem;
+    list-style: none;
+    max-height: min(260px, 60vh);
+    overflow-y: auto;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border-strong);
+    border-radius: var(--tk-radius-sm);
+    box-shadow: var(--tk-shadow);
+    outline: none;
+    animation: tk-select-in .14s ease both;
+}
+@keyframes tk-select-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.tk-select-option {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .6rem;
+    font-size: .85rem;
+    color: var(--tk-text);
+    border-radius: var(--tk-radius-xs);
+    cursor: pointer;
+    white-space: nowrap;
+}
+.tk-select-option.is-active { background: var(--tk-surface-2); }
+.tk-select-option[aria-selected="true"] { color: var(--tk-accent); font-weight: 600; }
+.tk-select-option[aria-selected="true"]::after {
+    content: "";
+    margin-left: auto;
+    width: 5px; height: 9px;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ── Menú de acciones (overflow accesible) ──────────────────── */
+.tk-menu { position: relative; display: inline-flex; }
+.tk-menu-list {
+    position: fixed;
+    z-index: 320;
+    margin: 0;
+    padding: .3rem;
+    list-style: none;
+    min-width: 168px;
+    max-height: min(280px, 60vh);
+    overflow-y: auto;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border-strong);
+    border-radius: var(--tk-radius-sm);
+    box-shadow: var(--tk-shadow);
+    outline: none;
+    animation: tk-select-in .14s ease both;
+}
+.tk-menu-item {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    width: 100%;
+    padding: .45rem .6rem;
+    font-size: .85rem;
+    color: var(--tk-text);
+    background: none;
+    border: 0;
+    border-radius: var(--tk-radius-xs);
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+}
+.tk-menu-item svg { flex-shrink: 0; color: var(--tk-text-muted); }
+.tk-menu-item-label { overflow: hidden; text-overflow: ellipsis; }
+.tk-menu-item:hover,
+.tk-menu-item:focus-visible { background: var(--tk-surface-2); outline: none; }
+.tk-menu-item--danger { color: var(--tk-danger); }
+.tk-menu-item--danger svg { color: var(--tk-danger); }
+.tk-menu-item--danger:hover,
+.tk-menu-item--danger:focus-visible { background: color-mix(in srgb, var(--tk-danger) 12%, transparent); }
+.tk-menu-item:disabled { opacity: .5; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) {
+    .tk-menu-list { animation: none; }
+}
+
+/* ── Toasts ─────────────────────────────────────────────────── */
+.tk-toasts {
+    position: fixed;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+}
+.tk-toast {
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border-strong);
+    border-radius: var(--tk-radius-sm);
+    box-shadow: var(--tk-shadow);
+    padding: .65rem 1rem;
+    font-size: .88rem;
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    animation: tk-toast-in .25s cubic-bezier(.22, .68, 0, 1.2) both;
+}
+.tk-toast--error { border-color: color-mix(in srgb, var(--tk-danger) 50%, transparent); }
+.tk-toast--success { border-color: color-mix(in srgb, var(--tk-success) 50%, transparent); }
+.tk-toast.is-leaving { animation: tk-toast-out .2s ease forwards; }
+
+/* ── Animaciones ────────────────────────────────────────────── */
+@keyframes tk-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tk-pop { from { opacity: 0; transform: scale(.96) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes tk-toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes tk-toast-out { to { opacity: 0; transform: translateY(12px); } }
+
+/* Salidas: inversas de su entrada, ligeras y rápidas. */
+@keyframes tk-fade-out { to { opacity: 0; } }
+@keyframes tk-pop-out { to { opacity: 0; transform: scale(.96) translateY(6px); } }
+
+/* Baja de tarjetas: espeja la entrada (idea = pop, misión = fade). El
+   nodo deja de capturar eventos mientras se desvanece. */
+.tk-idea.is-leaving,
+.tk-mission.is-leaving { pointer-events: none; }
+.tk-idea.is-leaving { animation: tk-pop-out .18s cubic-bezier(.4, 0, 1, 1) both; }
+.tk-mission.is-leaving { animation: tk-fade-out .16s ease both; }
+
+/* Cierre de superpuestos: reproduce la entrada en reversa para que el
+   cierre sea consistente con la apertura. */
+.tk-modal-backdrop.is-closing { display: flex; animation: tk-fade .18s ease reverse both; }
+.tk-modal-backdrop.is-closing .tk-modal { animation: tk-pop .18s cubic-bezier(.22, .68, 0, 1.2) reverse both; }
+.tk-cmd-backdrop.is-closing .tk-cmd { animation: tk-pop .16s cubic-bezier(.22, .68, 0, 1.2) reverse both; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+@media (max-width: 560px) {
+    .tk-shell { padding: 1rem .85rem 3rem; }
+    .tk-ideas-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 400px) {
+    .tk-ideas-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Pantalla de bloqueo (PIN) ──────────────────────────────── */
+.tk-pl-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: var(--tk-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: tk-fade .25s ease both;
+}
+.tk-pl-overlay.is-leaving { animation: tk-fade .3s ease reverse both; }
+.tk-pl-overlay.is-success .tk-pl-card { animation: tk-pl-pulse .45s ease both; }
+
+.tk-pl-card {
+    width: 100%;
+    max-width: 340px;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius);
+    box-shadow: var(--tk-shadow);
+    padding: 2.25rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .85rem;
+    animation: tk-pop .3s cubic-bezier(.22, .68, 0, 1.2) both;
+}
+.tk-pl-card.tk-shake { animation: tk-shake .4s ease both; }
+.tk-pl-icon {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--tk-accent);
+    background: var(--tk-accent-glow);
+}
+.tk-pl-title { font-size: 1.2rem; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+.tk-pl-subtitle { font-size: .85rem; color: var(--tk-text-muted); margin: 0; text-align: center; }
+
+.tk-pl-dots { display: flex; gap: .65rem; margin: .35rem 0; }
+.tk-pl-dot {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: var(--tk-surface-2);
+    border: 1px solid var(--tk-border-strong);
+    transition: background .15s, transform .15s, border-color .15s;
+}
+.tk-pl-dot.is-filled { background: var(--tk-accent); border-color: var(--tk-accent); transform: scale(1.1); }
+
+.tk-pl-status { font-size: .8rem; min-height: 1.1em; margin: 0; color: var(--tk-text-muted); }
+.tk-pl-status--error { color: var(--tk-danger); }
+
+.tk-pl-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .6rem;
+    width: 100%;
+    margin-top: .5rem;
+}
+.tk-pl-key {
+    aspect-ratio: 1.6 / 1;
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface-2);
+    color: var(--tk-text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: var(--tk-radius-sm);
+    display: grid;
+    place-items: center;
+    transition: background .12s, transform .08s, border-color .12s;
+}
+.tk-pl-key:hover:not(:disabled) { border-color: var(--tk-border-strong); }
+.tk-pl-key:active:not(:disabled) { transform: scale(.95); background: var(--tk-surface); }
+.tk-pl-key:disabled { opacity: .4; cursor: not-allowed; }
+.tk-pl-key--del { color: var(--tk-text-muted); }
+
+@keyframes tk-shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-9px); }
+    40%, 80% { transform: translateX(9px); }
+}
+@keyframes tk-pl-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.04); box-shadow: 0 0 0 6px var(--tk-accent-glow); }
+    100% { transform: scale(1); }
+}
+
+/* ── Búsqueda en vivo ───────────────────────────────────────── */
+.tk-search {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius-sm);
+    padding: .4rem .65rem;
+    transition: border-color .15s, box-shadow .15s;
+}
+.tk-search:focus-within { border-color: var(--tk-accent); box-shadow: 0 0 0 3px var(--tk-accent-glow); }
+.tk-search > svg { color: var(--tk-text-faint); flex-shrink: 0; }
+.tk-search-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--tk-text);
+    font-family: inherit;
+    font-size: .9rem;
+}
+.tk-search-input:focus { outline: none; }
+.tk-search-input::placeholder { color: var(--tk-text-faint); }
+.tk-search-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.tk-search-clear {
+    border: 0;
+    background: transparent;
+    color: var(--tk-text-faint);
+    display: none;
+    place-items: center;
+    padding: .15rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.tk-search.has-value .tk-search-clear { display: grid; }
+.tk-search-clear:hover { color: var(--tk-text); }
+
+/* Fila de herramientas de Ideas (búsqueda) */
+.tk-ideas-tools { margin-bottom: 1rem; }
+
+.tk-mark {
+    background: var(--tk-accent-glow);
+    color: inherit;
+    border-radius: .2rem;
+    padding: 0 .12em;
+}
+
+/* Estado vacío cuando un filtro/búsqueda no arroja resultados */
+.tk-empty--filtered { padding: 2.5rem 1rem; }
+
+/* ── Contador de caracteres ─────────────────────────────────── */
+.tk-counter {
+    font-size: .68rem;
+    color: var(--tk-text-faint);
+    opacity: 0;
+    transition: opacity .15s, color .15s;
+}
+.tk-counter.is-near { opacity: 1; }
+.tk-counter.is-warn { color: var(--tk-warning); }
+/* En el modal flota arriba a la derecha del campo; en el composer va inline. */
+.tk-field { position: relative; }
+.tk-field .tk-counter { position: absolute; top: 0; right: 0; pointer-events: none; }
+.tk-composer-bar .tk-counter { margin-left: auto; }
+
+/* ── Toast de deshacer (cuenta regresiva) ───────────────────── */
+.tk-toast--action {
+    position: relative;
+    overflow: hidden;
+    padding-right: .6rem;
+}
+.tk-toast-msg { margin-right: .15rem; }
+.tk-toast-action {
+    border: 1px solid var(--tk-border-strong);
+    background: transparent;
+    color: var(--tk-accent-2);
+    font-weight: 600;
+    font-size: .82rem;
+    padding: .25rem .6rem;
+    border-radius: var(--tk-radius-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    transition: background .15s, border-color .15s;
+}
+.tk-toast-action:hover { background: var(--tk-surface-2); border-color: var(--tk-accent); }
+.tk-toast-timer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    background: var(--tk-accent);
+    transform-origin: left center;
+    transition-property: transform;
+    transition-timing-function: linear;
+}
+/* En pausa (cursor/foco) la barra queda congelada; sutil refuerzo visual. */
+.tk-toast--action.is-paused .tk-toast-timer { background: var(--tk-accent-2); }
+
+/* ── Toolbar de misiones (orden + acciones) ─────────────────── */
+.tk-toolbar .tk-search { flex: 1 1 180px; min-width: 150px; }
+.tk-toolbar-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--tk-text-muted);
+    font-size: .8rem;
+}
+.tk-toolbar-sort > svg { color: var(--tk-text-faint); }
+.tk-toolbar-sort .tk-select--pill .tk-select-trigger { color: var(--tk-text); }
+
+/* ── Fecha relativa en misiones ─────────────────────────────── */
+/* Vive en el clúster de acciones (arriba a la derecha), junto a los
+   controles, para no quedar suelta a media fila de metadatos. */
+.tk-mission-date {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    margin-right: .15rem;
+    font-size: .72rem;
+    color: var(--tk-text-faint);
+}
+.tk-mission-date svg { width: 12px; height: 12px; }
+.tk-mission-date.is-done { color: var(--tk-success); }
+
+/* Las marcas temporales relativas son atómicas: nunca deben partirse en
+   dos líneas (p. ej. "hace 5 h"). Regla global para todo el módulo. */
+.tk-timeago { white-space: nowrap; }
+
+/* ── Agrupado de misiones ───────────────────────────────────── */
+.tk-group-label {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin: .35rem .15rem -.15rem;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--tk-text-faint);
+}
+.tk-group-label::after { content: ""; flex: 1; height: 1px; background: var(--tk-border); }
+.tk-group-label:first-child { margin-top: 0; }
+
+/* ── Overlay de atajos de teclado ───────────────────────────── */
+.tk-shortcuts { display: grid; gap: .55rem; margin: .25rem 0 .25rem; }
+.tk-shortcut {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: .88rem;
+    color: var(--tk-text-muted);
+}
+.tk-keys { display: inline-flex; gap: .3rem; flex-shrink: 0; }
+kbd.tk-kbd {
+    font-family: var(--tk-font-mono);
+    font-size: .72rem;
+    line-height: 1.4;
+    background: var(--tk-surface-2);
+    border: 1px solid var(--tk-border-strong);
+    border-bottom-width: 2px;
+    border-radius: .35rem;
+    padding: .1rem .42rem;
+    color: var(--tk-text);
+    min-width: 1.5em;
+    text-align: center;
+}
+
+/* El atajo "?" no aplica sin teclado físico: ocultar el botón de ayuda. */
+@media (hover: none) and (pointer: coarse) {
+    .tk-help-btn { display: none; }
+}
+
+/* ── Archivar completadas (lote) ────────────────────────────── */
+.tk-bulk-count {
+    margin-left: .1rem;
+    background: var(--tk-surface-2);
+    color: var(--tk-text-muted);
+}
+
+/* ── Reordenamiento por arrastre (drag & drop) ──────────────── */
+.tk-drag-handle {
+    flex-shrink: 0;
+    display: inline-grid;
+    place-items: center;
+    width: 26px; height: 26px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--tk-text-faint);
+    border-radius: var(--tk-radius-xs);
+    cursor: grab;
+    touch-action: none; /* el puntero controla el arrastre, no el scroll */
+    transition: color .15s, background .15s, opacity .15s;
+}
+.tk-drag-handle:hover { color: var(--tk-text); background: var(--tk-surface-2); }
+.tk-drag-handle:active { cursor: grabbing; }
+
+/* En la cabecera de misión el asa se alinea con el botón de completar. */
+.tk-mission-head > .tk-drag-handle { margin-top: 2px; }
+
+/* El asa se renderiza siempre (para no reconstruir tarjetas al alternar el
+   modo), pero sólo es visible/enfocable cuando la lista es ordenable. */
+.tk-ideas-grid:not(.is-sortable) .tk-drag-handle,
+.tk-missions:not(.is-sortable) .tk-mission-head > .tk-drag-handle { display: none; }
+
+/* En la checklist el asa sólo se revela al interactuar, para no recargar. */
+.tk-checklist-item .tk-drag-handle { opacity: 0; width: 22px; height: 22px; }
+.tk-checklist-item:hover .tk-drag-handle,
+.tk-checklist-item:focus-within .tk-drag-handle { opacity: 1; }
+
+/* Estados de arrastre: ítem tomado por puntero o por teclado. */
+.is-sorting { cursor: grabbing; }
+.is-dragging {
+    opacity: .85;
+    box-shadow: var(--tk-shadow-lg, 0 12px 28px rgba(0,0,0,.28));
+    position: relative;
+    z-index: 5;
+}
+.is-grabbed {
+    outline: 2px dashed var(--tk-accent);
+    outline-offset: 2px;
+}
+
+/* Mientras se arrastra, suavizar el reacomodo de los vecinos. */
+.tk-ideas-grid.is-sortable .tk-idea,
+.tk-missions.is-sortable .tk-mission,
+.tk-checklist .tk-checklist-item { transition: transform .15s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+    .tk-ideas-grid.is-sortable .tk-idea,
+    .tk-missions.is-sortable .tk-mission,
+    .tk-checklist .tk-checklist-item { transition: none; }
+}
+
+/* ============================================================
+   Etiquetas (tags): chips, combobox, filtro y gestor
+   `--tag-color` lo fija cada control en línea (token de acento o
+   hex). color-mix produce tintes coherentes en claro/oscuro.
+   ============================================================ */
+
+/* ── Chip (lectura y filtro) ── */
+.tk-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; padding: 0; }
+.tk-tag {
+    --tag-color: var(--acc-violet);
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    max-width: 100%;
+    padding: .2rem .55rem;
+    font-size: .74rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--tk-text);
+    background: color-mix(in srgb, var(--tag-color) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--tag-color) 36%, transparent);
+    border-radius: 999px;
+}
+.tk-tag-dot {
+    flex: 0 0 auto;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--tag-color);
+}
+.tk-tag-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tk-tag--btn {
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s;
+}
+.tk-tag--btn:hover { background: color-mix(in srgb, var(--tag-color) 24%, transparent); }
+.tk-tag--btn:active { transform: scale(.96); }
+.tk-tag--btn:focus-visible { outline: 2px solid var(--tag-color); outline-offset: 2px; }
+.tk-tag-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 15px; height: 15px;
+    color: var(--tk-text-muted);
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: color .15s, background .15s;
+}
+.tk-tag-remove:hover { color: var(--tk-text); background: color-mix(in srgb, var(--tag-color) 30%, transparent); }
+.tk-tag-remove:focus-visible { outline: 2px solid var(--tag-color); outline-offset: 1px; }
+
+/* ── Combobox de selección múltiple ── */
+.tk-tagbox { position: relative; }
+.tk-tagbox-field {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem;
+    min-height: 42px;
+    padding: .35rem .5rem;
+    background: var(--tk-surface-2);
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius-sm);
+    cursor: text;
+    transition: border-color .15s;
+}
+.tk-tagbox.is-open .tk-tagbox-field,
+.tk-tagbox-field:focus-within { border-color: var(--tk-accent); }
+.tk-tagbox-chips { display: contents; }
+.tk-tagbox-input {
+    flex: 1 1 7ch;
+    min-width: 7ch;
+    border: none;
+    background: transparent;
+    color: var(--tk-text);
+    font: inherit;
+    font-size: .9rem;
+    padding: .15rem .1rem;
+}
+.tk-tagbox-input:focus { outline: none; }
+.tk-tagbox-list {
+    position: fixed;
+    z-index: 340;
+    margin: 0;
+    padding: .3rem;
+    list-style: none;
+    max-height: min(260px, 50vh);
+    overflow-y: auto;
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border-strong);
+    border-radius: var(--tk-radius-sm);
+    box-shadow: var(--tk-shadow);
+    outline: none;
+    animation: tk-select-in .14s ease both;
+}
+.tk-tagbox-option {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .6rem;
+    font-size: .85rem;
+    color: var(--tk-text);
+    border-radius: var(--tk-radius-xs);
+    cursor: pointer;
+}
+.tk-tagbox-option.is-active { background: var(--tk-surface-2); }
+.tk-tagbox-option--create { color: var(--tk-accent); font-weight: 600; }
+.tk-tagbox-empty {
+    padding: .45rem .6rem;
+    font-size: .82rem;
+    color: var(--tk-text-faint);
+}
+
+/* ── Barra de filtro ── */
+.tk-mis-toolbar-wrap { display: flex; flex-direction: column; gap: .65rem; }
+.tk-tag-filter-mount:empty { display: none; }
+.tk-tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem;
+}
+.tk-tag-filter-icon { display: inline-flex; color: var(--tk-text-faint); margin-right: .15rem; }
+.tk-tag-chip {
+    --tag-color: var(--acc-violet);
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .25rem .6rem;
+    font-size: .76rem;
+    font-weight: 600;
+    color: var(--tk-text-muted);
+    background: var(--tk-surface);
+    border: 1px solid var(--tk-border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+}
+.tk-tag-chip:hover { color: var(--tk-text); border-color: color-mix(in srgb, var(--tag-color) 45%, transparent); }
+.tk-tag-chip.is-active {
+    color: var(--tk-text);
+    border-color: color-mix(in srgb, var(--tag-color) 55%, transparent);
+    background: color-mix(in srgb, var(--tag-color) 18%, transparent);
+}
+.tk-tag-chip:focus-visible { outline: 2px solid var(--tag-color); outline-offset: 2px; }
+.tk-tag-filter-clear {
+    border: none;
+    background: transparent;
+    color: var(--tk-text-faint);
+    font-size: .76rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: .25rem .4rem;
+    border-radius: var(--tk-radius-xs);
+}
+.tk-tag-filter-clear:hover { color: var(--tk-text); text-decoration: underline; }
+
+/* ── Gestor CRUD ── */
+.tk-tag-manager-list { display: flex; flex-direction: column; gap: .25rem; margin-bottom: 1rem; }
+.tk-tag-manager-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .35rem 0;
+    border-bottom: 1px solid var(--tk-border);
+}
+.tk-tag-manager-row:last-child { border-bottom: none; }
+.tk-tag-manager-row .tk-tag { flex: 0 1 auto; }
+.tk-tag-usage { flex: 1 1 auto; font-size: .76rem; color: var(--tk-text-faint); }
+.tk-muted-note { font-size: .85rem; color: var(--tk-text-muted); margin: .25rem 0; }
+
+@media (prefers-reduced-motion: reduce) {
+    .tk-tag--btn:active { transform: none; }
+    .tk-tagbox-list { animation: none; }
+}
+
+/* ── Chip de detalle (comentarios + adjuntos) ──────────────── */
+.tk-pill--detail {
+    background: transparent;
+    color: var(--tk-text-muted);
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+    font-variant-numeric: tabular-nums;
+}
+.tk-pill--detail svg { opacity: .8; }
+.tk-pill--detail:hover { color: var(--tk-text); border-color: var(--tk-border-strong); background: var(--tk-surface-2); }
+.tk-pill--detail-active { color: var(--tk-accent); border-color: color-mix(in srgb, var(--tk-accent) 40%, transparent); }
+
+/* ── Panel de detalle de misión ────────────────────────────── */
+.tk-detail { max-width: 560px; display: flex; flex-direction: column; max-height: min(86vh, 760px); }
+.tk-detail-header {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+.tk-detail-titlewrap { flex: 1 1 auto; min-width: 0; }
+.tk-detail-eyebrow {
+    margin: 0 0 .15rem;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--tk-text-faint);
+}
+.tk-detail-title { margin: 0; font-size: 1.15rem; line-height: 1.3; word-break: break-word; }
+.tk-detail-header .tk-icon-btn { flex-shrink: 0; }
+.tk-detail-body { overflow-y: auto; display: flex; flex-direction: column; gap: 1.5rem; padding-right: .15rem; }
+.tk-detail-section { display: flex; flex-direction: column; gap: .6rem; }
+.tk-detail-subtitle {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin: 0;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--tk-text);
+}
+.tk-detail-subtitle svg { color: var(--tk-text-muted); }
+.tk-detail-note { margin: .25rem 0; font-size: .85rem; color: var(--tk-text-muted); }
+.tk-detail-note.is-error { color: var(--tk-danger); }
+
+/* ── Comentarios ───────────────────────────────────────────── */
+.tk-comments-list { display: flex; flex-direction: column; gap: .55rem; }
+.tk-comment {
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface-2);
+    border-radius: var(--tk-radius-sm);
+    padding: .55rem .7rem;
+}
+.tk-comment-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.tk-comment-time { font-size: .72rem; color: var(--tk-text-faint); }
+.tk-comment-body { margin: .25rem 0 0; font-size: .9rem; white-space: pre-wrap; word-break: break-word; }
+.tk-comment-composer {
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface);
+    border-radius: var(--tk-radius-sm);
+    padding: .5rem;
+}
+.tk-comment-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--tk-text);
+    font-family: inherit;
+    font-size: .9rem;
+    resize: none;
+    padding: .25rem .3rem;
+}
+.tk-comment-input:focus { outline: none; }
+.tk-comment-composer-bar { display: flex; align-items: center; gap: .5rem; margin-top: .35rem; }
+.tk-comment-composer-bar .tk-hint { margin-right: auto; }
+
+/* ── Adjuntos ──────────────────────────────────────────────── */
+.tk-dropzone {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    padding: 1.1rem;
+    border: 1px dashed var(--tk-border-strong);
+    border-radius: var(--tk-radius-sm);
+    background: var(--tk-surface-2);
+    color: var(--tk-text-muted);
+    text-align: center;
+    transition: border-color .15s, background .15s, color .15s;
+}
+.tk-dropzone:hover { color: var(--tk-text); border-color: var(--tk-accent); }
+.tk-dropzone.is-dragging {
+    border-color: var(--tk-accent);
+    background: color-mix(in srgb, var(--tk-accent) 10%, transparent);
+    color: var(--tk-text);
+}
+.tk-dropzone[disabled] { opacity: .6; cursor: progress; }
+.tk-dropzone-title { font-weight: 600; font-size: .9rem; }
+.tk-dropzone-hint { font-size: .75rem; color: var(--tk-text-faint); }
+.tk-attach-list { display: flex; flex-direction: column; gap: .4rem; }
+.tk-attach {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    border: 1px solid var(--tk-border);
+    border-radius: var(--tk-radius-sm);
+    padding: .45rem .6rem;
+}
+.tk-attach-icon { color: var(--tk-text-muted); display: inline-flex; flex-shrink: 0; }
+.tk-attach-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.tk-attach-name {
+    color: var(--tk-text);
+    text-decoration: none;
+    font-size: .88rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tk-attach-name:hover { color: var(--tk-accent); text-decoration: underline; }
+.tk-attach-meta { display: flex; align-items: center; gap: .4rem; font-size: .72rem; color: var(--tk-text-faint); }
+.tk-attach-dot { opacity: .6; }
+
+/* ── Plantillas ────────────────────────────────────────────── */
+.tk-tpl-list { display: flex; flex-direction: column; gap: .35rem; margin: .5rem 0 1rem; }
+.tk-tpl-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .45rem 0;
+    border-bottom: 1px solid var(--tk-border);
+}
+.tk-tpl-row:last-child { border-bottom: none; }
+.tk-tpl-info { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.tk-tpl-name { font-weight: 600; font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tk-tpl-count { font-size: .74rem; color: var(--tk-text-faint); }
+.tk-tpl-actions { display: flex; align-items: center; gap: .25rem; flex-shrink: 0; }
+.tk-tpl-items-editor { display: flex; flex-direction: column; gap: .4rem; }
+.tk-tpl-items { display: flex; flex-direction: column; gap: .35rem; }
+.tk-tpl-item-row { display: flex; align-items: center; gap: .35rem; }
+.tk-tpl-item-input {
+    flex: 1 1 auto;
+    border: 1px solid var(--tk-border);
+    background: var(--tk-surface-2);
+    color: var(--tk-text);
+    border-radius: var(--tk-radius-sm);
+    padding: .45rem .6rem;
+    font-family: inherit;
+    font-size: .88rem;
+}
+.tk-tpl-item-input:focus { outline: none; border-color: var(--tk-accent); }
+.tk-tpl-items-editor .tk-btn { align-self: flex-start; }
+
+/* ── Exportar / Importar ───────────────────────────────────── */
+.tk-io-section { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.25rem; }
+.tk-io-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .5rem 0;
+    border-bottom: 1px solid var(--tk-border);
+}
+.tk-io-section .tk-io-row:last-child { border-bottom: none; }
+.tk-io-info { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.tk-io-name { font-weight: 600; font-size: .9rem; }
+.tk-io-hint { font-size: .74rem; color: var(--tk-text-faint); }
+
+/* El panel de detalle desliza desde la derecha en pantallas amplias. */
+@media (min-width: 640px) {
+    .tk-detail-backdrop { justify-content: flex-end; align-items: stretch; padding: 0; }
+    .tk-detail {
+        max-width: 460px;
+        max-height: none;
+        height: 100%;
+        border-radius: 0;
+        border-right: none;
+        border-top: none;
+        border-bottom: none;
+        animation: tk-slide-in .22s cubic-bezier(.22, .68, 0, 1.2) both;
+    }
+    /* En pantallas amplias el panel se desliza de vuelta hacia la derecha. */
+    .tk-detail-backdrop.is-closing .tk-detail { animation: tk-slide-in .2s cubic-bezier(.4, 0, 1, 1) reverse both; }
+}
+
+@keyframes tk-slide-in {
+    from { transform: translateX(24px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tk-detail { animation: none; }
+    .tk-dropzone, .tk-pill--detail { transition: none; }
+}

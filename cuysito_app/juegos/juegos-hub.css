@@ -1,0 +1,635 @@
+/**
+ * Juegos Hub — tarjetas «Giro Diario» y «Sorteo Flash» (vista /juegos).
+ *
+ * Módulo autocontenido (prefijo BEM `gh-`) construido con los patrones ya
+ * establecidos en la tienda; ninguna regla vive fuera de este archivo:
+ *
+ *   superficie de tarjeta ......... .item-page__panel   (negro 45 % + blur 12)
+ *   media ......................... .item-page__media   (#27272a, esquinas .75rem)
+ *   título ........................ .item-page__title   (Heading Now bold itálica)
+ *
+ * Los tokens del módulo derivan de los globales de style.css con fallback
+ * explícito (mismo contrato que daily_spin.css). Sólo se animan propiedades
+ * de composición (transform, opacity, filter, outline-*) y no existe ninguna
+ * animación en bucle.
+ *
+ * Estado: cada tarjeta expone `data-state` (máquina de estados de
+ * juegos.view.js) y sus slots `data-tone`. El CSS reacciona a
+ * esos atributos; nunca a clases añadidas por JS ni a estilos inline. Todos
+ * los slots reservan su caja incluso vacíos (min-height / visibility) para
+ * que alternar estados no desplace el layout.
+ */
+
+/* ────────────────────────── raíz y tokens ───────────────────────── */
+
+.gh {
+    width: 100%;
+    max-width: 56rem;
+    margin-inline: auto;
+    color: #fff;
+
+    --gh-surface: rgba(0, 0, 0, 0.45);
+    --gh-surface-2: rgba(255, 255, 255, 0.1);
+    --gh-media-bg: var(--modal-bg-secondary, #27272a);
+    --gh-icon-shadow: drop-shadow(0 2px 6px rgb(0 0 0 / 0.55));
+
+    --gh-text: #fff;
+    --gh-text-2: var(--text-modal-secondary, #a1a1aa);
+
+    /* Tonos semánticos de badge / nota (data-tone) */
+    --gh-tone-neutral: rgba(255, 255, 255, 0.18);
+    --gh-tone-info: #38bdf8;
+    --gh-tone-success: #4ade80;
+    --gh-tone-warning: #fbbf24;
+    --gh-tone-danger: #f87171;
+    --gh-tone-exclusive: #c084fc;
+
+    --gh-cta: #f7ff19;
+    --gh-cta-ink: rgb(21, 23, 24);
+    --gh-cta-2: rgba(255, 255, 255, 0.15);
+
+    --gh-radius: 0.75rem;
+    --gh-radius-sm: 0.5rem;
+    --gh-radius-cta: 1rem;
+
+    --gh-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --gh-blur: blur(12px);
+
+    --gh-font-regular: var(--font-heading-now-regular, 'Barlow', system-ui, sans-serif);
+    --gh-font-medium: var(--font-heading-now-medium, 'Barlow', system-ui, sans-serif);
+    --gh-font-bold: var(--font-heading-now-bold, 'Barlow', system-ui, sans-serif);
+    --gh-fvs-regular: var(--font-heading-now-regular--font-variation-settings, "wdth" 668, "wght" 400);
+    --gh-fvs-medium: var(--font-heading-now-medium--font-variation-settings, "wdth" 668, "wght" 500);
+    --gh-fvs-bold: var(--font-heading-now-bold--font-variation-settings, "wdth" 825, "wght" 700);
+}
+
+/* ─────────────────────────────── shell ────────────────────────────── */
+
+/* La vista centra el módulo en el alto disponible bajo el chrome fijo
+   (cabecera en escritorio; cabecera + nav inferior en móvil). */
+body[data-view="games"] #view-juegos {
+    --gh-chrome-h: 93px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - var(--gh-chrome-h));
+    min-height: calc(100dvh - var(--gh-chrome-h));
+}
+
+@media (max-width: 767px) {
+    body[data-view="games"] #view-juegos {
+        --gh-chrome-h: 109px;
+    }
+}
+
+/* ─────────────────────────────── layout ───────────────────────────── */
+
+.gh__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    align-items: stretch;
+}
+
+@media (min-width: 42rem) {
+    .gh__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ─────────────────────────────── tarjeta ──────────────────────────── */
+
+.gh-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 0.75rem;
+    border-radius: var(--gh-radius);
+    background-color: var(--gh-surface);
+    -webkit-backdrop-filter: var(--gh-blur);
+    backdrop-filter: var(--gh-blur);
+    font-family: var(--gh-font-regular);
+    font-variation-settings: var(--gh-fvs-regular);
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+}
+
+@media (min-width: 1280px) {
+    .gh-card {
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* ── media ── */
+
+.gh-card__media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--gh-radius-sm);
+    overflow: clip;
+    background-color: var(--gh-media-bg);
+    contain: paint;
+}
+
+/* Capas del media (Admin → Visual Juegos): imagen y/o icono SVG apilados en
+   la misma celda. El icono lee tamaño, color y sombra de custom properties
+   escritas por el servidor; `--gh-art-fx` se compone con el filtro de estado. */
+.gh-card__art {
+    --gh-art-fx: drop-shadow(0 0 0 transparent);
+    grid-area: 1 / 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: var(--gh-art-fx);
+    transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+}
+
+.gh-card__art--icon {
+    width: var(--gh-icon-size, 34%);
+    height: auto;
+    max-height: 84%;
+    color: var(--gh-icon-color, var(--gh-text));
+}
+
+/* ── badge sobre el media ── */
+
+.gh-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    font-family: var(--gh-font-bold);
+    font-variation-settings: var(--gh-fvs-bold);
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--gh-text);
+    background-color: var(--gh-tone-neutral);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+.gh-badge[data-tone="none"] {
+    visibility: hidden;
+}
+
+.gh-badge[data-tone="info"] {
+    background-color: var(--gh-tone-info);
+    color: var(--gh-cta-ink);
+}
+
+.gh-badge[data-tone="success"] {
+    background-color: var(--gh-tone-success);
+    color: var(--gh-cta-ink);
+}
+
+.gh-badge[data-tone="warning"] {
+    background-color: var(--gh-tone-warning);
+    color: var(--gh-cta-ink);
+}
+
+.gh-badge[data-tone="danger"] {
+    background-color: var(--gh-tone-danger);
+    color: var(--gh-cta-ink);
+}
+
+/* Sorteo privado / exclusivo: solo invitados. */
+.gh-badge[data-tone="exclusive"] {
+    background-color: var(--gh-tone-exclusive);
+    color: var(--gh-cta-ink);
+}
+
+.gh-badge[data-tone="exclusive"]::before {
+    content: "";
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-right: 0.4em;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+.gh-card__badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+}
+
+.gh-card__badge--exclusive {
+    left: auto;
+    right: 0.5rem;
+}
+
+/* El media comunica el estado sin cambiar de imagen: los estados no
+   accionables se atenúan; el estado «disponible» brilla ligeramente. */
+.gh-card[data-state="loading"] .gh-card__art {
+    filter: var(--gh-art-fx) saturate(0.6) brightness(0.8);
+}
+
+.gh-card[data-state="guest"] .gh-card__art,
+.gh-card[data-state="unverified"] .gh-card__art,
+.gh-card[data-state="cooldown"] .gh-card__art,
+.gh-card[data-state="paid-limit"] .gh-card__art,
+.gh-card[data-state="paid-insufficient"] .gh-card__art,
+.gh-card[data-state="scheduled"] .gh-card__art,
+.gh-card[data-state="full"] .gh-card__art,
+.gh-card[data-state="none"] .gh-card__art,
+.gh-card[data-state="completed"] .gh-card__art,
+.gh-card[data-state="cancelled"] .gh-card__art,
+.gh-card[data-state="banned"] .gh-card__art,
+.gh-card[data-state="expelled"] .gh-card__art,
+.gh-card[data-state="error"] .gh-card__art {
+    filter: var(--gh-art-fx) saturate(0.55) brightness(0.7);
+}
+
+.gh-card[data-state="free"] .gh-card__art,
+.gh-card[data-state="bonus"] .gh-card__art,
+.gh-card[data-state="open"] .gh-card__art {
+    filter: var(--gh-art-fx) brightness(1.12) saturate(1.1);
+}
+
+/* ── cuerpo ── */
+
+.gh-card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+/* Con subgrid, las cinco franjas de cada tarjeta (media, título, texto,
+   meta, CTA) comparten pista con las de la tarjeta vecina: mismas alturas
+   fila a fila aunque el copy difiera. */
+@supports (grid-template-rows: subgrid) {
+    .gh__grid {
+        grid-template-rows: repeat(5, auto);
+    }
+
+    .gh-card,
+    .gh-card__body {
+        display: grid;
+        grid-template-rows: subgrid;
+        row-gap: 0.75rem;
+    }
+
+    .gh-card {
+        grid-row: span 5;
+    }
+
+    .gh-card__body {
+        grid-row: span 4;
+    }
+}
+
+.gh-card__title {
+    margin: 0;
+    font-family: var(--gh-font-bold);
+    font-variation-settings: var(--gh-fvs-bold);
+    font-style: italic;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1;
+    text-transform: uppercase;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+}
+
+/* Reserva dos líneas: el copy cambia de estado en estado sin mover el CTA. */
+.gh-card__desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    min-height: calc(2 * 1.1667rem);
+    margin: 0;
+    overflow: hidden;
+    color: var(--gh-text);
+}
+
+.gh-card__meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.5rem;
+    margin: 0;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--gh-radius-sm);
+    background-color: var(--gh-surface-2);
+}
+
+.gh-card__meta-label {
+    font-family: var(--gh-font-medium);
+    font-variation-settings: var(--gh-fvs-medium);
+    font-size: 0.75rem;
+    line-height: 1.25;
+    text-transform: uppercase;
+    color: var(--gh-text-2);
+}
+
+.gh-card__meta-value {
+    margin: 0;
+    font-family: var(--gh-font-bold);
+    font-variation-settings: var(--gh-fvs-bold);
+    font-size: 1.125rem;
+    line-height: 1;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ─────────────────────────────── CTA ──────────────────────────────── */
+
+.gh-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 3.25rem;
+    margin: 0;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--gh-radius-cta);
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    text-wrap: balance;
+    font-family: var(--gh-font-bold);
+    font-variation-settings: var(--gh-fvs-bold);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.1875rem;
+    line-height: 1;
+    background-color: var(--gh-cta);
+    color: var(--gh-cta-ink);
+    outline: 3px solid transparent;
+    outline-offset: 10px;
+    transition:
+        outline-color 0.15s var(--gh-ease),
+        outline-offset 0.15s var(--gh-ease),
+        filter 0.1s var(--gh-ease),
+        opacity 0.15s var(--gh-ease);
+}
+
+.gh-cta[data-tone="secondary"],
+.gh-cta--secondary {
+    background-color: var(--gh-cta-2);
+    color: var(--gh-text);
+}
+
+.gh-cta:disabled {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.gh-cta:not(:disabled):active {
+    filter: brightness(0.8);
+}
+
+@media (hover: hover) {
+    .gh-cta:not(:disabled):hover {
+        outline-color: rgba(255, 255, 255, 0.4);
+        outline-offset: 4px;
+    }
+}
+
+.gh-cta:focus-visible {
+    outline-color: #fff;
+    outline-offset: 4px;
+}
+
+/* El CTA es el único control de la tarjeta; su área de pulsación se
+   extiende a toda la tarjeta (patrón «stretched link») mientras esté
+   habilitado. */
+.gh-card .gh-cta {
+    margin-top: auto;
+}
+
+@supports (grid-template-rows: subgrid) {
+    .gh-card .gh-cta {
+        margin-top: 0;
+    }
+}
+
+.gh-card .gh-cta:not(:disabled)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+.gh-card:has(.gh-cta:not(:disabled):hover) .gh-card__art,
+.gh-card:has(.gh-cta:focus-visible) .gh-card__art {
+    transform: scale(1.03);
+    filter: brightness(1.35);
+}
+
+/* Mientras se consulta el servidor el CTA late suavemente (sólo opacity). */
+.gh-card[aria-busy="true"] .gh-cta:disabled {
+    animation: gh-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes gh-pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 0.35; }
+}
+
+/* ─────────────────────────────── modal ────────────────────────────── */
+
+.gh-dialog {
+    width: min(100% - 2rem, 30rem);
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--gh-radius);
+    background: transparent;
+    color: var(--gh-text);
+}
+
+/* El velo lo pinta #backdrop (window.Backdrop, el mismo que Filtros y
+   Carrito); el ::backdrop nativo sólo captura el clic fuera del panel. */
+.gh-dialog::backdrop {
+    background: transparent;
+}
+
+.gh-dialog[open] {
+    animation: gh-dialog-in 0.2s var(--gh-ease);
+}
+
+.gh-dialog__panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 2rem 1.5rem 1.5rem;
+    border-radius: var(--gh-radius);
+    background-color: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: var(--gh-blur);
+    backdrop-filter: var(--gh-blur);
+    text-align: center;
+}
+
+.gh-dialog__close {
+    position: absolute;
+    top: 0.625rem;
+    right: 0.625rem;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--gh-cta-2);
+    color: var(--gh-text);
+    cursor: pointer;
+}
+
+.gh-dialog__close svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.gh-dialog__close:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.gh-dialog__badges {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    min-height: 1.5rem;
+}
+
+.gh-dialog__badge {
+    min-height: 1.5rem;
+}
+
+.gh-dialog__badges .gh-badge[data-tone="none"] {
+    display: none;
+}
+
+.gh-dialog__title {
+    margin: 0;
+    font-family: var(--gh-font-bold);
+    font-variation-settings: var(--gh-fvs-bold);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 1.375rem;
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+.gh-dialog__text {
+    min-height: calc(2 * 1.1667rem);
+    margin: 0;
+    font-family: var(--gh-font-regular);
+    font-variation-settings: var(--gh-fvs-regular);
+    font-size: 0.875rem;
+    line-height: 1.1667rem;
+    color: var(--gh-text-2);
+}
+
+.gh-dialog__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0;
+}
+
+.gh-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.625rem 0.5rem;
+    border-radius: var(--gh-radius-sm);
+    background-color: var(--gh-surface-2);
+}
+
+.gh-stat dt {
+    font-family: var(--gh-font-medium);
+    font-variation-settings: var(--gh-fvs-medium);
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--gh-text-2);
+}
+
+.gh-stat dd {
+    margin: 0;
+    font-family: var(--gh-font-bold);
+    font-variation-settings: var(--gh-fvs-bold);
+    font-size: 1.0625rem;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.gh-dialog__note {
+    min-height: 1.1667rem;
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.1667rem;
+    color: var(--gh-text-2);
+}
+
+.gh-dialog[data-state="banned"] .gh-dialog__note,
+.gh-dialog[data-state="expelled"] .gh-dialog__note,
+.gh-dialog[data-state="error"] .gh-dialog__note {
+    color: var(--gh-tone-danger);
+}
+
+.gh-dialog[data-state="review"] .gh-dialog__note {
+    color: var(--gh-tone-warning);
+}
+
+.gh-dialog[data-state="joined"] .gh-dialog__note {
+    color: var(--gh-tone-success);
+}
+
+.gh-dialog__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    width: 100%;
+    margin-top: 0.25rem;
+}
+
+@keyframes gh-dialog-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ─────────────────────────── reduced motion ───────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .gh-card__art,
+    .gh-cta {
+        transition: none;
+    }
+
+    .gh-card[aria-busy="true"] .gh-cta:disabled,
+    .gh-dialog[open] {
+        animation: none;
+    }
+}
