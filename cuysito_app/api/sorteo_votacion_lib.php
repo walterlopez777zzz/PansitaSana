@@ -543,6 +543,7 @@ if (!function_exists('sv_list_proposals')) {
             $row['id'] = (int)$row['id'];
             $row['ciclo_id'] = (int)$row['ciclo_id'];
             $row['usuario_id'] = (int)$row['usuario_id'];
+            $row['user_id'] = (int)$row['usuario_id'];
             $row['items'] = is_array($items) ? $items : [];
             $row['items_count'] = (int)$row['items_count'];
             $row['total_pavos'] = (int)$row['total_pavos'];
@@ -578,7 +579,9 @@ if (!function_exists('sv_stats')) {
         $cacheFile = __DIR__ . '/../cache/sorteo_votacion_stats.json';
         if (!$fresh && is_file($cacheFile)) {
             $cached = json_decode((string)@file_get_contents($cacheFile), true);
-            if (is_array($cached) && isset($cached['generated_at'], $cached['resumen'], $cached['ranking_ganadores']) && (time() - (int)($cached['_cached_at'] ?? 0)) < SV_STATS_TTL) {
+            if (is_array($cached)
+                && isset($cached['generated_at'], $cached['resumen']['valor_soles'], $cached['ranking_ganadores'])
+                && (time() - (int)($cached['_cached_at'] ?? 0)) < SV_STATS_TTL) {
                 unset($cached['_cached_at']);
                 return $cached;
             }
@@ -635,7 +638,7 @@ if (!function_exists('sv_stats')) {
                    WHERE w.user_id = rp.user_id AND w.choice IN ('original','cashback','double_won','double_lost')
                )
              GROUP BY rp.user_id, name, a.filename, u.is_verified
-             ORDER BY participations DESC, name ASC LIMIT 5");
+             ORDER BY participations DESC, name ASC LIMIT 10");
         while ($row = $res->fetch_assoc()) {
             $user = sv_stats_user($conn, $row);
             $user['participations'] = (int)$row['participations'];
@@ -725,13 +728,26 @@ if (!function_exists('sv_stats')) {
                 ];
             } else $latestChoices[$choice] = null;
         }
+        $unitCoins = 100.0;
+        $unitMoney = 1.30;
+        $ratesResult = $conn->query("SELECT key_name, value FROM site_settings WHERE key_name IN ('coins_unit_coins', 'coins_unit_money')");
+        if ($ratesResult) {
+            while ($rate = $ratesResult->fetch_assoc()) {
+                if ($rate['key_name'] === 'coins_unit_coins' && (float)$rate['value'] > 0) $unitCoins = (float)$rate['value'];
+                if ($rate['key_name'] === 'coins_unit_money' && (float)$rate['value'] > 0) $unitMoney = (float)$rate['value'];
+            }
+            $ratesResult->free();
+        }
         $summaryRow = $conn->query("SELECT
                 COALESCE((SELECT SUM(amount) FROM coin_transactions
                     WHERE amount > 0 AND reason IN ('raffle_win','raffle_cashback','raffle_prize_coins','raffle_early_bird','raffle_double_bonus','sorteo_votacion')), 0) AS bananos_entregados,
                 (SELECT COUNT(*) FROM raffles WHERE status = 'completed') AS sorteos_realizados")->fetch_assoc();
+        $bananosEntregados = (float)($summaryRow['bananos_entregados'] ?? 0);
         $summary = [
-            'bananos_entregados' => (float)($summaryRow['bananos_entregados'] ?? 0),
+            'bananos_entregados' => $bananosEntregados,
             'sorteos_realizados' => (int)($summaryRow['sorteos_realizados'] ?? 0),
+            'valor_soles' => round($bananosEntregados * $unitMoney / $unitCoins, 2),
+            'tasa' => ['unit_coins' => $unitCoins, 'unit_money' => $unitMoney],
         ];
         $payload = [
             'top_ganadores' => $topWinners,

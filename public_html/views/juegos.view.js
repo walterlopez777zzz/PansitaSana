@@ -53,7 +53,7 @@ const ACCOUNT_HREF = '/cuenta/';
  * exponer `?id=` no aporta nada y filtra un identificador interno.
  */
 const ROOM_HREF = '/juegos/sorteo_flash/';
-const HUB_HREF = '/juegos/sorteo_flash/hub';
+const HUB_HREF = '/juegos/sorteo_flash/';
 /** Id de cliente en window.Backdrop (velo compartido) para el dialog de Sorteo Flash. */
 const FLASH_BACKDROP_CLIENT = 'flashDialog';
 

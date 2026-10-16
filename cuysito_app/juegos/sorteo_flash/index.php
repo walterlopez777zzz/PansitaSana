@@ -6,6 +6,55 @@ require_once __DIR__ . '/../../api/session_security.php';
 require_once __DIR__ . '/../../wabo/core/db_connect.php';
 require_once __DIR__ . '/../../api/raffle_private.php';
 
+if (!isset($_GET['id'])) {
+    $renderHub = false;
+    try {
+        $activeResult = $conn->query("SELECT raffle_id FROM raffles WHERE status IN ('open', 'scheduled', 'locking', 'processing', 'waiting_for_winner') LIMIT 1");
+        $hasActiveRaffle = $activeResult && $activeResult->num_rows > 0;
+
+        if (!$hasActiveRaffle) {
+            $userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+            $isLoggedInClient = isset($_SESSION['logged_in_client']) && $_SESSION['logged_in_client'] === true;
+            $needsRoom = false;
+
+            if ($userId > 0 && $isLoggedInClient) {
+                $stmt = $conn->prepare(
+                    "SELECT rw.id
+                       FROM raffle_winners rw
+                      WHERE rw.user_id = ?
+                        AND rw.raffle_id = (
+                            SELECT r.raffle_id
+                              FROM raffles r
+                             WHERE r.status = 'completed'
+                             ORDER BY COALESCE(r.end_time, r.start_time) DESC, r.raffle_id DESC
+                             LIMIT 1
+                        )
+                        AND (
+                            rw.choice IN ('pending', 'gamble_pending')
+                            OR rw.prize_state = 'awaiting_selection'
+                        )
+                      LIMIT 1"
+                );
+                if ($stmt) {
+                    $stmt->bind_param('i', $userId);
+                    $stmt->execute();
+                    $needsRoom = $stmt->get_result()->num_rows > 0;
+                    $stmt->close();
+                }
+            }
+
+            $renderHub = !$needsRoom;
+        }
+    } catch (Throwable $e) {
+        $renderHub = false;
+    }
+    if (!empty($renderHub)) {
+        define('SORTEO_FLASH_HUB_EMBEDDED', true);
+        require __DIR__ . '/hub.php';
+        exit;
+    }
+}
+
 header('Content-Type: text/html; charset=UTF-8');
 
 // 1. DETECCIÓN
