@@ -18,6 +18,7 @@ require_once dirname(__DIR__) . '/core/AvatarCatalog.php';
 require_once __DIR__ . '/raffle_earlybird.php';
 require_once __DIR__ . '/raffle_welcome.php';
 require_once __DIR__ . '/raffle_private.php';
+require_once __DIR__ . '/raffle_bans.php';
 
 function _outputJson($data) {
     $raw = json_encode($data);
@@ -43,6 +44,27 @@ $raffleId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($raffleId <= 0) {
     _outputJson(['status' => 'error', 'message' => 'ID inválido']);
     exit;
+}
+
+$myBan = null;
+$myAccountBanned = false;
+$statusSignals = rb_client_signals();
+if ($myUserId > 0) {
+    try {
+        rb_ensure_schema($conn);
+        rb_track_device($conn, $myUserId, $statusSignals['ip'], $statusSignals['fp'], $statusSignals['did']);
+        $myBan = rb_find_active_ban($conn, $myUserId, $statusSignals['ip'], $statusSignals['fp'], $statusSignals['did']);
+        $accountStmt = $conn->prepare('SELECT account_status FROM users WHERE id = ? LIMIT 1');
+        $accountStmt->bind_param('i', $myUserId);
+        $accountStmt->execute();
+        $myAccountBanned = (($accountStmt->get_result()->fetch_assoc()['account_status'] ?? '') === 'banned');
+        $accountStmt->close();
+        if ($myBan && ($myBan['matched_by'] ?? 'user') !== 'user') {
+            rb_log_evasion($conn, $myBan, $myUserId, $statusSignals['ip'], $statusSignals['fp'], $statusSignals['did'], $raffleId, 'status');
+        }
+    } catch (Throwable $banError) {
+        error_log('[raffle_status] ban check failed: ' . $banError->getMessage());
+    }
 }
 
 try {
@@ -114,6 +136,24 @@ try {
     $raffle = $stmt->get_result()->fetch_assoc();
 
     if (!$raffle) throw new Exception("Sorteo no encontrado");
+
+    if ($myUserId > 0 && ($myBan || $myAccountBanned) && in_array(($raffle['status'] ?? ''), ['scheduled', 'open'], true)) {
+        $activeParticipant = $conn->prepare("SELECT review_status FROM raffle_participants WHERE raffle_id = ? AND user_id = ? LIMIT 1");
+        $activeParticipant->bind_param('ii', $raffleId, $myUserId);
+        $activeParticipant->execute();
+        $participantStatus = $activeParticipant->get_result()->fetch_assoc()['review_status'] ?? null;
+        $activeParticipant->close();
+        if ($participantStatus !== null && $participantStatus !== 'expelled') {
+            $expelReason = $myBan
+                ? ((string)($myBan['matched_by'] ?? 'user') === 'user' ? 'Ban: ' . (string)($myBan['reason'] ?? '') : 'Evasión de baneo')
+                : 'Cuenta suspendida';
+            try {
+                rb_expel_participant($conn, $raffleId, $myUserId, $expelReason, 0);
+            } catch (Throwable $expelError) {
+                error_log('[raffle_status] ban expulsion failed: ' . $expelError->getMessage());
+            }
+        }
+    }
 
     // =========================================================================
     // FIRST-CALLER RESOLUTION: State Machine Triggers
@@ -654,7 +694,6 @@ try {
     // Si el usuario fue expulsado de ESTE sorteo o baneado de la plataforma,
     // el frontend lo detecta en el polling y lanza el modal de retiro.
     $myReviewStatus  = null;  // null = no inscrito
-    $myAccountBanned = false;
     $myPreChoice     = null;  // pre-elección de premio (FASE 2): original|cashback|gamble|null
     $myPreGambleAnim = null;  // coin|slot|roulette|null (config completa del DoN anticipado)
     $myPreGambleSide = null;  // heads|tails|null
@@ -772,7 +811,20 @@ try {
         'server_time_utc' => gmdate('Y-m-d\TH:i:s\Z'),
         'decision_phase_reached_at' => $raffle['decision_phase_reached_at'] ?? null,
         'my_review_status' => $myReviewStatus, // active | under_review | expelled | null
-        'my_banned' => $myAccountBanned,
+        'my_banned' => ($myAccountBanned || $myBan !== null),
+        'my_ban' => $myBan ? rb_ban_payload($conn, $myBan) : ($myAccountBanned ? [
+            'type' => 'permanent',
+            'matched_by' => 'user',
+            'reason' => 'Cuenta suspendida',
+            'created_at' => null,
+            'expires_at' => null,
+            'remaining_seconds' => null,
+            'days_total' => null,
+            'raffles_total' => null,
+            'raffles_remaining' => null,
+            'strikes' => 0,
+            'whatsapp' => '51924989167',
+        ] : null),
         'my_welcome_ticket' => $myWelcomeTicket, // {available, applies_here, used_here, reason}
         'winners' => []
     ];

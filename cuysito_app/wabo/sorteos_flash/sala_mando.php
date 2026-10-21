@@ -540,6 +540,7 @@ $raffleId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="ban_dialog.js?v=<?php echo filemtime(__DIR__ . '/ban_dialog.js'); ?>"></script>
 
 <script>
 const API_URL = 'api_sorteos.php';
@@ -906,6 +907,7 @@ function ccRenderParticipants(list) {
             const badges = [];
             if (p.is_verified) badges.push('<i class="fas fa-circle-check cc-verified-check" title="Verificado"></i>');
             if (p.strikes > 0) badges.push(`<span class="cc-badge cc-badge--alert" title="Expulsiones previas">⚠ ${p.strikes} exp.</span>`);
+            if (p.active_ban) badges.push('<span class="cc-badge cc-badge--alert">BANEADO</span>');
             if (p.ip_shared > 1) badges.push(`<span class="cc-badge cc-badge--alert">IP×${p.ip_shared}</span>`);
             if (p.first_time) badges.push('<span class="cc-badge cc-badge--new">NUEVO</span>');
             if (p.used_welcome_ticket) badges.push(CC_WT_BADGE);
@@ -943,6 +945,7 @@ function ccRenderParticipants(list) {
             (p.is_verified ? '<i class="fas fa-circle-check cc-verified-check" title="Verificado"></i>' : '') +
             (underReview ? '<i class="fas fa-user-clock cc-review-ico" title="Entró bajo revisión / aprobación"></i>' : '') +
             (expelled ? '<i class="fas fa-user-slash cc-expelled-ico" title="Expulsado (su ticket quedó como hueco)"></i>' : '') +
+            (p.active_ban ? '<span class="cc-badge cc-badge--alert">BANEADO</span>' : '') +
             (p.used_welcome_ticket ? CC_WT_BADGE : '');
 
         const lockAttr = started ? 'disabled title="Bloqueado: el sorteo ya arrancó"' : '';
@@ -1020,18 +1023,12 @@ function ccUnexpel(uid, name, ticket, paid) {
 }
 
 function ccBan(uid, name) {
-    Swal.fire({
-        title: '¿Banear cuenta?',
-        html: `Se bloqueará la cuenta de <strong>${ccEsc(name)}</strong> en toda la plataforma. Esta acción es severa.`,
-        icon: 'warning', input: 'text', inputplaceholder: 'Motivo (opcional)',
-        showCancelButton: true, confirmButtonText: 'Sí, banear',
-        cancelButtonText: 'Cancelar', confirmButtonColor: '#ef4444'
-    }).then(r => {
-        if (!r.isConfirmed) return;
-        $.post(API_URL, { action: 'cc_ban', user_id: uid, reason: r.value || '' }, res => {
-            if (res && res.status === 'success') { ccToast(res.message || 'Baneado.'); ccLoadParticipants($('#ccPartSearch').val().trim()); }
-            else { Swal.fire('Error', (res && res.message) || 'No se pudo banear.', 'error'); }
-        }, 'json').fail(() => Swal.fire('Error', 'No se pudo banear.', 'error'));
+    sfBanDialog({
+        api: API_URL,
+        userId: uid,
+        name,
+        raffleId: ccState.id,
+        onDone: () => ccLoadParticipants($('#ccPartSearch').val().trim())
     });
 }
 

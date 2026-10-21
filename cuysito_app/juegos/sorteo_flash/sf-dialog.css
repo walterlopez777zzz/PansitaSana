@@ -1475,7 +1475,7 @@
         overflow-wrap: normal;
     }
 
-    .sf-dialog--flow .sf-notice {
+.sf-dialog--flow .sf-notice {
         padding: 0.75rem 0.875rem;
     }
 }
@@ -1496,4 +1496,29 @@
     .sf-dialog[data-phase="closing"] .sf-dialog__panel {
         animation: none;
     }
+}
+
+.sf-dialog--ban .sf-option {
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    cursor: default;
+    border-color: color-mix(in srgb, var(--sfd-tone-danger) 45%, var(--sfd-line));
+}
+
+.sf-dialog--ban .sf-option:hover,
+.sf-dialog--ban .sf-option:active {
+    background-color: rgba(255, 255, 255, 0.05);
+    filter: none;
+}
+
+.sf-dialog--ban .sf-tile {
+    cursor: default;
+}
+
+.sf-dialog--ban .sf-tile__value {
+    color: var(--sfd-tone-danger);
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: clamp(1.5rem, 6vw, 2.125rem);
+    font-style: italic;
+    line-height: 1;
 }

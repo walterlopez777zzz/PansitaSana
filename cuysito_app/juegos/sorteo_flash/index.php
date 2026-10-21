@@ -3316,6 +3316,26 @@ if ($meUserId > 0) {
         </article>
     </dialog>
 
+    <dialog class="sf-dialog sf-dialog--flow sf-dialog--ban" id="sf-ban-dialog"
+            aria-labelledby="sf-ban-title" aria-describedby="sf-ban-desc">
+        <article class="sf-dialog__panel">
+            <header class="sf-dialog__header sf-dialog__header--bar">
+                <span class="sf-dialog__glyph sf-dialog__glyph--sm" data-tone="danger" aria-hidden="true">
+                    <svg><use href="#sf-icon-ban"></use></svg>
+                </span>
+                <div class="sf-dialog__heading" aria-live="polite">
+                    <h2 id="sf-ban-title" class="sf-dialog__title" data-slot="title">Baneo de Sorteo Flash</h2>
+                    <p id="sf-ban-desc" class="sf-dialog__summary" data-slot="desc"></p>
+                </div>
+            </header>
+            <section class="sf-dialog__body sf-dialog__body--scroll" data-slot="view" aria-labelledby="sf-ban-title"></section>
+            <footer class="sf-dialog__footer">
+                <a class="sf-cta" href="/juegos">Salir de la sala</a>
+                <a class="sf-cta sf-cta--secondary" href="https://wa.me/51924989167" target="_blank" rel="noopener noreferrer">Escribir por WhatsApp</a>
+            </footer>
+        </article>
+    </dialog>
+
     <!-- Premios en juego: vitrina por puesto (tabs) con tarjetas de tienda -->
     <dialog class="sf-dialog sf-dialog--showcase" id="sf-prizes-dialog"
             aria-labelledby="sf-prizes-title" aria-describedby="sf-prizes-desc">
@@ -3367,6 +3387,7 @@ if ($meUserId > 0) {
 <script src="/avatar-fallback.js?v=20260914"></script>
 <script src="sf-dialog.js?v=<?php echo filemtime(__DIR__ . '/sf-dialog.js'); ?>"></script>
 <script src="sf-prechoice.js?v=<?php echo filemtime(__DIR__ . '/sf-prechoice.js'); ?>"></script>
+<script src="sf-ban-modal.js?v=<?php echo filemtime(__DIR__ . '/sf-ban-modal.js'); ?>"></script>
 <script src="sorteo_flash.js?v=<?php echo time(); ?>"></script>
 <script src="skip_controller.js?v=<?php echo time(); ?>"></script>
 <script type="module" src="/cuenta/onboarding_check.js"></script>

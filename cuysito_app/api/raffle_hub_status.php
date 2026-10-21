@@ -32,6 +32,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/db_connect.php';
 require_once __DIR__ . '/raffle_private.php';
+require_once __DIR__ . '/raffle_bans.php';
 
 function _outputJson($data)
 {
@@ -70,6 +71,7 @@ $response = [
     'server_time_utc' => gmdate('Y-m-d\TH:i:s\Z'),
     'is_logged_in' => ($myUserId > 0),
     'my_banned' => false,
+    'my_ban' => null,
     'raffle' => null,
     'next_scheduled' => null,
 ];
@@ -105,13 +107,36 @@ try {
     }
 
     if ($myUserId > 0) {
+        rb_ensure_schema($conn);
+        $signals = rb_client_signals();
+        rb_track_device($conn, $myUserId, $signals['ip'], $signals['fp'], $signals['did']);
+        $ban = rb_find_active_ban($conn, $myUserId, $signals['ip'], $signals['fp'], $signals['did']);
         $stmt = $conn->prepare('SELECT account_status FROM users WHERE id = ? LIMIT 1');
         if ($stmt) {
             $stmt->bind_param('i', $myUserId);
             $stmt->execute();
             $row = $stmt->get_result()->fetch_assoc();
             $stmt->close();
-            $response['my_banned'] = (($row['account_status'] ?? '') === 'banned');
+            $accountBanned = (($row['account_status'] ?? '') === 'banned');
+            $response['my_banned'] = ($accountBanned || $ban !== null);
+            $response['my_ban'] = $ban
+                ? rb_ban_payload($conn, $ban)
+                : ($accountBanned ? [
+                    'type' => 'permanent',
+                    'matched_by' => 'user',
+                    'reason' => 'Cuenta suspendida',
+                    'created_at' => null,
+                    'expires_at' => null,
+                    'remaining_seconds' => null,
+                    'days_total' => null,
+                    'raffles_total' => null,
+                    'raffles_remaining' => null,
+                    'strikes' => 0,
+                    'whatsapp' => '51924989167',
+                ] : null);
+            if ($ban && ($ban['matched_by'] ?? 'user') !== 'user') {
+                rb_log_evasion($conn, $ban, $myUserId, $signals['ip'], $signals['fp'], $signals['did'], (int)($raffle['raffle_id'] ?? 0), 'status');
+            }
         }
     }
 

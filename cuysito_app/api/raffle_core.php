@@ -6,6 +6,7 @@
 
 require_once __DIR__ . '/raffle_review.php';
 require_once __DIR__ . '/raffle_rewards.php';
+require_once __DIR__ . '/raffle_bans.php';
 
 // =================================================================================
 // HELPER: BSC RPC Call (Generic)
@@ -368,6 +369,7 @@ function triggerRaffleResolve($conn, $raffleId, $rpcUrl, $cacheFile) {
         return ['success' => false, 'message' => 'Invalid raffle ID'];
     }
 
+    rb_ensure_schema($conn);
     $conn->begin_transaction();
     try {
         // Lock the raffle row
@@ -711,6 +713,13 @@ function triggerRaffleResolve($conn, $raffleId, $rpcUrl, $cacheFile) {
         $insAwaitingSelection->close();
         if ($selPrePool) $selPrePool->close();
 
+        if ($newState === 'completed') {
+            try {
+                rb_decrement_on_resolve($conn, $raffleId);
+            } catch (Throwable $banErr) {
+                error_log('[triggerRaffleResolve] ban countdown failed: ' . $banErr->getMessage());
+            }
+        }
         $conn->commit();
 
         return [
@@ -751,6 +760,7 @@ function triggerGambleResolve($conn, $raffleId, $rpcUrl, $cacheFile, $currentBlo
         error_log("[triggerGambleResolve] ABORT: Invalid raffle ID ($raffleId)");
         return ['success' => false, 'message' => 'Invalid raffle ID'];
     }
+    rb_ensure_schema($conn);
 
     // Find unresolved gamble_pending winners with a valid target block
     $stmtFind = $conn->prepare(
@@ -941,6 +951,11 @@ function triggerGambleResolve($conn, $raffleId, $rpcUrl, $cacheFile, $currentBlo
             $stmtClose->bind_param("i", $raffleId);
             $stmtClose->execute();
             $stmtClose->close();
+            try {
+                rb_decrement_on_resolve($conn, $raffleId);
+            } catch (Throwable $banErr) {
+                error_log('[triggerGambleResolve] ban countdown failed: ' . $banErr->getMessage());
+            }
             error_log("[triggerGambleResolve] Raffle $raffleId → completed (all winners resolved)");
         }
     }

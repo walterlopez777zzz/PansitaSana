@@ -36,6 +36,7 @@ require_once __DIR__ . '/db_connect.php';
 require_once __DIR__ . '/raffle_review.php';
 // Reglas del espacio de decisión (rr_raffle_*_enabled) y helpers de pool.
 require_once __DIR__ . '/raffle_rewards.php';
+require_once __DIR__ . '/raffle_bans.php';
 
 $userId   = (int)$_SESSION['user_id'];
 $raffleId = isset($_POST['raffle_id']) ? (int)$_POST['raffle_id'] : 0;
@@ -49,6 +50,33 @@ $sub      = isset($_POST['sub']) ? strtolower(trim((string)$_POST['sub'])) : '';
 // {"1":"p1_o2", ...}; vacío/ausente = asignación automática (primera opción
 // del pool si gana estando AFK).
 $poolChoicesRaw = isset($_POST['pool_choices']) ? trim((string)$_POST['pool_choices']) : '';
+
+$signals = rb_client_signals();
+if ($raffleId > 0) {
+    try {
+        rb_ensure_schema($conn);
+        rb_track_device($conn, $userId, $signals['ip'], $signals['fp'], $signals['did']);
+        $activeBan = rb_find_active_ban($conn, $userId, $signals['ip'], $signals['fp'], $signals['did']);
+        if ($activeBan) {
+            if (($activeBan['matched_by'] ?? 'user') !== 'user') {
+                rb_log_evasion($conn, $activeBan, $userId, $signals['ip'], $signals['fp'], $signals['did'], $raffleId, 'prechoice');
+            }
+            http_response_code(403);
+            _outputJson([
+                'status' => 'error',
+                'code' => 'raffle_banned',
+                'message' => rb_public_message($activeBan),
+                'ban' => rb_ban_payload($conn, $activeBan),
+            ]);
+            exit;
+        }
+    } catch (Throwable $banError) {
+        error_log('[raffle_prechoice] ban check failed: ' . $banError->getMessage());
+        http_response_code(503);
+        _outputJson(['status' => 'error', 'message' => 'No se pudo validar tu acceso al sorteo. Intenta nuevamente.']);
+        exit;
+    }
+}
 
 // ── Botón de pánico del ganador EN VIVO: "prefiero elegir manualmente" ──
 // El contador global ya es el tiempo completo (p. ej. 60s); la pre-elección se

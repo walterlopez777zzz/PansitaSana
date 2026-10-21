@@ -1,11 +1,12 @@
 <?php
 // /wabo/sorteos_flash/baneos_expulsados.php
 // Vista dedicada: ranking de expulsados (raffle_strikes), baneos activos e historial (raffle_bans).
-// Reutiliza las acciones existentes de api_sorteos.php: cc_strikes_overview, cc_bans_list, cc_user_search, cc_ban, cc_unban.
+// Reutiliza las acciones existentes de api_sorteos.php: cc_strikes_overview, cc_bans_list, cc_evasions_list, cc_evasion_allow, cc_user_search, cc_ban, cc_unban.
 require_once __DIR__ . '/../core/admin_header.php';
 ?>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="sorteos_flash/ban_dialog.js"></script>
 
 <style>
     @keyframes bxFadeUp { from { opacity:0; transform:translateY(10px);} to { opacity:1; transform:translateY(0);} }
@@ -51,8 +52,8 @@ require_once __DIR__ . '/../core/admin_header.php';
 </div>
 
 <!-- KPIs -->
-<div id="bxKpis" class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-    <?php for ($i = 0; $i < 5; $i++) echo '<div class="bx-skel h-20"></div>'; ?>
+<div id="bxKpis" class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-4">
+    <?php for ($i = 0; $i < 6; $i++) echo '<div class="bx-skel h-20"></div>'; ?>
 </div>
 
 <!-- TABS -->
@@ -63,6 +64,7 @@ require_once __DIR__ . '/../core/admin_header.php';
             <button class="bx-tab" data-tab="active" onclick="bxTab('active')"><i class="fas fa-lock"></i>Baneos activos <span class="bx-count" id="bxCountActive">0</span></button>
             <button class="bx-tab" data-tab="strikes" onclick="bxTab('strikes')"><i class="fas fa-clock-rotate-left"></i>Historial de expulsiones <span class="bx-count" id="bxCountStrikes">0</span></button>
             <button class="bx-tab" data-tab="history" onclick="bxTab('history')"><i class="fas fa-box-archive"></i>Baneos pasados <span class="bx-count" id="bxCountHistory">0</span></button>
+            <button class="bx-tab" data-tab="evasions" onclick="bxTab('evasions')"><i class="fas fa-user-shield"></i>Evasiones <span class="bx-count" id="bxCountEvasions">0</span></button>
         </div>
         <div class="flex items-center gap-2">
             <div class="relative">
@@ -78,7 +80,7 @@ require_once __DIR__ . '/../core/admin_header.php';
 </div>
 
 <p class="text-[11px] mt-3 leading-relaxed bx-fade bx-d2" style="color: var(--text-secondary);">
-    <b>Expulsión</b> = el admin sacó al usuario de un sorteo concreto (queda un strike y se le devolvió la cuota). <b>Baneo</b> = bloqueo para TODOS los sorteos (por cuenta, IP y huella) hasta que se levante o expire. Expulsar sigue haciéndose desde la <a href="sorteos_flash/sala_mando.php" class="underline">Sala de Mando</a> de cada sorteo.
+    <b>Expulsión</b> = el admin sacó al usuario de un sorteo concreto (queda un strike y se le devolvió la cuota). <b>Baneo</b> = bloqueo para TODOS los sorteos (por cuenta, IP, huella y dispositivo) hasta que se levante o expire. Expulsar sigue haciéndose desde la <a href="sorteos_flash/sala_mando.php" class="underline">Sala de Mando</a> de cada sorteo.
 </p>
 
 </div>
@@ -93,7 +95,7 @@ const bxAvatar = (f) => `<img class="bx-avatar" src="${bxEsc(BX_AVATAR + (f || '
 const bxUser = (u) => `<div class="flex items-center gap-2 min-w-0">${bxAvatar(u.avatar)}<div class="min-w-0"><div class="font-semibold truncate flex items-center gap-1.5">${bxEsc(u.name)}${Number(u.is_verified) ? '<span class="bx-tag bx-tag--ver" title="Verificado"><i class="fas fa-check"></i></span>' : ''}</div><div class="text-[11px] truncate" style="color: var(--text-secondary);">${u.game_username && u.game_username !== u.name ? bxEsc(u.game_username) + ' · ' : ''}${bxEsc(u.public_code || '')}${u.phone ? ' · ' + bxEsc(u.phone) : ''}</div></div></div>`;
 const bxToast = (msg, ok = true) => Swal.fire({ toast: true, position: 'top-end', icon: ok ? 'success' : 'error', title: msg, showConfirmButton: false, timer: 3500 });
 
-let bxData = { ranking: [], history: [], kpi: {} }, bxBans = { active: [], history: [] }, bxCurrent = 'ranking';
+let bxData = { ranking: [], history: [], kpi: {} }, bxBans = { active: [], history: [] }, bxEvasions = [], bxCurrent = 'ranking';
 
 function bxBanTag(b) {
     if (!b) return '<span class="bx-tag bx-tag--free">Sin baneo</span>';
@@ -104,18 +106,21 @@ function bxBanTag(b) {
 
 async function bxReload() {
     try {
-        const [ov, bans] = await Promise.all([
+        const [ov, bans, evasions] = await Promise.all([
             $.getJSON(BX_API, { action: 'cc_strikes_overview', limit: 500 }),
             $.getJSON(BX_API, { action: 'cc_bans_list' }),
+            $.getJSON(BX_API, { action: 'cc_evasions_list' }),
         ]);
         if (ov.status !== 'success') throw new Error(ov.message || 'Error');
         if (bans.status !== 'success') throw new Error(bans.message || 'Error');
-        bxData = ov; bxBans = bans;
+        if (evasions.status !== 'success') throw new Error(evasions.message || 'Error');
+        bxData = ov; bxBans = bans; bxEvasions = evasions.evasions || [];
         const k = ov.kpi;
         document.getElementById('bxKpis').innerHTML = [
             ['Usuarios expulsados', k.users_expelled, 'fa-user-xmark', ''], ['Expulsiones totales', k.strikes_total, 'fa-ban', ''],
             ['Últimos 30 días', k.strikes_30d, 'fa-calendar-day', ''], ['Reincidentes (≥2)', k.repeat_offenders, 'fa-triangle-exclamation', 'text-amber-400'],
             ['Baneos activos', k.bans_active, 'fa-lock', k.bans_active > 0 ? 'text-red-400' : ''],
+            ['Evasiones (30 días)', k.evasions_30d, 'fa-user-shield', k.evasions_30d > 0 ? 'text-amber-400' : ''],
         ].map(([l, v, i, c]) => `<div class="bx-kpi card rounded-xl p-4 bx-fade"><div class="flex items-start justify-between"><div><p class="text-[11px] font-semibold uppercase tracking-wide" style="color: var(--text-secondary);">${l}</p><p class="text-2xl font-bold mt-1 ${c}">${Number(v || 0).toLocaleString('es-PE')}</p></div><div class="p-2 rounded-lg" style="background: rgba(128,128,128,.1);"><i class="fas ${i} ${c}"></i></div></div></div>`).join('');
         bxRender();
     } catch (e) { document.getElementById('bxPanel').innerHTML = `<div class="p-6 text-center text-red-400">${bxEsc(e.message || 'No se pudo cargar.')}</div>`; }
@@ -123,7 +128,7 @@ async function bxReload() {
 
 function bxTab(t) { bxCurrent = t; document.querySelectorAll('.bx-tab').forEach(b => b.classList.toggle('is-active', b.dataset.tab === t)); bxRender(); }
 
-function bxMatch(u, q) { if (!q) return true; return [u.name, u.game_username, u.public_code, u.phone, u.reason, u.raffle_title].some(v => String(v || '').toLowerCase().includes(q)); }
+function bxMatch(u, q) { if (!q) return true; return [u.name, u.game_username, u.public_code, u.phone, u.reason, u.raffle_title, u.trying_name, u.trying_code, u.banned_name, u.banned_code].some(v => String(v || '').toLowerCase().includes(q)); }
 
 function bxRender() {
     const q = document.getElementById('bxSearch').value.trim().toLowerCase();
@@ -136,6 +141,8 @@ function bxRender() {
     document.getElementById('bxCountStrikes').textContent = strikes.length;
     document.getElementById('bxCountActive').textContent = active.length;
     document.getElementById('bxCountHistory').textContent = history.length;
+    const evasions = bxEvasions.filter(u => bxMatch(u, q));
+    document.getElementById('bxCountEvasions').textContent = evasions.length;
     const panel = document.getElementById('bxPanel');
     const empty = (t) => `<div class="p-10 text-center" style="color: var(--text-secondary);"><i class="fas fa-inbox text-2xl mb-2 block opacity-50"></i>${t}</div>`;
 
@@ -163,14 +170,29 @@ function bxRender() {
         panel.innerHTML = strikes.length ? `<table class="bx-table w-full"><thead><tr><th>Fecha</th><th>Usuario</th><th>Sorteo</th><th>Motivo</th><th>Por</th></tr></thead><tbody>` +
             strikes.map(s => `<tr><td class="text-xs whitespace-nowrap" style="color: var(--text-secondary);">${bxDate(s.created_at)}</td><td>${bxUser(s)}</td><td class="text-xs">${s.raffle_id ? `<a href="sorteos_flash/sala_mando.php?id=${s.raffle_id}" class="underline">#${s.raffle_id}</a> ${bxEsc(s.raffle_title || '')}` : '—'}</td><td>${bxEsc(s.reason || '—')}</td><td class="text-xs" style="color: var(--text-secondary);"><i class="fas fa-user-shield mr-1"></i>${bxEsc(s.created_by)}</td></tr>`).join('') + '</tbody></table>' : empty('Sin expulsiones registradas.');
     }
+    else if (bxCurrent === 'evasions') {
+        const matchLabel = e => ({ ip: 'IP', fingerprint: 'Huella', device: 'Dispositivo' }[e.matched_by] || e.matched_by || '—');
+        panel.innerHTML = evasions.length ? `<table class="bx-table w-full"><thead><tr><th>Fecha</th><th>Cuenta que intentó</th><th>Cuenta baneada original</th><th>Coincidencia / señales</th><th>Origen</th><th>Acciones</th></tr></thead><tbody>` +
+            evasions.map(e => `<tr>
+                <td class="text-xs whitespace-nowrap">${bxDate(e.created_at)}</td>
+                <td>${bxUser({name: e.trying_name, game_username: e.trying_game_username, public_code: e.trying_code, avatar: e.trying_avatar})}${e.trying_banned ? '<span class="bx-tag bx-tag--perm mt-1">Ya baneada</span>' : ''}</td>
+                <td>${bxUser({name: e.banned_name, game_username: e.banned_game_username, public_code: e.banned_code, avatar: e.banned_avatar})}</td>
+                <td class="text-[11px] font-mono">${matchLabel(e)}<br>IP ${bxEsc(e.ip || '—')}<br>Huella ${bxEsc(String(e.fingerprint || '—').slice(0, 16))}${e.fingerprint ? '…' : ''}<br>Dispositivo ${bxEsc(String(e.device_id || '—').slice(0, 16))}${e.device_id ? '…' : ''}</td>
+                <td>${e.source === 'prechoice' ? 'Preselección' : e.source === 'status' ? 'Estado' : 'Ingreso'}${e.raffle_id ? `<div class="text-[10px]">Sorteo #${e.raffle_id}</div>` : ''}</td>
+                <td class="whitespace-nowrap">
+                    <button class="bx-btn bx-ban" onclick="bxBan(${e.user_id}, '${bxJs(e.trying_name)}', 'Evasión de baneo con otra cuenta o dispositivo')"><i class="fas fa-gavel"></i> Banear esta cuenta</button>
+                    ${e.exempted ? '<div class="bx-tag bx-tag--free mt-1">Falso positivo permitido</div>' : `<button class="bx-btn bx-ghost mt-1" onclick="bxAllowEvasion(${e.ban_id}, ${e.user_id})">Permitir (falso positivo)</button>`}
+                </td>
+            </tr>`).join('') + '</tbody></table>' : empty('Sin evasiones registradas.');
+    }
     else {
         const list = bxCurrent === 'active' ? active : history, isActive = bxCurrent === 'active';
-        panel.innerHTML = list.length ? `<table class="bx-table w-full"><thead><tr><th>Usuario</th><th>Tipo</th><th>Motivo</th><th>IP / Huella</th><th>Creado</th>${isActive ? '<th class="text-right">Acción</th>' : '<th>Fin</th>'}</tr></thead><tbody>` +
+        panel.innerHTML = list.length ? `<table class="bx-table w-full"><thead><tr><th>Usuario</th><th>Tipo</th><th>Motivo</th><th>IP / Huella / Dispositivo</th><th>Creado</th>${isActive ? '<th class="text-right">Acción</th>' : '<th>Fin</th>'}</tr></thead><tbody>` +
             list.map(b => `<tr>
                 <td>${bxUser(b)}</td>
                 <td>${bxBanTag(b)}</td>
                 <td class="text-sm">${bxEsc(b.reason || '—')}</td>
-                <td class="text-[11px] font-mono" style="color: var(--text-secondary);">${bxEsc(b.ip || 's/IP')}<br>${b.fingerprint ? bxEsc(String(b.fingerprint).slice(0, 14)) + '…' : 's/huella'}</td>
+                <td class="text-[11px] font-mono" style="color: var(--text-secondary);">${bxEsc(b.ip || 's/IP')}<br>Huella ${b.fingerprint ? bxEsc(String(b.fingerprint).slice(0, 14)) + '…' : '—'}<br>Dispositivo ${b.device ? bxEsc(String(b.device).slice(0, 14)) + '…' : '—'}</td>
                 <td class="text-xs whitespace-nowrap" style="color: var(--text-secondary);">${bxDate(b.created_at)}<br><i class="fas fa-user-shield mr-1"></i>${bxEsc(b.created_by)}</td>
                 ${isActive ? `<td class="text-right"><button class="bx-btn bx-unban" onclick="bxUnban(${b.id}, '${bxJs(b.name)}')"><i class="fas fa-unlock"></i> Desbanear</button></td>`
                            : `<td>${b.lifted_at ? '<span class="bx-tag bx-tag--lifted">Levantado</span><div class="text-[10px] mt-0.5" style="color: var(--text-secondary);">' + bxDate(b.lifted_at) + '</div>' : '<span class="bx-tag bx-tag--lifted">Expirado</span>'}</td>`}
@@ -188,32 +210,19 @@ function bxUserStrikes(uid) {
     });
 }
 
-function bxBan(uid, name) {
-    Swal.fire({
-        title: 'Banear de sorteos',
-        html: `Se bloqueará a <strong>${bxEsc(name)}</strong> en TODOS los Sorteos Flash (también por IP y dispositivo para evitar multicuentas).
-            <div style="text-align:left;margin-top:12px;">
-                <label style="font-size:.8rem;font-weight:700;">Tipo de baneo</label>
-                <select id="bxType" class="swal2-select" style="width:100%;margin:4px 0 10px;" onchange="document.getElementById('bxNWrap').style.display=this.value==='next_n_raffles'?'block':'none';document.getElementById('bxDWrap').style.display=this.value==='until_date'?'block':'none';">
-                    <option value="next_n_raffles">Próximos N sorteos</option>
-                    <option value="until_date">Por días</option>
-                    <option value="permanent" selected>Permanente</option>
-                </select>
-                <div id="bxNWrap" style="display:none;"><label style="font-size:.8rem;font-weight:700;">Número de sorteos</label><input id="bxN" type="number" min="1" value="3" class="swal2-input" style="width:100%;margin:4px 0 10px;"></div>
-                <div id="bxDWrap" style="display:none;"><label style="font-size:.8rem;font-weight:700;">Duración (días)</label><input id="bxDays" type="number" min="1" value="7" class="swal2-input" style="width:100%;margin:4px 0 10px;"></div>
-                <label style="font-size:.8rem;font-weight:700;">Motivo</label>
-                <input id="bxReason" type="text" class="swal2-input" placeholder="Motivo (opcional, visible en el historial)" style="width:100%;margin:4px 0 0;">
-            </div>`,
-        icon: 'warning', showCancelButton: true, confirmButtonText: 'Sí, banear', cancelButtonText: 'Cancelar', confirmButtonColor: '#ef4444',
-        preConfirm: () => ({ ban_type: document.getElementById('bxType').value, raffles_n: document.getElementById('bxN').value, days: document.getElementById('bxDays').value, reason: document.getElementById('bxReason').value }),
-    }).then(r => {
-        if (!r.isConfirmed) return;
-        const v = r.value || {};
-        $.post(BX_API, { action: 'cc_ban', user_id: uid, ban_type: v.ban_type, raffles_n: v.raffles_n, days: v.days, reason: v.reason || '' }, res => {
-            if (res && res.status === 'success') { bxToast(res.message || 'Baneado.'); bxReload(); }
-            else Swal.fire('Error', (res && res.message) || 'No se pudo banear.', 'error');
-        }, 'json').fail(() => Swal.fire('Error', 'No se pudo banear.', 'error'));
-    });
+function bxBan(uid, name, presetReason) {
+    sfBanDialog({ api: BX_API, userId: uid, name, presetReason, onDone: bxReload });
+}
+
+function bxAllowEvasion(banId, userId) {
+    Swal.fire({ title: '¿Permitir esta cuenta?', text: 'La cuenta quedará exenta de este baneo. Úsalo solo si confirmaste un falso positivo.', icon: 'question', showCancelButton: true, confirmButtonText: 'Permitir', cancelButtonText: 'Cancelar' })
+        .then(result => {
+            if (!result.isConfirmed) return;
+            $.post(BX_API, { action: 'cc_evasion_allow', ban_id: banId, user_id: userId }, response => {
+                if (response && response.status === 'success') { bxToast(response.message || 'Cuenta permitida.'); bxReload(); }
+                else Swal.fire('Error', (response && response.message) || 'No se pudo permitir la cuenta.', 'error');
+            }, 'json').fail(() => Swal.fire('Error', 'No se pudo permitir la cuenta.', 'error'));
+        });
 }
 
 function bxUnban(banId, name) {
