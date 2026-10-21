@@ -366,6 +366,9 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .hub-choice-pill { display: grid; min-width: 0; gap: .12rem; padding: .45rem .5rem; border: 1px solid #e5dcea; border-radius: 12px; background: #fff; color: #554a60; font-size: .68rem; font-weight: 900; }
 .hub-choice-pill__label { display: flex; min-width: 0; align-items: center; gap: .3rem; white-space: nowrap; }
 .hub-choice-pill__swatch { width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; }
+.hub-choice-legend__swatch--original { background: #8f70ce; }
+.hub-choice-legend__swatch--cashback { background: #e875a8; }
+.hub-choice-legend__swatch--double { background: #d9a936; }
 .hub-choice-pill__value { color: #40364c; font-family: var(--hub-heading); font-size: .9rem; font-variation-settings: var(--hub-heavy); font-variant-numeric: tabular-nums; }
 .hub-choice-pill__value small { color: #786d80; font-family: inherit; font-size: .68rem; }
 .hub-double-metric { display: grid; grid-template-columns: minmax(92px, .7fr) 1fr; align-items: center; gap: .7rem; padding: .75rem; border: 1px solid #eedeb9; border-radius: 17px; background: linear-gradient(110deg,#fffaf0,#fff7f8); }
