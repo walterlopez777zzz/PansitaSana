@@ -40,7 +40,7 @@
             + '<span class="sf-tile__label">' + label + '</span></div>';
         const rows = [
             ['Motivo', escapeHtml(ban.reason || 'Incumplir los requisitos del sorteo')],
-            ['Expulsiones', 'Tuviste ' + Math.max(0, Number(ban.strikes) || 0) + ' expulsiones'],
+            ['Expulsiones', (function (n) { return 'Tuviste ' + n + (n === 1 ? ' expulsión' : ' expulsiones'); })(Math.max(0, Number(ban.strikes) || 0))],
             ['Fecha del baneo', escapeHtml(formatDate(ban.created_at))]
         ];
         const matched = {
