@@ -67,6 +67,11 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
         <symbol id="icon-users-round" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0m1-4a5 5 0 0 1 5 4"/></symbol>
         <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
         <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+        <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+        <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+        <symbol id="icon-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15v2m4-6v6m4-9v9m4-12v12"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4m8-4v4"/></symbol>
         <symbol id="icon-sparkle" viewBox="0 0 24 24"><path d="m12 3 1.5 6.5L20 12l-6.5 1.5L12 20l-1.5-6.5L4 12l6.5-2.5L12 3Z"/><path d="m19 3 .7 2.3L22 6l-2.3.7L19 9l-.7-2.3L16 6l2.3-.7L19 3Z"/></symbol>
     </svg>
 
@@ -74,7 +79,7 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
         <main class="hub-main">
             <header class="hub-masthead">
                 <h1 id="hub-title" class="hub-title">SORTEO FLASH</h1>
-                <p class="hub-subtitle">¿Qué es el Sorteo Flash? Es el sorteo semanal de los domingos exclusivo para clientes de la comunidad.</p>
+                <p class="hub-subtitle">Sorteo semanal de los domingos para clientes de la comunidad.</p>
                 <div class="hub-hero-status" id="hub-hero" data-state="loading">
                     <div class="hub-hero-status__copy">
                         <span class="hub-live-dot" aria-hidden="true"></span>
@@ -92,10 +97,9 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
 
             <section class="hub-well-grid" aria-label="El pozo y el último sorteo">
                 <article class="hub-card hub-well hub-reveal" id="hub-vault">
-                    <div class="hub-well__intro">
-                        <p class="hub-eyebrow"><svg class="hub-icon" aria-hidden="true"><use href="#icon-coin"/></svg> EL POZO DE LA COMUNIDAD</p>
-                        <h2>Una bóveda llena de suerte</h2>
-                        <p>Cada premio compartido hace crecer la fiesta.</p>
+                    <div class="hub-well__count">
+                        <span class="hub-well__label"><svg class="hub-icon" aria-hidden="true"><use href="#icon-coin"/></svg> Bananos entregados</span>
+                        <div class="hub-odometer" id="summary-bananas" aria-label="0 Bananos"><span class="hub-skeleton hub-skeleton--number"></span></div>
                     </div>
                     <div class="hub-vault__scene" role="img" aria-label="Una bóveda de Bananos que se llena con premios">
                         <svg class="hub-vault__svg" viewBox="0 0 380 250" aria-hidden="true">
@@ -146,31 +150,24 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
                         <span class="hub-vault__sparkle hub-vault__sparkle--one" aria-hidden="true">✦</span>
                         <span class="hub-vault__sparkle hub-vault__sparkle--two" aria-hidden="true">✧</span>
                     </div>
-                    <div class="hub-well__count">
-                        <span class="hub-well__label"><svg class="hub-icon" aria-hidden="true"><use href="#icon-coin"/></svg> Bananos entregados</span>
-                        <div class="hub-odometer" id="summary-bananas" aria-label="0 Bananos"><span class="hub-skeleton hub-skeleton--number"></span></div>
-                        <p class="hub-well__soles" id="summary-soles" hidden></p>
-                    </div>
                     <div class="hub-summary" aria-label="Estadísticas del pozo">
+                        <div class="hub-summary__pill hub-summary__pill--soles" id="summary-soles" hidden></div>
                         <div class="hub-summary__pill"><svg class="hub-icon" aria-hidden="true"><use href="#icon-trophy"/></svg><span><strong id="summary-raffles">0</strong> sorteos realizados</span></div>
-                        <div class="hub-summary__pill"><svg class="hub-icon" aria-hidden="true"><use href="#icon-gift"/></svg><span>Premios que unen a la comunidad</span></div>
                     </div>
                 </article>
 
                 <section class="hub-card hub-last-winner hub-reveal" id="last-winner" hidden aria-labelledby="last-winner-title">
-                    <div class="hub-section-heading hub-last-winner__header">
-                        <div>
-                            <p class="hub-eyebrow"><svg class="hub-icon" aria-hidden="true"><use href="#icon-crown"/></svg> LA SUERTE MÁS RECIENTE</p>
-                            <h2 id="last-winner-title">Último sorteo</h2>
-                        </div>
-                        <div class="hub-winner__links">
-                            <span class="hub-winner__raffle" id="last-raffle-meta"></span>
-                            <a class="hub-results-link" id="last-results-link" href="/juegos/sorteo_flash/">Ver resultados de la sala</a>
-                        </div>
-                    </div>
-                    <div id="last-winner-content"></div>
+                    <header class="hub-card-head">
+                        <h2 id="last-winner-title">Último sorteo</h2>
+                        <span class="hub-card-head__meta" id="last-raffle-meta"></span>
+                    </header>
+                    <div class="hub-winner-tabs" id="last-winner-tabs" role="tablist" aria-label="Ganadores del último sorteo" hidden></div>
+                    <div class="hub-last-winner__stage" id="last-winner-content"></div>
                     <div class="hub-fomo" id="ticket-fomo" hidden></div>
-                    <button class="hub-button hub-button--history" type="button" data-action="open-history">📜 Ver historial de sorteos pasados</button>
+                    <div class="hub-last-winner__actions">
+                        <button class="hub-button hub-button--ghost" type="button" data-action="open-history"><svg class="hub-icon" aria-hidden="true"><use href="#icon-history"/></svg> Ver historial de sorteos pasados</button>
+                        <a class="hub-results-link" id="last-results-link" href="/juegos/sorteo_flash/">Ver sala de resultados <svg class="hub-icon" aria-hidden="true"><use href="#icon-arrow"/></svg></a>
+                    </div>
                 </section>
             </section>
 
@@ -179,7 +176,6 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
             <section class="hub-card hub-proposals hub-reveal" aria-labelledby="proposals-title">
                 <div class="hub-section-heading hub-section-heading--wrap">
                     <div class="hub-section-heading__title">
-                        <p class="hub-eyebrow"><svg class="hub-icon" aria-hidden="true"><use href="#icon-gift"/></svg> CREA · VOTA · CELEBRA</p>
                         <h2 id="proposals-title">Elige los próximos premios</h2>
                         <p class="hub-muted">Cada artículo = 1 premio. ¿3 gestos de 500? ¡Serán 3 ganadores!</p>
                     </div>
@@ -196,38 +192,32 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
             </section>
             </template>
 
-            <section class="hub-card hub-sponsor hub-reveal" id="sponsor-banner" aria-labelledby="sponsor-title">
-                <div class="hub-sponsor__mark"><svg class="hub-icon" aria-hidden="true"><use href="#icon-crown"/></svg></div>
-                <div class="hub-sponsor__copy">
-                    <h2 id="sponsor-title">👑 ¿Quieres patrocinar un Sorteo Flash?</h2>
-                    <p>Pon el premio del próximo sorteo, aparece como Anfitrión VIP frente a toda la comunidad y deja tu mensaje destacado en la sala.</p>
-                </div>
-                <button class="hub-button hub-button--sponsor" type="button" data-action="open-sponsor">🤝 Patrocinar un sorteo</button>
+            <section class="hub-sponsor hub-reveal" id="sponsor-banner" aria-label="Patrocinar un Sorteo Flash">
+                <span class="hub-sponsor__crown" aria-hidden="true">
+                    <svg viewBox="0 0 64 48"><defs><linearGradient id="sponsor-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3a8"/><stop offset=".5" stop-color="#f6c337"/><stop offset="1" stop-color="#c98a12"/></linearGradient></defs><path d="M6 40 2 10l16 12L32 2l14 20 16-12-4 30Z" fill="url(#sponsor-gold)" stroke="#9a6a0c" stroke-width="2" stroke-linejoin="round"/><path d="M8 44h48" stroke="#c98a12" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="27" r="4.5" fill="#fff8d8"/><circle cx="17" cy="31" r="3" fill="#fff8d8"/><circle cx="47" cy="31" r="3" fill="#fff8d8"/></svg>
+                </span>
+                <button class="hub-cta hub-cta--sponsor" type="button" data-action="open-sponsor"><span>Patrocinar un sorteo</span></button>
             </section>
 
             <section class="hub-bottom" aria-label="Podios y métricas de la comunidad">
                 <article class="hub-card hub-hall hub-reveal" aria-labelledby="hall-title">
-                    <div class="hub-section-heading hub-section-heading--wrap">
-                        <div>
-                            <p class="hub-eyebrow"><svg class="hub-icon" aria-hidden="true"><use href="#icon-medal"/></svg> LEYENDAS DE LA COMUNIDAD</p>
-                            <h2 id="hall-title">Trofeos y Podios</h2>
-                        </div>
-                        <span class="hub-updated" id="stats-updated">Actualizando estadísticas…</span>
-                    </div>
+                    <header class="hub-card-head">
+                        <h2 id="hall-title"><svg class="hub-icon" aria-hidden="true"><use href="#icon-trophy"/></svg> Trofeos y podios</h2>
+                        <span class="hub-card-head__meta" id="stats-updated"></span>
+                    </header>
                     <div class="hub-hall__full" id="hall-full">
                         <div class="hub-skeleton hub-skeleton--proposal"></div>
                     </div>
                 </article>
-                <section class="hub-card hub-insights hub-reveal" aria-label="Logros y métricas del sorteo">
+                <div class="hub-insights" aria-label="Logros y métricas del sorteo">
                     <div class="hub-insights__trophies" id="trophy-cards"></div>
                     <div id="choice-panel"></div>
-                </section>
+                </div>
             </section>
 
             <div id="meme-slot"></div>
 
             <footer class="hub-footer">
-                <p>La suerte se disfruta más cuando las reglas son claras.</p>
                 <a class="hub-button hub-button--transparency" href="/juegos/sorteo_flash/transparencia">
                     <svg class="hub-icon" aria-hidden="true"><use href="#icon-shield"/></svg>
                     ¿Cómo garantizamos un sorteo 100% justo?
@@ -241,7 +231,6 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
             <div class="hub-dialog__inner">
                 <header class="hub-dialog__header">
                     <div>
-                        <p class="hub-eyebrow"><svg class="hub-icon" aria-hidden="true"><use href="#icon-gift"/></svg> INVENTARIO DE PREMIOS</p>
                         <h2 id="combo-title">Arma tu combo</h2>
                         <p class="hub-muted">Elige entre 1 y 12 artículos. ¡Puedes repetirlos!</p>
                     </div>
@@ -271,7 +260,6 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
             <div class="hub-dialog__inner">
                 <header class="hub-dialog__header">
                     <div>
-                        <p class="hub-eyebrow"><svg class="hub-icon" aria-hidden="true"><use href="#icon-clock"/></svg> ARCHIVO DE LA COMUNIDAD</p>
                         <h2 id="history-title">Sorteos pasados</h2>
                     </div>
                     <button class="hub-icon-button" type="button" data-action="close-history" aria-label="Cerrar historial">×</button>
@@ -286,8 +274,7 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
             <div class="hub-dialog__inner">
                 <header class="hub-dialog__header">
                     <div>
-                        <p class="hub-eyebrow"><svg class="hub-icon" aria-hidden="true"><use href="#icon-crown"/></svg> ANFITRIÓN VIP</p>
-                        <h2 id="sponsor-dialog-title">Tu premio, toda una comunidad</h2>
+                        <h2 id="sponsor-dialog-title">Patrocina un Sorteo Flash</h2>
                     </div>
                     <button class="hub-icon-button" type="button" data-action="close-sponsor" aria-label="Cerrar patrocinio">×</button>
                 </header>
@@ -298,16 +285,26 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
                     <li><span>3</span><strong>La comunidad participa con tu nombre en portada.</strong></li>
                 </ol>
                 <div class="hub-sponsor-dialog__actions">
-                    <a class="hub-button hub-button--sponsor" id="sponsor-whatsapp-link" href="<?= htmlspecialchars($hubConfig['sponsorUrl'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">🤝 Hablemos por WhatsApp</a>
+                    <a class="hub-button hub-button--sponsor" id="sponsor-whatsapp-link" href="<?= htmlspecialchars($hubConfig['sponsorUrl'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">Hablemos por WhatsApp</a>
                     <button class="hub-button hub-button--soft" type="button" data-action="close-sponsor">Cerrar</button>
                 </div>
+            </div>
+        </dialog>
+
+        <dialog class="hub-dialog hub-winner-dialog" id="winner-dialog" aria-labelledby="winner-dialog-title">
+            <div class="hub-dialog__inner">
+                <header class="hub-dialog__header">
+                    <div><h2 id="winner-dialog-title">Detalles del ganador</h2></div>
+                    <button class="hub-icon-button" type="button" data-action="close-winner" aria-label="Cerrar detalles">×</button>
+                </header>
+                <div id="winner-dialog-content"></div>
             </div>
         </dialog>
 
         <dialog class="hub-dialog hub-ranking-dialog" id="ranking-dialog" aria-labelledby="ranking-title">
             <div class="hub-dialog__inner">
                 <header class="hub-dialog__header">
-                    <div><p class="hub-eyebrow"><svg class="hub-icon" aria-hidden="true"><use href="#icon-crown"/></svg> HISTORIA DE GANADORES</p><h2 id="ranking-title">Ranking completo</h2></div>
+                    <div><h2 id="ranking-title">Ranking completo</h2></div>
                     <button class="hub-icon-button" type="button" data-action="close-ranking" aria-label="Cerrar ranking">×</button>
                 </header>
                 <div id="ranking-dialog-content"></div>
@@ -317,7 +314,7 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
         <dialog class="hub-dialog hub-category-dialog" id="category-dialog" aria-labelledby="category-title">
             <div class="hub-dialog__inner">
                 <header class="hub-dialog__header">
-                    <div><p class="hub-eyebrow" id="category-eyebrow">TROFEO DE LA COMUNIDAD</p><h2 id="category-title">Top 10</h2></div>
+                    <div><h2 id="category-title">Top 10</h2></div>
                     <button class="hub-icon-button" type="button" data-action="close-category" aria-label="Cerrar trofeo">×</button>
                 </header>
                 <div id="category-dialog-content"></div>
@@ -326,7 +323,7 @@ $hubJsVersion = is_file(__DIR__ . '/hub.js') ? filemtime(__DIR__ . '/hub.js') : 
 
         <dialog class="hub-dialog hub-confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-title">
             <div class="hub-confirm">
-                <span class="hub-confirm__emoji" aria-hidden="true">🌼</span>
+                <span class="hub-confirm__emoji" aria-hidden="true"><svg class="hub-icon"><use href="#icon-sparkle"/></svg></span>
                 <h2 id="confirm-title">¿Cerrar el creador?</h2>
                 <p id="confirm-copy">Tu selección todavía no se ha enviado.</p>
                 <div class="hub-confirm__actions">

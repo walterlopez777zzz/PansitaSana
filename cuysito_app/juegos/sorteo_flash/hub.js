@@ -25,6 +25,9 @@
         voteCelebration: 0,
         historyLoaded: false,
         historyLoading: false,
+        lastWinners: [],
+        lastRaffle: null,
+        lastWinnerIndex: 0,
     };
     const countFormat = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 });
     const moneyFormat = new Intl.NumberFormat('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -204,7 +207,9 @@
 
     function makePrizeThumb(source, className = '') {
         const thumb = el('span', `hub-prize-thumb${className ? ` ${className}` : ''}`);
-        thumb.append(el('span', 'hub-prize-thumb__fallback', '🎁'));
+        const fallback = el('span', 'hub-prize-thumb__fallback');
+        fallback.append(icon('gift'));
+        thumb.append(fallback);
         const url = safeUrl(source);
         if (url) {
             const image = el('img');
@@ -220,11 +225,11 @@
 
     function winnerDelivery(winner) {
         if (winner.choice === 'double_lost') {
-            return el('span', 'hub-delivery hub-delivery--pending', 'El doble no salió 🍀');
+            return el('span', 'hub-delivery hub-delivery--lost', 'Doble perdido');
         }
         const delivered = winner.delivery_status === 'delivered';
         return el('span', `hub-delivery hub-delivery--${delivered ? 'done' : 'pending'}`,
-            delivered ? 'Entregado ✅' : 'En camino 🚚');
+            delivered ? 'Entregado' : 'En camino');
     }
 
     function makeVerified(user) {
@@ -410,74 +415,180 @@
         const soles = Number(totals.valor_soles) || 0;
         const solesLine = $('#summary-soles');
         solesLine.hidden = soles <= 0;
-        if (soles > 0) solesLine.textContent = `≈ S/ ${moneyFormat.format(soles)} en premios`;
+        if (soles > 0) solesLine.textContent = `≈ S/ ${moneyFormat.format(soles)}`;
         const fill = bananas > 0 ? Math.min(.72, .14 + Math.log10(bananas) / 9) : 0;
         $('#hub-vault').style.setProperty('--vault-fill', String(fill));
         requestAnimationFrame(() => $('#hub-vault').classList.add('is-loaded'));
     }
 
+    const TROPHY_TONES = {
+        gold: ['#fff6b8', '#f7c843', '#c4860f', '#8a5a06'],
+        silver: ['#ffffff', '#d3dae2', '#8d99a6', '#5c6772'],
+        bronze: ['#ffdcbc', '#e39357', '#a5562a', '#6e3517'],
+    };
+
+    function makeTrophy(tone, className = 'hub-trophy') {
+        const colors = TROPHY_TONES[tone] || TROPHY_TONES.gold;
+        const id = `hub-trophy-${tone}-${Math.random().toString(36).slice(2, 8)}`;
+        const wrap = el('span', `${className} ${className}--${tone}`);
+        wrap.setAttribute('aria-hidden', 'true');
+        wrap.innerHTML = `<svg viewBox="0 0 64 74" focusable="false"><defs>
+            <linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${colors[0]}"/><stop offset=".45" stop-color="${colors[1]}"/><stop offset="1" stop-color="${colors[2]}"/></linearGradient>
+            <linearGradient id="${id}-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${colors[1]}"/><stop offset="1" stop-color="${colors[3]}"/></linearGradient></defs>
+            <path d="M16 12H7c0 12 5 19 14 20M48 12h9c0 12-5 19-14 20" fill="none" stroke="url(#${id})" stroke-width="5" stroke-linecap="round"/>
+            <path d="M13 5h38v13c0 14-8 23-19 23S13 32 13 18Z" fill="url(#${id})" stroke="${colors[3]}" stroke-width="1.5"/>
+            <path d="M20 10v8c0 7 3 12 8 15" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+            <path d="m32 13 2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4-3.9-3.8 5.4-.8Z" fill="#fff" fill-opacity=".55"/>
+            <path d="M28 41h8v9h-8z" fill="url(#${id}-s)"/>
+            <path d="M20 50h24l3 9H17z" fill="url(#${id})" stroke="${colors[3]}" stroke-width="1.2"/>
+            <rect x="13" y="59" width="38" height="12" rx="2.5" fill="#2b2433"/>
+            <rect x="25" y="62.5" width="14" height="5" rx="1.2" fill="${colors[1]}"/></svg>`;
+        return wrap;
+    }
+
+    function winnerStory(winner) {
+        const choice = String(winner && winner.choice || '');
+        if (choice === 'cashback') return { cls: 'cashback', choice: 'Cashback', icon: 'coin', result: winner.prize_name || 'Cashback en Bananos' };
+        if (choice === 'double_won') return { cls: 'won', choice: 'Doble o Nada', icon: 'dice', result: `¡Ganó el doble! · ${winner.prize_name || 'Premio del sorteo'}` };
+        if (choice === 'double_lost') return { cls: 'lost', choice: 'Doble o Nada', icon: 'dice', result: 'Se perdió en Doble o Nada' };
+        return { cls: 'original', choice: 'Premio original', icon: 'gift', result: winner.prize_name || 'Premio del sorteo' };
+    }
+
+    function makeWinnerCard(winner, index) {
+        const story = winnerStory(winner);
+        const card = el('article', 'hub-tr-card');
+        card.append(el('span', 'hub-tr-card__glow'), el('span', 'hub-tr-card__border'));
+        const inner = el('div', 'hub-tr-card__inner');
+        const avatarWrap = el('span', 'hub-tr-avatar');
+        avatarWrap.append(el('span', 'hub-tr-avatar__ring'), makeAvatar(winner, 'hub-avatar hub-tr-avatar__img'));
+        const name = el('h3', 'hub-tr-name', winner.name || 'Ganador');
+        if (String(winner.name || '').length > 13) name.classList.add('is-long');
+        const verified = makeVerified(winner);
+        if (verified) name.append(verified);
+        const storyBox = el('div', `hub-tr-story hub-tr-story--${story.cls}`);
+        const choiceRow = el('div', 'hub-tr-story__row');
+        const choiceValue = el('span', 'hub-tr-story__val');
+        choiceValue.append(icon(story.icon), document.createTextNode(story.choice));
+        choiceRow.append(el('span', 'hub-tr-story__key', 'Elección'), choiceValue);
+        const resultRow = el('div', 'hub-tr-story__row');
+        resultRow.append(el('span', 'hub-tr-story__key', 'Resultado'), el('span', 'hub-tr-story__val hub-tr-story__val--result', story.result));
+        storyBox.append(choiceRow, el('span', 'hub-tr-story__divider'), resultRow);
+        const details = el('button', 'hub-tr-details');
+        details.type = 'button';
+        details.dataset.action = 'open-winner';
+        details.dataset.winnerIndex = String(index);
+        details.append(icon('eye'), el('span', '', 'Ver detalles'), icon('chevron', 'hub-icon hub-tr-details__arrow'));
+        inner.append(avatarWrap, name, storyBox, details);
+        if (winner.choice !== 'double_lost') {
+            const delivered = winner.delivery_status === 'delivered';
+            const bar = el('div', `hub-tr-reward ${delivered ? 'is-delivered' : 'is-pending'}`);
+            bar.append(el('span', 'hub-tr-reward__dot'), document.createTextNode(delivered ? 'Recompensa entregada' : 'Entrega en proceso'));
+            inner.append(bar);
+        }
+        card.append(inner);
+        return card;
+    }
+
+    function showLastWinner(index) {
+        const winners = state.lastWinners || [];
+        const winner = winners[index];
+        if (!winner) return;
+        state.lastWinnerIndex = index;
+        $('#last-winner-content').replaceChildren(makeWinnerCard(winner, index));
+        $$('.hub-winner-tab', $('#last-winner-tabs')).forEach(tab => {
+            const active = Number(tab.dataset.winnerIndex) === index;
+            tab.classList.toggle('is-active', active);
+            tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+    }
+
     function renderLastWinner(data, my) {
         const section = $('#last-winner');
-        const content = $('#last-winner-content');
         const fomo = $('#ticket-fomo');
-        content.replaceChildren();
+        const tabs = $('#last-winner-tabs');
         fomo.replaceChildren();
         fomo.hidden = true;
+        tabs.replaceChildren();
+        tabs.hidden = true;
         if (!data || !Array.isArray(data.ganadores) || data.ganadores.length === 0) {
             section.hidden = true;
             return;
         }
         section.hidden = false;
+        state.lastRaffle = data;
+        state.lastWinners = data.ganadores;
         const edition = data.edicion ?? data.raffle_id;
         const dateLabel = data.end_time
-            ? new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium', timeZone: 'America/Lima' }).format(new Date(data.end_time))
+            ? new Intl.DateTimeFormat('es-PE', { day: 'numeric', month: 'short', timeZone: 'America/Lima' }).format(new Date(data.end_time))
             : '';
-        $('#last-raffle-meta').textContent = `Sorteo #${formatCount(edition)} · ${dateLabel}`;
+        const meta = $('#last-raffle-meta');
+        meta.replaceChildren(el('strong', '', `#${formatCount(edition)}`));
+        if (dateLabel) meta.append(el('span', '', dateLabel));
         const results = $('#last-results-link');
         const raffleId = Number(data.raffle_id);
         results.href = raffleId > 0 ? `/juegos/sorteo_flash/?id=${encodeURIComponent(String(Math.floor(raffleId)))}` : '/juegos/sorteo_flash/';
-        const winners = data.ganadores;
-        const first = winners[0];
-        const featured = el('article', 'hub-winner-feature');
-        const avatar = makeAvatar(first, 'hub-avatar hub-avatar--large');
-        const main = el('div', 'hub-winner-card__main');
-        const identity = el('div', 'hub-winner-feature__identity');
-        const nameRow = el('div', 'hub-winner-card__name');
-        nameRow.append(el('strong', '', first.name || 'Ganador de la comunidad'));
-        const verified = makeVerified(first);
-        if (verified) nameRow.append(verified);
-        identity.append(avatar, nameRow);
-        const prize = el('p', 'hub-winner-card__prize', first.prize_name || 'Premio del sorteo');
-        main.append(identity, prize, winnerDelivery(first));
-        featured.append(makePrizeThumb(first.prize_image), main);
-        content.append(featured);
-        if (winners.length > 1) {
-            const others = el('div', 'hub-winner-chips');
-            winners.slice(1).forEach(winner => {
-                const chip = el('article', 'hub-winner-chip');
-                chip.append(el('span', 'hub-winner-chip__position', `#${winner.position}`));
-                chip.append(makeAvatar(winner, 'hub-avatar hub-avatar--small'));
-                const label = el('span', 'hub-winner-chip__label');
-                const name = el('strong', '', winner.name || 'Ganador');
-                const verified = makeVerified(winner);
-                if (verified) name.append(verified);
-                label.append(name, el('small', '', winner.prize_name || 'Premio'));
-                chip.append(label, makePrizeThumb(winner.prize_image), winnerDelivery(winner));
-                others.append(chip);
+        if (data.ganadores.length > 1) {
+            tabs.hidden = false;
+            data.ganadores.forEach((winner, index) => {
+                const tab = el('button', 'hub-winner-tab');
+                tab.type = 'button';
+                tab.setAttribute('role', 'tab');
+                tab.dataset.action = 'pick-winner';
+                tab.dataset.winnerIndex = String(index);
+                tab.setAttribute('aria-label', `Ganador #${winner.position || index + 1}: ${winner.name || 'Ganador'}`);
+                tab.append(makeAvatar(winner, 'hub-avatar hub-avatar--small'), el('span', '', `#${winner.position || index + 1}`));
+                tabs.append(tab);
             });
-            content.append(others);
         }
+        showLastWinner(0);
         if (my && my.participo) {
             fomo.hidden = false;
             if (my.gano) {
-                fomo.append(el('strong', '', '¡La suerte también te encontró! 🎉'));
-                fomo.append(el('span', '', `Tu ticket #${formatCount(my.mi_ticket)} ganó en este sorteo.`));
+                fomo.append(el('strong', '', '¡Ganaste en este sorteo!'));
+                fomo.append(el('span', '', `Tu ticket #${formatCount(my.mi_ticket)} salió premiado.`));
             } else {
-                fomo.append(el('strong', '', '¡Te quedaste cerquita! 🍀'));
                 const gap = my.distancia === null || my.distancia === undefined ? 'muy cerca' : `${formatCount(my.distancia)} ${my.distancia === 1 ? 'ticket' : 'tickets'}`;
-                fomo.append(el('span', '', `Tu ticket #${formatCount(my.mi_ticket)} vs. ticket ganador #${my.ticket_ganador ?? '—'}. ¡Te quedaste a ${gap} de ganar!`));
+                fomo.append(el('strong', '', `A ${gap} de ganar`));
+                fomo.append(el('span', '', `Tu ticket #${formatCount(my.mi_ticket)} · ganador #${my.ticket_ganador ?? '—'}`));
             }
         }
+    }
+
+    function openWinnerDetails(index) {
+        const winner = (state.lastWinners || [])[index];
+        if (!winner) return;
+        const raffle = state.lastRaffle || {};
+        const story = winnerStory(winner);
+        const content = $('#winner-dialog-content');
+        content.replaceChildren();
+        const hero = el('div', `hub-wd-hero hub-wd-hero--${story.cls}`);
+        hero.append(makePrizeThumb(winner.prize_image, 'hub-prize-thumb--hero'));
+        const heroCopy = el('div', 'hub-wd-hero__copy');
+        heroCopy.append(el('span', 'hub-wd-hero__key', 'Resultado'), el('strong', '', story.result));
+        hero.append(heroCopy);
+        const options = el('div', 'hub-wd-options');
+        const chosen = story.cls === 'won' || story.cls === 'lost' ? 'double' : story.cls;
+        [['original', 'Original', 'gift'], ['cashback', 'Cashback', 'coin'], ['double', 'Doble o Nada', 'dice']].forEach(([key, label, iconName]) => {
+            const option = el('div', `hub-wd-option${key === chosen ? ' is-chosen' : ''}`);
+            option.append(icon(iconName), el('span', '', label));
+            options.append(option);
+        });
+        const facts = el('dl', 'hub-wd-facts');
+        const edition = raffle.edicion ?? raffle.raffle_id;
+        const timestamp = Date.parse(raffle.end_time || '');
+        [
+            ['Ganador', winner.name || 'Ganador'],
+            ['Sorteo', `#${formatCount(edition)}`],
+            ['Fecha', Number.isFinite(timestamp) ? new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium', timeZone: 'America/Lima' }).format(new Date(timestamp)) : '—'],
+            ['Ticket', winner.ticket_index !== null && winner.ticket_index !== undefined ? `#${formatCount(winner.ticket_index)}` : '—'],
+            ['Participantes', formatCount(raffle.participantes)],
+        ].forEach(([key, value]) => {
+            const row = el('div');
+            row.append(el('dt', '', key), el('dd', '', value));
+            facts.append(row);
+        });
+        content.append(hero, el('h3', 'hub-wd-label', 'Elección'), options, facts, winnerDelivery(winner));
+        $('#winner-dialog').showModal();
     }
 
     function historyWinnerRow(winner) {
@@ -649,7 +760,7 @@
             applyCardImageFraming(image, item);
             imageBox.append(image);
         } else {
-            imageBox.append(el('span', 'hub-shop-card__placeholder', '🍌'));
+            { const ph = el('span', 'hub-shop-card__placeholder'); ph.append(icon('gift')); imageBox.append(ph); }
         }
         content.append(imageBox);
         const overlay = el('span', 'card-info-overlay');
@@ -848,7 +959,7 @@
             image.decoding = 'async';
             tile.append(image);
         } else {
-            tile.append(el('span', 'hub-proposal-item__placeholder', '🍌'));
+            { const ph = el('span', 'hub-proposal-item__placeholder'); ph.append(icon('gift')); tile.append(ph); }
         }
         const info = el('span', 'hub-proposal-item__info');
         info.append(el('strong', '', item.name || 'Artículo'), el('small', '', `${formatCount(item.pavos)} PaVos`));
@@ -884,9 +995,9 @@
             const badges = el('div', 'hub-proposal-card__badges');
             if (proposal.is_mine) badges.append(el('span', 'hub-chip hub-chip--pink', 'Tu propuesta'));
             if (my.has_voted && Number(my.voted_propuesta_id) === Number(proposal.id)) {
-                badges.append(el('span', 'hub-chip hub-chip--green', 'Tu voto ✅'));
+                badges.append(el('span', 'hub-chip hub-chip--green', 'Tu voto'));
             }
-            if (proposal.estado === 'ganadora') badges.append(el('span', 'hub-chip hub-chip--gold', 'Combo ganador 🏆'));
+            if (proposal.estado === 'ganadora') badges.append(el('span', 'hub-chip hub-chip--gold', 'Combo ganador'));
             header.append(badges);
             const items = el('div', 'hub-proposal-card__items');
             (Array.isArray(proposal.items) ? proposal.items : []).forEach(item => items.append(createProposalItem(item)));
@@ -1036,89 +1147,48 @@
         return rows;
     }
 
-    function podiumPerson(user, rank, viewerId) {
+    function podiumColumn(user, rank) {
         const variant = rank === 1 ? 'first' : (rank === 2 ? 'second' : 'third');
-        const place = el('div', `hub-podium-place hub-podium-place--${variant}`);
-        place.append(el('span', 'hub-podium-place__rank', `#${rank}`));
-        const avatarWrap = el('span', 'hub-podium-avatar-wrap');
-        if (rank === 1) {
-            const crown = document.createElementNS(SVG_NS, 'svg');
-            crown.setAttribute('class', 'hub-podium-crown');
-            crown.setAttribute('viewBox', '0 0 32 32');
-            crown.setAttribute('aria-hidden', 'true');
-            const crownPath = document.createElementNS(SVG_NS, 'path');
-            crownPath.setAttribute('d', 'M4 23 2 8l8 6 6-10 6 10 8-6-2 15H4Zm1 3h22v3H5Z');
-            crownPath.setAttribute('fill', '#f2bd35');
-            crownPath.setAttribute('stroke', '#a8791a');
-            crownPath.setAttribute('stroke-width', '1.5');
-            crown.append(crownPath);
-            avatarWrap.append(crown);
-        }
-        avatarWrap.append(makeAvatar(user || {}, 'hub-avatar'));
-        place.append(avatarWrap);
-        if (user) {
-            const name = el('span', 'hub-podium-place__name', user.name || 'Banano');
-            const verified = makeVerified(user);
-            if (verified) name.append(verified);
-            place.append(name, el('span', 'hub-podium-place__wins', `${formatCount(user.wins)} ${Number(user.wins) === 1 ? 'victoria' : 'victorias'}`));
-        } else {
-            place.append(el('span', 'hub-podium-place__name', 'Por descubrir'), el('span', 'hub-podium-place__wins', 'Aún sin ganador'));
-        }
-        const pedestal = el('span', 'hub-podium-place__pedestal');
-        const svg = document.createElementNS(SVG_NS, 'svg');
-        svg.setAttribute('viewBox', '0 0 120 120');
-        svg.setAttribute('aria-hidden', 'true');
-        const defs = document.createElementNS(SVG_NS, 'defs');
-        const gradient = document.createElementNS(SVG_NS, 'linearGradient');
-        const gradientId = `hub-podium-${variant}`;
-        gradient.setAttribute('id', gradientId);
-        gradient.setAttribute('x1', '0'); gradient.setAttribute('y1', '0');
-        gradient.setAttribute('x2', '0'); gradient.setAttribute('y2', '1');
-        const colors = rank === 1 ? ['#ffe991', '#d69b2e'] : (rank === 2 ? ['#f4f6f8', '#9ea9b5'] : ['#f2c39f', '#a86645']);
-        colors.forEach((color, index) => {
-            const stop = document.createElementNS(SVG_NS, 'stop');
-            stop.setAttribute('offset', index ? '100%' : '0%');
-            stop.setAttribute('stop-color', color);
-            gradient.append(stop);
-        });
-        defs.append(gradient);
-        const side = document.createElementNS(SVG_NS, 'path');
-        side.setAttribute('d', 'M100 27 117 40v78h-17Z');
-        side.setAttribute('fill', rank === 1 ? '#b87d1e' : (rank === 2 ? '#85919c' : '#8c5338'));
-        const face = document.createElementNS(SVG_NS, 'path');
-        face.setAttribute('d', 'M8 40h92v78H8z');
-        face.setAttribute('fill', `url(#${gradientId})`);
-        const top = document.createElementNS(SVG_NS, 'path');
-        top.setAttribute('d', 'M8 40 25 24h92l-17 16Z');
-        top.setAttribute('fill', rank === 1 ? '#fff1ae' : (rank === 2 ? '#fff' : '#ffdcc0'));
-        top.setAttribute('stroke', colors[1]);
-        top.setAttribute('stroke-width', '2');
-        svg.append(defs, side, face, top);
-        pedestal.append(svg);
-        place.append(pedestal);
-        if (user && Number(user.user_id) === Number(viewerId) && Number(viewerId) > 0) place.classList.add('is-you');
-        return place;
+        const tone = rank === 1 ? 'gold' : (rank === 2 ? 'silver' : 'bronze');
+        const column = el('div', `hub-podium__col hub-podium__col--${variant}`);
+        const person = el('div', 'hub-podium__person');
+        const avatar = el('span', 'hub-podium__avatar');
+        avatar.append(makeAvatar(user || {}, 'hub-avatar'));
+        const name = el('span', 'hub-podium__name', user ? (user.name || 'Banano') : 'Por descubrir');
+        const verified = makeVerified(user);
+        if (verified) name.append(verified);
+        person.append(avatar, name);
+        const step = el('div', 'hub-podium__step');
+        step.append(makeTrophy(tone, 'hub-trophy'), el('span', 'hub-podium__numeral', String(rank)));
+        column.append(person, step);
+        if (user && Number(user.user_id) === Number(CONFIG.userId) && Number(CONFIG.userId) > 0) column.classList.add('is-you');
+        return column;
     }
 
-    function trophyCard(title, iconName, user, detail, category, entries, metric, modifier = '') {
-        const card = el('article', `hub-trophy-card${modifier ? ` ${modifier}` : ''}`);
+    function trophyCard(title, iconName, user, valueText, valueLabel, category, entries, metric, modifier = '') {
+        const card = el('article', `hub-trophy-card hub-reveal${modifier ? ` ${modifier}` : ''}`);
         card.dataset.category = category;
         const heading = el('h3', 'hub-trophy-card__heading');
-        heading.append(icon(iconName), document.createTextNode(title));
+        const badge = el('span', 'hub-trophy-card__icon');
+        badge.append(icon(iconName));
+        heading.append(badge, el('span', '', title));
         card.append(heading);
         if (user) {
-            const highlight = el('p', 'hub-trophy-highlight');
-            highlight.append(makeAvatar(user, 'hub-avatar'), el('span', '', user.name || 'Banano'));
-            card.append(highlight, el('p', 'hub-results-note', detail(user)));
+            const value = el('p', 'hub-trophy-card__value');
+            value.append(el('strong', '', valueText(user)), el('span', '', valueLabel));
+            const who = el('p', 'hub-trophy-card__who');
+            const name = el('span', '', user.name || 'Banano');
+            const verified = makeVerified(user);
+            if (verified) name.append(verified);
+            who.append(makeAvatar(user, 'hub-avatar hub-avatar--small'), name);
             const more = el('button', 'hub-text-button hub-category-button', 'Ver Top 10');
             more.type = 'button';
             more.dataset.action = 'open-category';
             more.dataset.category = category;
-            card.append(more);
+            card.append(value, who, more);
         } else {
-            card.append(el('p', 'hub-empty-state hub-empty-state--small', 'La próxima historia de suerte está por escribirse.'));
+            card.append(el('p', 'hub-empty-state hub-empty-state--small', 'Aún sin datos.'));
         }
-        card.dataset.entries = String(Array.isArray(entries) ? entries.length : 0);
         card._hubEntries = entries;
         card._hubMetric = metric;
         return card;
@@ -1133,140 +1203,150 @@
     function makeChoicePanel(stats) {
         const choices = stats.elecciones || {};
         const percentFormat = new Intl.NumberFormat('es-PE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-        const panel = el('section', 'hub-choice-panel hub-reveal');
+        const panel = el('section', 'hub-card hub-choice-panel hub-reveal');
+        const head = el('header', 'hub-card-head');
         const heading = el('h2');
-        heading.append(document.createTextNode('📊 Métricas y Elecciones'));
-        panel.append(heading);
-        const body = el('div', 'hub-choice-panel__body');
+        heading.append(icon('chart'), document.createTextNode('Métricas y elecciones'));
+        head.append(heading);
+        panel.append(head);
         const parts = [
-            ['original', 'Original', 'original'],
+            ['original', 'Premio original', 'original'],
             ['cashback', 'Cashback', 'cashback'],
             ['doble', 'Doble o Nada', 'double'],
         ];
-        const triple = el('section', 'hub-triple-metric');
-        triple.append(el('h3', '', 'El Triple'));
+        const total = parts.reduce((sum, [key]) => sum + (Number(choices[key]) || 0), 0);
+        const triple = el('section', 'hub-metric hub-metric--choices');
+        const tripleHead = el('div', 'hub-metric__head');
+        tripleHead.append(el('h3', '', 'Elección de los ganadores'));
+        const totalNode = el('strong', 'hub-metric__total', formatCount(total));
+        totalNode.dataset.countUp = String(total);
+        tripleHead.append(totalNode);
         const segmentBar = el('div', 'hub-choice-segments');
         segmentBar.setAttribute('role', 'img');
         segmentBar.setAttribute('aria-label', 'Distribución porcentual de las elecciones');
-        const choicePills = el('div', 'hub-choice-pills');
+        const rows = el('div', 'hub-choice-rows');
         parts.forEach(([key, label, color]) => {
             const pct = choicePercent(choices, key);
             const fill = el('span', `hub-choice-segments__fill hub-choice-segments__fill--${color}`);
             fill.style.setProperty('--choice-pct', `${pct}%`);
-            fill.setAttribute('aria-hidden', 'true');
             segmentBar.append(fill);
-
-            const pill = el('div', 'hub-choice-pill');
-            const labelRow = el('span', 'hub-choice-pill__label');
-            labelRow.append(el('span', `hub-choice-pill__swatch hub-choice-legend__swatch--${color}`), document.createTextNode(label));
-            const valueRow = el('strong', 'hub-choice-pill__value');
-            valueRow.append(document.createTextNode(formatCount(choices[key])));
-            const percentage = el('small', '', `${percentFormat.format(pct)}%`);
+            const row = el('div', 'hub-choice-row');
+            const labelNode = el('span', 'hub-choice-row__label');
+            labelNode.append(el('span', `hub-choice-row__swatch hub-choice-row__swatch--${color}`), document.createTextNode(label));
+            const count = el('strong', 'hub-choice-row__count', formatCount(choices[key]));
+            count.dataset.countUp = String(Number(choices[key]) || 0);
+            const percentage = el('span', 'hub-choice-row__pct', `${percentFormat.format(pct)}%`);
             percentage.dataset.countUp = String(pct);
             percentage.dataset.decimals = '1';
             percentage.dataset.suffix = '%';
-            valueRow.append(percentage);
-            pill.append(labelRow, valueRow);
-            choicePills.append(pill);
+            row.append(labelNode, count, percentage);
+            rows.append(row);
         });
-        triple.append(segmentBar, choicePills);
-        body.append(triple);
+        triple.append(tripleHead, segmentBar, rows);
+
         const rate = Math.max(0, Math.min(100, Number(choices.doble_win_rate) || 0));
-        const rateBox = el('section', 'hub-double-metric');
-        rateBox.append(el('h3', '', '% de Victorias en Doble o Nada'));
+        const rateBox = el('section', 'hub-metric hub-metric--double');
         const svg = document.createElementNS(SVG_NS, 'svg');
         svg.setAttribute('class', 'hub-double-ring');
         svg.setAttribute('viewBox', '0 0 100 100');
         svg.setAttribute('role', 'img');
         svg.setAttribute('aria-label', `Victorias en Doble o Nada: ${percentFormat.format(rate)} por ciento`);
-        const track = document.createElementNS(SVG_NS, 'circle');
-        track.setAttribute('class', 'hub-double-ring__track');
-        track.setAttribute('cx', '50'); track.setAttribute('cy', '50'); track.setAttribute('r', '42');
-        track.setAttribute('pathLength', '100');
-        const ring = document.createElementNS(SVG_NS, 'circle');
-        ring.setAttribute('class', 'hub-double-ring__fill');
-        ring.setAttribute('cx', '50'); ring.setAttribute('cy', '50'); ring.setAttribute('r', '42');
-        ring.setAttribute('pathLength', '100');
-        ring.style.setProperty('--ring-value', String(rate));
-        const ringText = document.createElementNS(SVG_NS, 'text');
-        ringText.setAttribute('class', 'hub-double-ring__value');
-        ringText.setAttribute('x', '50'); ringText.setAttribute('y', '50');
-        ringText.textContent = `${percentFormat.format(rate)}%`;
-        ringText.dataset.countUp = String(rate);
-        ringText.dataset.decimals = '1';
-        ringText.dataset.suffix = '%';
-        svg.append(track, ring, ringText);
-        const rateValue = el('strong', '', `${formatCount(choices.doble_ganados)} ganados`);
-        const totals = el('div', 'hub-double-metric__totals');
-        totals.append(rateValue, el('span', '', `${formatCount(choices.doble_perdidos)} perdidos`));
-        rateBox.append(svg, totals);
-        body.append(rateBox);
-        panel.append(body, makeLatestChoices(stats));
+        ['track', 'fill'].forEach(part => {
+            const circle = document.createElementNS(SVG_NS, 'circle');
+            circle.setAttribute('class', `hub-double-ring__${part}`);
+            circle.setAttribute('cx', '50'); circle.setAttribute('cy', '50'); circle.setAttribute('r', '42');
+            circle.setAttribute('pathLength', '100');
+            if (part === 'fill') circle.style.setProperty('--ring-value', String(rate));
+            svg.append(circle);
+        });
+        const ringWrap = el('div', 'hub-double-ring-wrap');
+        const ringValue = el('strong', 'hub-double-ring-wrap__value', `${percentFormat.format(rate)}%`);
+        ringValue.dataset.countUp = String(rate);
+        ringValue.dataset.decimals = '1';
+        ringValue.dataset.suffix = '%';
+        ringWrap.append(svg, ringValue);
+        const rateCopy = el('div', 'hub-double-copy');
+        rateCopy.append(el('h3', '', 'Victorias en Doble o Nada'));
+        const split = el('div', 'hub-double-split');
+        [['won', 'Ganados', choices.doble_ganados], ['lost', 'Perdidos', choices.doble_perdidos]].forEach(([tone, label, value]) => {
+            const box = el('div', `hub-double-split__item hub-double-split__item--${tone}`);
+            const number = el('strong', '', formatCount(value));
+            number.dataset.countUp = String(Number(value) || 0);
+            box.append(number, el('span', '', label));
+            split.append(box);
+        });
+        rateCopy.append(split);
+        rateBox.append(ringWrap, rateCopy);
+        panel.append(triple, rateBox, makeLatestChoices(stats));
         return panel;
     }
 
     function makeLatestChoices(stats) {
         const latest = stats.ultimas_elecciones || {};
-        const section = el('section', 'hub-latest-choices');
-        const heading = el('h3');
-        heading.append(icon('clock'), document.createTextNode('Últimas elecciones'));
-        section.append(heading);
-        const grid = el('div', 'hub-latest-choices__grid');
+        const section = el('section', 'hub-metric hub-metric--latest');
+        section.append(el('h3', '', 'Últimas elecciones'));
+        const list = el('div', 'hub-latest-list');
         [
-            ['Original', latest.original, 'gift'],
-            ['Cashback', latest.cashback, 'coin'],
-            ['Doble o Nada', latest.doble, latest.doble && latest.doble.resultado === 'perdio' ? 'heart-broken' : 'dice'],
-        ].forEach(([label, entry, iconName]) => {
-            const card = el('article', 'hub-latest-card');
-            const badge = el('span', 'hub-latest-card__icon');
+            ['Original', latest.original, 'gift', 'original'],
+            ['Cashback', latest.cashback, 'coin', 'cashback'],
+            ['Doble o Nada', latest.doble, latest.doble && latest.doble.resultado === 'perdio' ? 'heart-broken' : 'dice', 'double'],
+        ].forEach(([label, entry, iconName, tone]) => {
+            const row = el('article', `hub-latest-row hub-latest-row--${tone}`);
+            const badge = el('span', 'hub-latest-row__icon');
             badge.append(icon(iconName));
-            card.append(badge);
-            const copy = el('span', 'hub-latest-card__copy');
+            row.append(badge);
+            const copy = el('span', 'hub-latest-row__copy');
+            copy.append(el('small', '', label));
             if (entry) {
-                const nameLine = el('span', 'hub-user-name');
-                nameLine.append(makeAvatar(entry, 'hub-avatar hub-avatar--small'), document.createTextNode(entry.name || 'Ganador'));
+                const name = el('strong', '', entry.name || 'Ganador');
                 const verified = makeVerified(entry);
-                if (verified) nameLine.append(verified);
-                copy.append(el('strong', '', label), nameLine);
+                if (verified) name.append(verified);
+                copy.append(name);
+                row.append(makeAvatar(entry, 'hub-avatar hub-avatar--small'), copy);
                 const edition = entry.edicion ?? entry.raffle_id;
-                const result = entry.resultado === 'perdio'
-                    ? ' · El doble se perdió'
-                    : (entry.resultado === 'gano' ? ' · ¡Ganó el doble!' : '');
-                copy.append(el('small', '', `Edición #${formatCount(edition)}${result}`));
+                const meta = el('span', 'hub-latest-row__meta');
+                meta.append(el('strong', '', `#${formatCount(edition)}`));
+                if (entry.resultado === 'gano') meta.append(el('span', 'hub-latest-row__tag is-won', 'Ganó'));
+                if (entry.resultado === 'perdio') meta.append(el('span', 'hub-latest-row__tag is-lost', 'Perdió'));
+                row.append(meta);
             } else {
-                copy.append(el('strong', '', label), el('small', '', 'Aún sin registros'));
+                copy.append(el('strong', '', 'Aún sin registros'));
+                row.append(copy);
             }
-            card.append(copy);
-            grid.append(card);
+            list.append(row);
         });
-        section.append(grid);
+        section.append(list);
         return section;
     }
 
     function makeStatsDetail(stats, viewerId) {
         const detail = el('div', 'hub-hall-detail');
         const winners = Array.isArray(stats.top_ganadores) ? stats.top_ganadores : [];
-        detail.append(el('h3', '', 'Los tres primeros'));
-        const podiumRows = el('div', 'hub-podium');
-        podiumRows.append(podiumPerson(winners[1], 2, viewerId), podiumPerson(winners[0], 1, viewerId), podiumPerson(winners[2], 3, viewerId));
-        detail.append(podiumRows);
-        detail.append(el('h3', '', 'Lugares #4–#10'));
-        const leaderboard = el('div', 'hub-leaderboard');
-        winners.slice(3, 10).forEach((user, index) => {
-            const rank = Number(user.rank) || index + 4;
-            const row = el('div', 'hub-leaderboard-row');
-            row.append(el('span', 'hub-leaderboard-row__rank', `#${rank}`));
-            row.append(makeAvatar(user, 'hub-avatar hub-avatar--small'));
-            const identity = el('span', 'hub-leaderboard-row__identity');
-            identity.append(document.createTextNode(user.name || 'Banano'));
+        const podium = el('div', 'hub-podium hub-reveal');
+        podium.setAttribute('aria-label', 'Podio de ganadores');
+        podium.append(podiumColumn(winners[1], 2), podiumColumn(winners[0], 1), podiumColumn(winners[2], 3));
+        detail.append(podium);
+        const board = el('ol', 'hub-leaderboard hub-reveal');
+        board.setAttribute('aria-label', 'Top 10 de ganadores');
+        winners.slice(0, 10).forEach((user, index) => {
+            const rank = Number(user.rank) || index + 1;
+            const own = Number(user.user_id) === Number(viewerId) && Number(viewerId) > 0;
+            const row = el('li', `hub-lb-row${rank <= 3 ? ` hub-lb-row--top hub-lb-row--${['gold', 'silver', 'bronze'][rank - 1]}` : ''}${own ? ' is-you' : ''}`);
+            row.style.setProperty('--row-i', String(index));
+            const rankNode = el('span', 'hub-lb-row__rank');
+            if (rank <= 3) rankNode.append(makeTrophy(['gold', 'silver', 'bronze'][rank - 1], 'hub-trophy-mini'));
+            else rankNode.textContent = String(rank);
+            const name = el('span', 'hub-lb-row__name', user.name || 'Banano');
             const verified = makeVerified(user);
-            if (verified) identity.append(verified);
-            row.append(identity, el('span', 'hub-leaderboard-row__wins', `${formatCount(user.wins)} victorias`));
-            leaderboard.append(row);
+            if (verified) name.append(verified);
+            const wins = el('span', 'hub-lb-row__wins');
+            wins.append(el('strong', '', formatCount(user.wins)), el('small', '', Number(user.wins) === 1 ? 'victoria' : 'victorias'));
+            row.append(rankNode, makeAvatar(user, 'hub-avatar hub-avatar--small'), name, wins);
+            board.append(row);
         });
-        if (winners.length < 4) leaderboard.append(el('p', 'hub-empty-state hub-empty-state--small', 'Pronto habrá más leyendas en el ranking.'));
-        detail.append(leaderboard);
-        const fullRanking = el('button', 'hub-button hub-button--soft', 'Ver ranking completo');
+        if (!winners.length) board.append(el('li', 'hub-empty-state hub-empty-state--small', 'Pronto habrá leyendas en el ranking.'));
+        detail.append(board);
+        const fullRanking = el('button', 'hub-button hub-button--ghost hub-button--block', 'Ver ranking completo');
         fullRanking.type = 'button';
         fullRanking.dataset.action = 'open-ranking';
         detail.append(fullRanking);
@@ -1275,24 +1355,23 @@
 
     function renderHall(stats) {
         const payload = stats || {};
-        const target = $('#hall-full');
-        target.replaceChildren(makeStatsDetail(payload, CONFIG.userId || 0));
+        $('#hall-full').replaceChildren(makeStatsDetail(payload, CONFIG.userId || 0));
         const streaks = Array.isArray(payload.top_rachas) ? payload.top_rachas : [];
-        const streakMetric = user => `Récord ${formatCount(user.best_streak)} · actual ${formatCount(user.current_streak)}`;
-        const streakCard = trophyCard('🔥 Racha Imparable', 'fire', streaks[0],
-            user => `Mejor racha: ${formatCount(user.best_streak)} · racha actual: ${formatCount(user.current_streak)}`,
-            'streak', streaks, streakMetric);
         const worst = Array.isArray(payload.peor_suerte) ? payload.peor_suerte : [];
-        const worstMetric = user => `${formatCount(user.participations)} participaciones`;
-        const worstCard = trophyCard('💔 Peor Suerte', 'heart-broken', worst[0],
-            user => `${formatCount(user.participations)} participaciones sin victoria. ¡La próxima puede ser la buena!`,
-            'worst', worst, worstMetric, 'hub-trophy-card--luck');
-        $('#trophy-cards').replaceChildren(streakCard, worstCard);
+        const loyal = Array.isArray(payload.top_participantes) ? payload.top_participantes : [];
+        $('#trophy-cards').replaceChildren(
+            trophyCard('Racha imparable', 'fire', streaks[0], user => formatCount(user.best_streak), 'sorteos seguidos',
+                'streak', streaks, user => `Récord ${formatCount(user.best_streak)} · actual ${formatCount(user.current_streak)}`, 'hub-trophy-card--fire'),
+            trophyCard('Peor suerte', 'heart-broken', worst[0], user => formatCount(user.participations), 'sin ganar',
+                'worst', worst, user => `${formatCount(user.participations)} participaciones`, 'hub-trophy-card--luck'),
+            trophyCard('Siempre presente', 'users-round', loyal[0], user => formatCount(user.participations), 'sorteos jugados',
+                'loyal', loyal, user => `${formatCount(user.participations)} sorteos`, 'hub-trophy-card--loyal'),
+        );
         $('#choice-panel').replaceChildren(makeChoicePanel(payload));
         const generated = Date.parse(payload.generated_at || '');
         $('#stats-updated').textContent = Number.isFinite(generated)
-            ? `Se actualiza cada 5 minutos · actualizado ${new Intl.DateTimeFormat('es-PE', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(generated))}`
-            : 'Se actualiza cada 5 minutos';
+            ? new Intl.DateTimeFormat('es-PE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date(generated))
+            : '';
         observeReveals(root);
     }
 
@@ -1372,9 +1451,8 @@
     function openCategory(category) {
         const card = $$('.hub-trophy-card', $('#trophy-cards')).find(node => node.dataset.category === category);
         if (!card) return;
-        const title = category === 'streak' ? 'Racha Imparable · Top 10' : 'Peor Suerte · Top 10';
+        const title = { streak: 'Racha imparable · Top 10', worst: 'Peor suerte · Top 10', loyal: 'Siempre presente · Top 10' }[category] || 'Top 10';
         $('#category-title').textContent = title;
-        $('#category-eyebrow').textContent = category === 'streak' ? 'RACHAS DE LA COMUNIDAD' : 'MÁS PARTICIPACIONES SIN VICTORIA';
         const metric = card._hubMetric || (user => formatCount(user.participations));
         const entries = Array.isArray(card._hubEntries) ? card._hubEntries.slice(0, 10) : [];
         const content = $('#category-dialog-content');
@@ -1442,6 +1520,15 @@
             case 'retry-history':
                 loadHistory();
                 break;
+            case 'pick-winner':
+                showLastWinner(Number(button.dataset.winnerIndex) || 0);
+                break;
+            case 'open-winner':
+                openWinnerDetails(Number(button.dataset.winnerIndex) || 0);
+                break;
+            case 'close-winner':
+                $('#winner-dialog').close();
+                break;
             case 'open-sponsor':
                 $('#sponsor-dialog').showModal();
                 break;
@@ -1495,6 +1582,7 @@
         if (event.target === $('#confirm-dialog')) $('#confirm-dialog').close();
         if (event.target === $('#history-dialog')) $('#history-dialog').close();
         if (event.target === $('#sponsor-dialog')) $('#sponsor-dialog').close();
+        if (event.target === $('#winner-dialog')) $('#winner-dialog').close();
     }
 
     // Polling de sala y arranque
@@ -1515,7 +1603,7 @@
         root.addEventListener('input', onInput);
         $('#combo-dialog').addEventListener('cancel', onDialogCancel);
         [$('#history-dialog'), $('#sponsor-dialog')].forEach(dialog => dialog.addEventListener('cancel', onDialogCancel));
-        [$('#combo-dialog'), $('#ranking-dialog'), $('#category-dialog'), $('#confirm-dialog'), $('#history-dialog'), $('#sponsor-dialog')]
+        [$('#combo-dialog'), $('#ranking-dialog'), $('#category-dialog'), $('#confirm-dialog'), $('#history-dialog'), $('#sponsor-dialog'), $('#winner-dialog')]
             .forEach(dialog => dialog.addEventListener('click', onDialogBackdrop));
         window.setInterval(updateCountdown, 1000);
         const results = await Promise.allSettled([loadVoteState(), getRaffleStatus()]);
