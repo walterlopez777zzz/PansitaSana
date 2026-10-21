@@ -34,8 +34,9 @@
                 day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
         };
-        const tile = (value, label, extra) => '<div class="sf-tile">'
-            + '<strong class="sf-tile__value"' + (extra ? ' ' + extra : '') + '>' + value + '</strong>'
+        const tile = (value, label, extraClass, extraAttribute) => '<div class="sf-tile">'
+            + '<strong class="sf-tile__value' + (extraClass ? ' ' + extraClass : '') + '"'
+            + (extraAttribute ? ' ' + extraAttribute : '') + '>' + value + '</strong>'
             + '<span class="sf-tile__label">' + label + '</span></div>';
         const rows = [
             ['Motivo', escapeHtml(ban.reason || 'Incumplir los requisitos del sorteo')],
@@ -62,7 +63,7 @@
             const remaining = Math.max(0, Number(ban.remaining_seconds) || 0);
             html += '<div class="sf-tiles">'
                 + tile(days + (days === 1 ? ' día' : ' días'), 'Duración del baneo')
-                + tile('—', 'Tiempo restante', 'data-countdown')
+                + tile('—', 'Tiempo restante', 'sf-tile__value--countdown', 'data-countdown')
                 + '</div>';
             const startedAt = Date.now();
             const updateCountdown = () => {
@@ -77,8 +78,8 @@
                 const h = Math.floor((seconds % 86400) / 3600);
                 const m = Math.floor((seconds % 3600) / 60);
                 const s = seconds % 60;
-                el.textContent = d + 'd ' + String(h).padStart(2, '0') + 'h '
-                    + String(m).padStart(2, '0') + 'm ' + String(s).padStart(2, '0') + 's';
+                const time = [h, m, s].map(value => String(value).padStart(2, '0')).join(':');
+                el.textContent = (d > 0 ? d + 'd ' : '') + time;
             };
             if (view) view.innerHTML = html;
             updateCountdown();

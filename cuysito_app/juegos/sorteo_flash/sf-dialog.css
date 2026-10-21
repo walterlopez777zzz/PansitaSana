@@ -1522,3 +1522,14 @@
     font-style: italic;
     line-height: 1;
 }
+
+.sf-dialog--ban .sf-tile__value--countdown {
+    font-size: 1.5rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 40em) {
+    .sf-dialog--ban .sf-tile__value--countdown {
+        font-size: clamp(1rem, 4.5vw, 1.25rem);
+    }
+}

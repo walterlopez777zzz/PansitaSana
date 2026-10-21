@@ -28,6 +28,7 @@
                 + '.swal2-popup .sf-ban-types button.is-active{background:#ef4444;color:#fff}'
                 + '.swal2-popup .sf-ban-reasons{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}'
                 + '.swal2-popup .sf-ban-reason{border:1px solid rgba(128,128,128,.35);border-radius:999px;padding:5px 9px;background:transparent;color:inherit;font-size:.75rem;cursor:pointer}'
+                + '.swal2-popup .sf-ban-reason.is-active{border-color:#ef4444;background:#ef4444;color:#fff}'
                 + '.swal2-popup #sfBanReason{width:100%;box-sizing:border-box;margin:6px 0 0}'
                 + '.swal2-popup #sfBanDaysWrap[hidden],.swal2-popup #sfBanRafflesWrap[hidden]{display:none}';
             document.head.appendChild(style);
@@ -67,14 +68,30 @@
                     });
                 });
                 const reasonInput = popup.querySelector('#sfBanReason');
+                const reasonButtons = popup.querySelectorAll('.sf-ban-reason');
+                const activateReason = selected => reasonButtons.forEach(button => {
+                    button.classList.toggle('is-active', button === selected);
+                });
                 popup.querySelectorAll('[data-reason]').forEach(button => button.addEventListener('click', () => {
                     reasonInput.value = button.dataset.reason;
+                    activateReason(button);
                 }));
-                popup.querySelector('[data-custom]').addEventListener('click', () => {
+                const customButton = popup.querySelector('[data-custom]');
+                customButton.addEventListener('click', () => {
                     reasonInput.value = '';
+                    activateReason(customButton);
                     reasonInput.focus();
                 });
-                if (options.presetReason) reasonInput.value = options.presetReason;
+                reasonInput.addEventListener('input', () => {
+                    const active = popup.querySelector('.sf-ban-reason.is-active');
+                    if (active && reasonInput.value !== (active.dataset.reason || '')) active.classList.remove('is-active');
+                });
+                if (options.presetReason) {
+                    reasonInput.value = options.presetReason;
+                    const match = Array.from(popup.querySelectorAll('[data-reason]'))
+                        .find(button => button.dataset.reason === options.presetReason);
+                    if (match) activateReason(match);
+                }
             },
             preConfirm: () => {
                 const popup = Swal.getPopup();
