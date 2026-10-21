@@ -573,6 +573,26 @@ if (!function_exists('sv_stats_user')) {
     }
 }
 
+if (!function_exists('sv_edition_map')) {
+    function sv_edition_map(mysqli $conn): array
+    {
+        static $editionMap = null;
+        if ($editionMap !== null) return $editionMap;
+        $editionMap = [];
+        $result = $conn->query("SELECT raffle_id FROM raffles
+            WHERE status = 'completed'
+            ORDER BY COALESCE(end_time, start_time) ASC, raffle_id ASC");
+        if ($result) {
+            $edition = 0;
+            while ($row = $result->fetch_assoc()) {
+                $editionMap[(int)$row['raffle_id']] = ++$edition;
+            }
+            $result->free();
+        }
+        return $editionMap;
+    }
+}
+
 if (!function_exists('sv_stats')) {
     function sv_stats(mysqli $conn, bool $fresh = false): array
     {
@@ -580,6 +600,7 @@ if (!function_exists('sv_stats')) {
         if (!$fresh && is_file($cacheFile)) {
             $cached = json_decode((string)@file_get_contents($cacheFile), true);
             if (is_array($cached)
+                && ($cached['stats_version'] ?? 0) === 2
                 && isset($cached['generated_at'], $cached['resumen']['valor_soles'], $cached['ranking_ganadores'])
                 && (time() - (int)($cached['_cached_at'] ?? 0)) < SV_STATS_TTL) {
                 unset($cached['_cached_at']);
@@ -589,6 +610,7 @@ if (!function_exists('sv_stats')) {
         $priv = rp_private_column_sql($conn, 'r');
         $privateFilter = $priv === '0 AS is_private' ? '1=1' : "{$priv} = 0";
         $winnerFilter = "w.choice IN ('original','cashback','double_won','double_lost')";
+        $editionMap = sv_edition_map($conn);
         $topWinners = [];
         $winnerRanking = [];
         $res = $conn->query("SELECT w.user_id, COALESCE(NULLIF(u.public_display_name,''), u.game_username) AS name, a.filename AS avatar, u.is_verified,
@@ -723,6 +745,7 @@ if (!function_exists('sv_stats')) {
                 $user = sv_stats_user($conn, $latest);
                 $latestChoices[$choice] = $user + [
                     'raffle_id' => (int)$latest['raffle_id'], 'title' => (string)$latest['title'],
+                    'edicion' => $editionMap[(int)$latest['raffle_id']] ?? null,
                     'fecha' => sv_utc_iso($latest['fecha'] ?? null),
                     'resultado' => $choice === 'doble' ? ($latest['choice'] === 'double_won' ? 'gano' : 'perdio') : null,
                 ];
@@ -759,6 +782,7 @@ if (!function_exists('sv_stats')) {
             'elecciones' => $choices,
             'ultimas_elecciones' => $latestChoices,
             'resumen' => $summary,
+            'stats_version' => 2,
             'generated_at' => gmdate('Y-m-d\TH:i:s\Z'),
             '_cached_at' => time(),
         ];
@@ -771,6 +795,90 @@ if (!function_exists('sv_stats')) {
         }
         unset($payload['_cached_at']);
         return $payload;
+    }
+}
+
+if (!function_exists('sv_raffle_winners')) {
+    function sv_raffle_winners(mysqli $conn, array $raffle): array
+    {
+        $raffleId = (int)($raffle['raffle_id'] ?? 0);
+        if ($raffleId <= 0) return ['winners' => [], 'tickets' => []];
+        $winnerStmt = $conn->prepare("SELECT w.id, w.user_id, w.position, w.choice, w.final_prize,
+                    w.cashback_credited_coins, w.delivery_status,
+                    COALESCE(NULLIF(u.public_display_name,''), u.game_username) AS name,
+                    a.filename AS avatar, u.is_verified,
+                    (SELECT MIN(rp.ticket_index) FROM raffle_participants rp
+                     WHERE rp.raffle_id = w.raffle_id AND rp.user_id = w.user_id) AS ticket_index
+            FROM raffle_winners w
+            JOIN users u ON u.id = w.user_id
+            LEFT JOIN avatars a ON a.id = u.avatar_id
+            WHERE w.raffle_id = ? AND w.choice IN ('original','cashback','double_won','double_lost')
+            ORDER BY w.position ASC, w.id ASC");
+        if (!$winnerStmt) return ['winners' => [], 'tickets' => []];
+        $winnerStmt->bind_param('i', $raffleId);
+        $winnerStmt->execute();
+        $winnerResult = $winnerStmt->get_result();
+        $winners = [];
+        $winnerTickets = [];
+        $prizeConfig = json_decode((string)($raffle['prize_config'] ?? ''), true);
+        if (!is_array($prizeConfig)) $prizeConfig = [];
+        while ($row = $winnerResult->fetch_assoc()) {
+            $position = (int)$row['position'];
+            $choice = (string)$row['choice'];
+            $finalPrize = json_decode((string)($row['final_prize'] ?? ''), true);
+            if (!is_array($finalPrize)) $finalPrize = [];
+            $positionPrize = [];
+            if (!function_exists('rr_prize_for_position')) require_once __DIR__ . '/raffle_rewards.php';
+            $positionPrize = rr_prize_for_position($prizeConfig, $position);
+            $prizeName = (string)($finalPrize['resolved_item']['name'] ?? '');
+            if ($choice === 'double_lost') {
+                $prizeName = 'Se perdió en Doble o Nada';
+            } elseif ($choice === 'cashback') {
+                $cashbackCoins = (float)($row['cashback_credited_coins'] ?? 0);
+                if ($cashbackCoins <= 0) {
+                    if (!function_exists('rr_recorded_raffle_credit')) require_once __DIR__ . '/raffle_rewards.php';
+                    $cashbackCoins = max(0, rr_recorded_raffle_credit($conn, (int)$row['user_id'], $raffleId, 'raffle_cashback'));
+                }
+                $cashbackText = rtrim(rtrim(number_format($cashbackCoins, 2, ',', '.'), '0'), ',');
+                $prizeName = $cashbackCoins > 0 ? "Cashback de {$cashbackText} Bananos" : 'Cashback en Bananos';
+            } elseif ($prizeName === '') {
+                if (($finalPrize['kind'] ?? $finalPrize['type'] ?? '') === 'coins') {
+                    $amount = (float)($finalPrize['amount'] ?? $finalPrize['coins'] ?? $positionPrize['amount'] ?? 0);
+                    $prizeName = number_format($amount, 0, ',', '.') . ' Bananos';
+                } else {
+                    $prizeName = (string)($finalPrize['name'] ?? $finalPrize['label'] ?? $positionPrize['name'] ?? $positionPrize['label'] ?? $positionPrize['display_name'] ?? '');
+                }
+            }
+            if ($prizeName === '') $prizeName = 'Premio del sorteo';
+            $prizeImage = null;
+            if ($choice === 'cashback') {
+                $prizeImage = '/assets/img/moneda.webp';
+            } elseif ($choice !== 'double_lost') {
+                foreach ([$finalPrize['resolved_item']['image'] ?? '', $finalPrize['image'] ?? '', $positionPrize['image'] ?? '', $positionPrize['image_icon'] ?? ''] as $candidate) {
+                    if (is_string($candidate) && trim($candidate) !== '') {
+                        $image = trim($candidate);
+                        if (preg_match('#^https?://[^\s]+$#i', $image)
+                            || (str_starts_with($image, '/') && !str_starts_with($image, '//') && !str_contains($image, '\\'))) {
+                            $prizeImage = $image;
+                            break;
+                        }
+                    }
+                }
+            }
+            $ticket = $row['ticket_index'] !== null ? (int)$row['ticket_index'] : null;
+            if ($ticket !== null) $winnerTickets[] = ['ticket' => $ticket, 'position' => $position];
+            $user = sv_stats_user($conn, $row);
+            $winners[] = $user + [
+                'position' => $position,
+                'choice' => $choice,
+                'prize_name' => $prizeName,
+                'prize_image' => $prizeImage,
+                'delivery_status' => $choice === 'cashback' || (string)($row['delivery_status'] ?? '') === 'delivered' ? 'delivered' : 'pending',
+                'ticket_index' => $ticket,
+            ];
+        }
+        $winnerStmt->close();
+        return ['winners' => $winners, 'tickets' => $winnerTickets];
     }
 }
 
@@ -794,64 +902,13 @@ if (!function_exists('sv_latest_public_raffle')) {
         $participants = (int)($participantsStmt->get_result()->fetch_assoc()['total'] ?? 0);
         $participantsStmt->close();
 
-        $winnerStmt = $conn->prepare("SELECT w.id, w.user_id, w.position, w.choice, w.final_prize,
-                    w.cashback_credited_coins, w.delivery_status,
-                    COALESCE(NULLIF(u.public_display_name,''), u.game_username) AS name,
-                    a.filename AS avatar, u.is_verified,
-                    (SELECT MIN(rp.ticket_index) FROM raffle_participants rp
-                     WHERE rp.raffle_id = w.raffle_id AND rp.user_id = w.user_id) AS ticket_index
-            FROM raffle_winners w
-            JOIN users u ON u.id = w.user_id
-            LEFT JOIN avatars a ON a.id = u.avatar_id
-            WHERE w.raffle_id = ? AND w.choice IN ('original','cashback','double_won','double_lost')
-            ORDER BY w.position ASC, w.id ASC");
-        $winnerStmt->bind_param('i', $raffleId);
-        $winnerStmt->execute();
-        $winnerResult = $winnerStmt->get_result();
-        $winners = [];
-        $winnerTickets = [];
+        $winnerData = sv_raffle_winners($conn, $raffle);
+        $winners = $winnerData['winners'];
+        $winnerTickets = $winnerData['tickets'];
         $viewerWon = false;
-        while ($row = $winnerResult->fetch_assoc()) {
-            $position = (int)$row['position'];
-            $choice = (string)$row['choice'];
-            $finalPrize = json_decode((string)($row['final_prize'] ?? ''), true);
-            if (!is_array($finalPrize)) $finalPrize = [];
-            $prizeName = (string)($finalPrize['resolved_item']['name'] ?? '');
-            if ($choice === 'double_lost') {
-                $prizeName = 'Se perdió en Doble o Nada';
-            } elseif ($choice === 'cashback') {
-                $cashbackCoins = (float)($row['cashback_credited_coins'] ?? 0);
-                if ($cashbackCoins <= 0) {
-                    if (!function_exists('rr_recorded_raffle_credit')) require_once __DIR__ . '/raffle_rewards.php';
-                    $cashbackCoins = max(0, rr_recorded_raffle_credit($conn, (int)$row['user_id'], $raffleId, 'raffle_cashback'));
-                }
-                $cashbackText = rtrim(rtrim(number_format($cashbackCoins, 2, ',', '.'), '0'), ',');
-                $prizeName = $cashbackCoins > 0 ? "Cashback de {$cashbackText} Bananos" : 'Cashback en Bananos';
-            } elseif ($prizeName === '') {
-                if (!function_exists('rr_prize_for_position')) require_once __DIR__ . '/raffle_rewards.php';
-                $prizeConfig = json_decode((string)($raffle['prize_config'] ?? ''), true);
-                $positionPrize = is_array($prizeConfig) ? rr_prize_for_position($prizeConfig, $position) : [];
-                if (($finalPrize['kind'] ?? $finalPrize['type'] ?? '') === 'coins') {
-                    $amount = (float)($finalPrize['amount'] ?? $finalPrize['coins'] ?? $positionPrize['amount'] ?? 0);
-                    $prizeName = number_format($amount, 0, ',', '.') . ' Bananos';
-                } else {
-                    $prizeName = (string)($finalPrize['name'] ?? $finalPrize['label'] ?? $positionPrize['name'] ?? $positionPrize['label'] ?? $positionPrize['display_name'] ?? '');
-                }
-            }
-            if ($prizeName === '') $prizeName = 'Premio del sorteo';
-            $ticket = $row['ticket_index'] !== null ? (int)$row['ticket_index'] : null;
-            if ($ticket !== null) $winnerTickets[] = ['ticket' => $ticket, 'position' => $position];
-            $user = sv_stats_user($conn, $row);
-            $winners[] = $user + [
-                'position' => $position,
-                'choice' => $choice,
-                'prize_name' => $prizeName,
-                'delivery_status' => $choice === 'cashback' || (string)($row['delivery_status'] ?? '') === 'delivered' ? 'delivered' : 'pending',
-                'ticket_index' => $ticket,
-            ];
-            if ((int)$row['user_id'] === $viewerId) $viewerWon = true;
+        foreach ($winners as $winner) {
+            if ((int)$winner['user_id'] === $viewerId) $viewerWon = true;
         }
-        $winnerStmt->close();
 
         $my = null;
         if ($viewerId > 0) {
@@ -886,6 +943,7 @@ if (!function_exists('sv_latest_public_raffle')) {
         return [
             'sorteo' => [
                 'raffle_id' => $raffleId,
+                'edicion' => sv_edition_map($conn)[$raffleId] ?? null,
                 'title' => (string)$raffle['title'],
                 'end_time' => sv_utc_iso($raffle['end_time'] ?? $raffle['start_time'] ?? null),
                 'participantes' => $participants,
@@ -893,6 +951,43 @@ if (!function_exists('sv_latest_public_raffle')) {
             ],
             'my' => $my,
         ];
+    }
+}
+
+if (!function_exists('sv_raffle_history')) {
+    function sv_raffle_history(mysqli $conn, int $limit = 20): array
+    {
+        $limit = max(1, min(30, $limit));
+        $privateColumn = rp_private_column_sql($conn, 'r');
+        $privateFilter = $privateColumn === '0 AS is_private' ? '1=1' : "{$privateColumn} = 0";
+        $result = $conn->query("SELECT r.raffle_id, r.title, r.end_time, r.start_time, r.prize_config,
+                    (SELECT COUNT(*) FROM raffle_participants rp
+                     WHERE rp.raffle_id = r.raffle_id AND rp.review_status <> 'expelled') AS participantes
+            FROM raffles r
+            WHERE r.status = 'completed' AND {$privateFilter}
+            ORDER BY COALESCE(r.end_time, r.start_time) DESC, r.raffle_id DESC
+            LIMIT {$limit}");
+        if (!$result) return [];
+        $editionMap = sv_edition_map($conn);
+        $history = [];
+        while ($raffle = $result->fetch_assoc()) {
+            $raffleId = (int)$raffle['raffle_id'];
+            $winnerData = sv_raffle_winners($conn, $raffle);
+            $winners = array_map(static function (array $winner): array {
+                unset($winner['ticket_index']);
+                return $winner;
+            }, $winnerData['winners']);
+            $history[] = [
+                'raffle_id' => $raffleId,
+                'edicion' => $editionMap[$raffleId] ?? null,
+                'title' => (string)$raffle['title'],
+                'end_time' => sv_utc_iso($raffle['end_time'] ?? $raffle['start_time'] ?? null),
+                'participantes' => (int)$raffle['participantes'],
+                'ganadores' => $winners,
+            ];
+        }
+        $result->free();
+        return $history;
     }
 }
 

@@ -34,6 +34,10 @@ try {
         sv_output_json(['status' => 'success', 'stats' => sv_stats($conn)]);
         exit;
     }
+    if ($sub === 'historial') {
+        sv_output_json(['status' => 'success', 'historial' => sv_raffle_history($conn, (int)($_POST['limit'] ?? $_GET['limit'] ?? 20))]);
+        exit;
+    }
     if ($sub === 'catalogo') {
         $settings = sv_settings($conn);
         $items = [];
