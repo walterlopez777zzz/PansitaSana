@@ -1392,6 +1392,8 @@ try {
             cc_ensure_whitelist($conn);
             rr_ensure_schema($conn);
             wt_ensure_schema($conn);
+            rb_ensure_schema($conn);
+            $activeCond = rb_active_condition_sql('activeBan');
 
             $sql = "SELECT rp.user_id, rp.ticket_index, rp.joined_at, rp.ip_address, rp.entry_fee_paid, rp.review_status,
                            rp.pre_chosen_prize, rp.used_welcome_ticket,
@@ -1400,6 +1402,7 @@ try {
                            a.filename AS avatar,
                            rw.coin_choice AS gamble_coin_choice, rw.selected_animation_mode AS gamble_mode,
                            (SELECT COUNT(*) FROM raffle_strikes s WHERE s.user_id = rp.user_id) AS strikes,
+                           EXISTS(SELECT 1 FROM raffle_bans activeBan WHERE activeBan.user_id = rp.user_id AND ($activeCond)) AS active_ban,
                            (SELECT COUNT(*) FROM raffle_whitelist w WHERE w.raffle_id = rp.raffle_id AND w.user_id = rp.user_id) AS wl,
                            (SELECT COUNT(*) FROM raffle_participants rp2 WHERE rp2.user_id = rp.user_id) AS total_parts,
                            (SELECT COUNT(DISTINCT rp3.user_id) FROM raffle_participants rp3 WHERE rp3.raffle_id = rp.raffle_id AND rp3.ip_address = rp.ip_address AND rp3.ip_address <> '' AND rp3.ip_address <> '0.0.0.0') AS ip_shared,
@@ -1438,6 +1441,7 @@ try {
                     'account_status' => $p['account_status'] ?: 'active',
                     'review_status' => $p['review_status'] ?: 'active',
                     'strikes' => (int)($p['strikes'] ?? 0),
+                    'active_ban' => (bool)($p['active_ban'] ?? false),
                     'whitelisted' => ((int)$p['wl']) > 0,
                     'first_time' => ((int)$p['total_parts']) === 1,
                     'ip_shared' => (int)$p['ip_shared'],
@@ -2233,7 +2237,9 @@ try {
             $sql = "SELECT b.*, ($activeCond) AS is_active,
                            u.public_display_name, u.game_username, u.public_code,
                            u.whatsapp_phone_e164, a.filename AS avatar,
-                           adm.game_username AS admin_name
+                           adm.game_username AS admin_name,
+                           (SELECT COUNT(*) FROM raffle_strikes s WHERE s.user_id = b.user_id) AS strikes,
+                           (SELECT COUNT(*) FROM raffle_ban_evasions e WHERE e.ban_id = b.id) AS evasions
                     FROM raffle_bans b
                     JOIN users u ON u.id = b.user_id
                     LEFT JOIN avatars a ON u.avatar_id = a.id
@@ -2255,6 +2261,10 @@ try {
                     'reason' => $b['reason'],
                     'ip' => $b['ip_snapshot'],
                     'fingerprint' => $b['fingerprint_snapshot'],
+                    'device' => $b['device_snapshot'] ?? '',
+                    'strikes' => (int)($b['strikes'] ?? 0),
+                    'evasions' => (int)($b['evasions'] ?? 0),
+                    'raffles_total' => $b['raffles_total'] !== null ? (int)$b['raffles_total'] : null,
                     'created_by' => $b['admin_name'] ?: ('#' . (int)$b['created_by']),
                     'created_at' => $b['created_at'],
                     'lifted_at' => $b['lifted_at'],
@@ -2262,6 +2272,59 @@ try {
                 if ((int)$b['is_active'] === 1) $active[] = $item; else $history[] = $item;
             }
             $response = ['status' => 'success', 'active' => $active, 'history' => $history];
+        }
+
+        elseif ($action === 'cc_evasions_list') {
+            rb_ensure_schema($conn);
+            $activeCond = rb_active_condition_sql('b');
+            $tryingActiveCond = rb_active_condition_sql('tb');
+            $sql = "SELECT e.*, b.ban_type, b.reason AS ban_reason, b.raffles_remaining, b.expires_at,
+                           trying.public_display_name AS trying_name, trying.game_username AS trying_game_username,
+                           trying.public_code AS trying_code, trying.account_status AS trying_status,
+                           trying_avatar.filename AS trying_avatar,
+                           banned.public_display_name AS banned_name, banned.game_username AS banned_game_username,
+                           banned.public_code AS banned_code, banned_avatar.filename AS banned_avatar,
+                           ($activeCond) AS original_ban_active,
+                           EXISTS(SELECT 1 FROM raffle_bans tb WHERE tb.user_id = e.user_id AND ($tryingActiveCond)) AS trying_banned,
+                           EXISTS(SELECT 1 FROM raffle_ban_exemptions ex WHERE ex.ban_id = e.ban_id AND ex.user_id = e.user_id) AS exempted
+                    FROM raffle_ban_evasions e
+                    JOIN raffle_bans b ON b.id = e.ban_id
+                    JOIN users trying ON trying.id = e.user_id
+                    JOIN users banned ON banned.id = e.banned_user_id
+                    LEFT JOIN avatars trying_avatar ON trying_avatar.id = trying.avatar_id
+                    LEFT JOIN avatars banned_avatar ON banned_avatar.id = banned.avatar_id
+                    ORDER BY e.id DESC LIMIT 300";
+            $res = $conn->query($sql);
+            $evasions = [];
+            while ($res && ($e = $res->fetch_assoc())) {
+                $evasions[] = [
+                    'id' => (int)$e['id'],
+                    'ban_id' => (int)$e['ban_id'],
+                    'user_id' => (int)$e['user_id'],
+                    'banned_user_id' => (int)$e['banned_user_id'],
+                    'trying_name' => $e['trying_name'] ?: $e['trying_game_username'],
+                    'trying_game_username' => $e['trying_game_username'],
+                    'trying_code' => $e['trying_code'] ?? '',
+                    'trying_avatar' => AvatarCatalog::filename($conn, $e['trying_avatar'] ?? null),
+                    'trying_banned' => ((bool)$e['trying_banned'] || ($e['trying_status'] ?? '') === 'banned'),
+                    'banned_name' => $e['banned_name'] ?: $e['banned_game_username'],
+                    'banned_game_username' => $e['banned_game_username'],
+                    'banned_code' => $e['banned_code'] ?? '',
+                    'banned_avatar' => AvatarCatalog::filename($conn, $e['banned_avatar'] ?? null),
+                    'matched_by' => $e['matched_by'],
+                    'ip' => $e['ip'],
+                    'fingerprint' => $e['fingerprint'],
+                    'device_id' => $e['device_id'],
+                    'raffle_id' => (int)$e['raffle_id'],
+                    'source' => $e['source'],
+                    'created_at' => $e['created_at'],
+                    'ban_type' => $e['ban_type'],
+                    'ban_reason' => $e['ban_reason'],
+                    'exempted' => (bool)$e['exempted'],
+                    'original_ban_active' => (bool)$e['original_ban_active'],
+                ];
+            }
+            $response = ['status' => 'success', 'evasions' => $evasions];
         }
 
         // --- BANEOS Y EXPULSADOS: RANKING DE EXPULSIONES + HISTORIAL ---
@@ -2351,12 +2414,14 @@ try {
                                         SUM(created_at >= UTC_TIMESTAMP() - INTERVAL 30 DAY) AS strikes_30d
                                  FROM raffle_strikes")->fetch_assoc();
             $bansActive = (int)$conn->query("SELECT COUNT(*) AS c FROM raffle_bans b WHERE $activeCond")->fetch_assoc()['c'];
+            $evasions30d = (int)$conn->query("SELECT COUNT(*) AS c FROM raffle_ban_evasions WHERE created_at >= UTC_TIMESTAMP() - INTERVAL 30 DAY")->fetch_assoc()['c'];
 
             $response = ['status' => 'success', 'ranking' => $ranking, 'history' => $hist, 'kpi' => [
                 'strikes_total' => (int)($kpi['strikes_total'] ?? 0),
                 'users_expelled' => (int)($kpi['users_expelled'] ?? 0),
                 'strikes_30d' => (int)($kpi['strikes_30d'] ?? 0),
                 'bans_active' => $bansActive,
+                'evasions_30d' => $evasions30d,
                 'repeat_offenders' => count(array_filter($ranking, static fn($r) => $r['strikes'] >= 2)),
             ]];
         }
@@ -3257,10 +3322,21 @@ try {
                 $expiresAt = gmdate('Y-m-d H:i:s', time() + (int)round($days * 86400));
             }
 
-            // Snapshot de IP + huella: última señal de inscripción del usuario.
-            $ipSnap = ''; $fpSnap = '';
+            // Snapshot de señales recopiladas en el tiempo; las señales legacy quedan como respaldo.
+            $ipSnap = ''; $fpSnap = ''; $deviceSnap = '';
+            $deviceQ = $conn->prepare("SELECT ip, fingerprint, device_id FROM raffle_user_devices WHERE user_id = ? ORDER BY last_seen DESC LIMIT 1");
+            if ($deviceQ) {
+                $deviceQ->bind_param('i', $uid); $deviceQ->execute();
+                $deviceRow = $deviceQ->get_result()->fetch_assoc();
+                if ($deviceRow) {
+                    $ipSnap = (string)$deviceRow['ip'];
+                    $fpSnap = (string)$deviceRow['fingerprint'];
+                    $deviceSnap = (string)$deviceRow['device_id'];
+                }
+                $deviceQ->close();
+            }
             $sigTbl = $conn->query("SHOW TABLES LIKE 'raffle_entry_signals'");
-            if ($sigTbl && $sigTbl->num_rows > 0) {
+            if ($ipSnap === '' && $fpSnap === '' && $sigTbl && $sigTbl->num_rows > 0) {
                 $sg = $conn->prepare("SELECT ip_address, fingerprint FROM raffle_entry_signals WHERE user_id = ? ORDER BY id DESC LIMIT 1");
                 if ($sg) {
                     $sg->bind_param("i", $uid); $sg->execute();
@@ -3278,8 +3354,9 @@ try {
             }
 
             $adminId = (int)($_SESSION['wabo_user_id'] ?? 0);
-            $ins = $conn->prepare("INSERT INTO raffle_bans (user_id, ban_type, raffles_remaining, expires_at, reason, ip_snapshot, fingerprint_snapshot, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())");
-            $ins->bind_param("isissssi", $uid, $banType, $rafflesN, $expiresAt, $reason, $ipSnap, $fpSnap, $adminId);
+            $rafflesTotal = $rafflesN;
+            $ins = $conn->prepare("INSERT INTO raffle_bans (user_id, ban_type, raffles_remaining, raffles_total, expires_at, reason, ip_snapshot, fingerprint_snapshot, device_snapshot, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())");
+            $ins->bind_param("isiisssssi", $uid, $banType, $rafflesN, $rafflesTotal, $expiresAt, $reason, $ipSnap, $fpSnap, $deviceSnap, $adminId);
             $ins->execute();
 
             // Log de admin (best-effort).
@@ -3290,55 +3367,45 @@ try {
                 if ($lg) { $lg->bind_param("iis", $adminId, $uid, $det); $lg->execute(); }
             }
 
-            // AUTO-EXPULSIÓN: si el usuario está inscrito en el sorteo indicado y
-            // el roster aún no se congeló (scheduled/open), se le expulsa automáticamente
-            // (mismo flujo que cc_expel: hueco + reembolso + strike + limpia señal).
-            $expelTxt = '';
-            if ($rid > 0) {
-                $stStmt = $conn->prepare("SELECT status FROM raffles WHERE raffle_id = ?");
-                $stStmt->bind_param("i", $rid); $stStmt->execute();
-                $rStatus = (string)($stStmt->get_result()->fetch_assoc()['status'] ?? '');
-
-                $pStmt = $conn->prepare("SELECT entry_fee_paid, review_status FROM raffle_participants WHERE raffle_id = ? AND user_id = ?");
-                $pStmt->bind_param("ii", $rid, $uid); $pStmt->execute();
-                $pRow = $pStmt->get_result()->fetch_assoc();
-
-                if ($pRow && ($pRow['review_status'] ?? '') !== 'expelled') {
-                    if (in_array($rStatus, ['scheduled', 'open'], true)) {
-                        rr_ensure_schema($conn);
-                        $fee = (float)($pRow['entry_fee_paid'] ?? 0);
-
-                        $upd = $conn->prepare("UPDATE raffle_participants SET review_status = 'expelled' WHERE raffle_id = ? AND user_id = ?");
-                        $upd->bind_param("ii", $rid, $uid); $upd->execute();
-
-                        if ($fee > 0) {
-                            $conn->query("INSERT IGNORE INTO coins (user_id, balance) VALUES ($uid, 0.00)");
-                            $rb = $conn->prepare("UPDATE coins SET balance = balance + ? WHERE user_id = ?");
-                            $rb->bind_param("di", $fee, $uid); $rb->execute();
-                            $refId = (string)$rid;
-                            $tx = $conn->prepare("INSERT INTO coin_transactions (user_id, amount, reason, reference_type, reference_id, created_at) VALUES (?, ?, 'raffle_expel_refund', 'raffle_id', ?, UTC_TIMESTAMP())");
-                            if ($tx) { $tx->bind_param("ids", $uid, $fee, $refId); $tx->execute(); }
-                        }
-
-                        $stkReason = $reason !== '' ? "Ban: $reason" : 'Expulsado por baneo';
-                        $stk = $conn->prepare("INSERT INTO raffle_strikes (user_id, raffle_id, reason, created_by, created_at) VALUES (?, ?, ?, ?, UTC_TIMESTAMP())");
-                        if ($stk) { $stk->bind_param("iisi", $uid, $rid, $stkReason, $adminId); $stk->execute(); }
-
-                        $sigTbl = $conn->query("SHOW TABLES LIKE 'raffle_entry_signals'");
-                        if ($sigTbl && $sigTbl->num_rows > 0) {
-                            $ds = $conn->prepare("DELETE FROM raffle_entry_signals WHERE raffle_id = ? AND user_id = ?");
-                            $ds->bind_param("ii", $rid, $uid); $ds->execute();
-                        }
-
-                        $expelTxt = ' Además se le expulsó del sorteo actual (su ticket queda como hueco' . ($fee > 0 ? ', se le devolvieron ' . number_format($fee, 2) . ' monedas' : '') . ').';
-                    } else {
-                        $expelTxt = " OJO: sigue inscrito en el sorteo actual porque el roster ya está congelado (estado: $rStatus); el baneo aplica desde los próximos sorteos.";
-                    }
-                }
+            $expelled = 0;
+            $expelQuery = $conn->prepare(
+                "SELECT rp.raffle_id FROM raffle_participants rp JOIN raffles r ON r.raffle_id = rp.raffle_id
+                 WHERE rp.user_id = ? AND rp.review_status <> 'expelled' AND r.status IN ('scheduled','open')
+                 ORDER BY rp.raffle_id"
+            );
+            $expelQuery->bind_param('i', $uid);
+            $expelQuery->execute();
+            $expelRes = $expelQuery->get_result();
+            $raffleIds = [];
+            while ($expelRow = $expelRes->fetch_assoc()) $raffleIds[] = (int)$expelRow['raffle_id'];
+            $expelQuery->close();
+            if ($rid > 0 && !in_array($rid, $raffleIds, true)) $raffleIds[] = $rid;
+            foreach ($raffleIds as $expelRaffleId) {
+                $expel = rb_expel_participant($conn, $expelRaffleId, $uid, 'Ban: ' . $reason, $adminId);
+                if ($expel['expelled']) $expelled++;
             }
 
             $durTxt = $banType === 'permanent' ? 'permanente' : ($banType === 'until_date' ? "hasta $expiresAt (UTC)" : "por $rafflesN sorteo(s)");
-            $response = ['status' => 'success', 'message' => "Baneo de sorteos aplicado ($durTxt)." . ($ipSnap !== '' || $fpSnap !== '' ? ' Se guardó IP/huella para bloquear multicuentas.' : ' Sin IP/huella registrada aún (se bloqueará solo por cuenta).') . $expelTxt];
+            $response = ['status' => 'success', 'message' => "Baneo de sorteos aplicado ($durTxt)." . ($ipSnap !== '' || $fpSnap !== '' || $deviceSnap !== '' ? ' Se guardaron señales del dispositivo y red.' : ' Sin señales registradas aún (se bloqueará solo por cuenta).') . ($expelled ? " Se expulsó de $expelled sorteo(s) activo(s)." : '')];
+        }
+
+        elseif ($action === 'cc_evasion_allow') {
+            rb_ensure_schema($conn);
+            $banId = (int)($_POST['ban_id'] ?? 0);
+            $uid = (int)($_POST['user_id'] ?? 0);
+            if ($banId <= 0 || $uid <= 0) throw new Exception('Evasión inválida.');
+            $adminId = (int)($_SESSION['wabo_user_id'] ?? 0);
+            $allow = $conn->prepare("INSERT INTO raffle_ban_exemptions (ban_id, user_id, created_by, created_at) VALUES (?, ?, ?, UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE created_by = VALUES(created_by), created_at = VALUES(created_at)");
+            $allow->bind_param('iii', $banId, $uid, $adminId);
+            $allow->execute();
+            $allow->close();
+            $logTbl = $conn->query("SHOW TABLES LIKE 'admin_actions_log'");
+            if ($adminId > 0 && $logTbl && $logTbl->num_rows > 0) {
+                $details = "raffle_evasion_allow:ban_id=$banId:user_id=$uid";
+                $log = $conn->prepare("INSERT INTO admin_actions_log (admin_id, target_user_id, action, details) VALUES (?, ?, 'raffle_evasion_allow', ?)");
+                if ($log) { $log->bind_param('iis', $adminId, $uid, $details); $log->execute(); $log->close(); }
+            }
+            $response = ['status' => 'success', 'message' => 'Cuenta permitida para este baneo.'];
         }
 
         // --- GESTIÓN DE BANEOS: DESBANEAR / WHITELIST (1 clic) ---

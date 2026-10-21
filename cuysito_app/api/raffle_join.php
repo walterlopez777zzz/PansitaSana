@@ -44,6 +44,7 @@ require_once __DIR__ . '/raffle_earlybird.php';
 require_once __DIR__ . '/raffle_review.php';
 require_once __DIR__ . '/raffle_welcome.php';
 require_once __DIR__ . '/raffle_private.php';
+require_once __DIR__ . '/raffle_bans.php';
 
 $userId = (int)$_SESSION['user_id'];
 $raffleId = isset($_POST['raffle_id']) ? (int)$_POST['raffle_id'] : 0;
@@ -55,6 +56,33 @@ $clientIp = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 if ($raffleId <= 0) {
     http_response_code(400);
     _outputJson(['status' => 'error', 'message' => 'ID de sorteo inválido.']);
+    exit;
+}
+
+$signals = rb_client_signals();
+$fingerprint = $signals['fp'];
+$clientIp = $signals['ip'] !== '' ? $signals['ip'] : '0.0.0.0';
+try {
+    rb_ensure_schema($conn);
+    rb_track_device($conn, $userId, $clientIp, $fingerprint, $signals['did']);
+    $activeBan = rb_find_active_ban($conn, $userId, $clientIp, $fingerprint, $signals['did']);
+    if ($activeBan) {
+        if (($activeBan['matched_by'] ?? 'user') !== 'user') {
+            rb_log_evasion($conn, $activeBan, $userId, $clientIp, $fingerprint, $signals['did'], $raffleId, 'join');
+        }
+        http_response_code(403);
+        _outputJson([
+            'status' => 'error',
+            'code' => 'raffle_banned',
+            'message' => rb_public_message($activeBan),
+            'ban' => rb_ban_payload($conn, $activeBan),
+        ]);
+        exit;
+    }
+} catch (Throwable $banError) {
+    error_log('[raffle_join] ban check failed: ' . $banError->getMessage());
+    http_response_code(503);
+    _outputJson(['status' => 'error', 'message' => 'No se pudo validar tu acceso al sorteo. Intenta nuevamente.']);
     exit;
 }
 

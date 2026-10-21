@@ -1944,7 +1944,8 @@
             joined: 'sf-joined-dialog',
             removed: 'sf-removed-dialog',
             enrolled: 'sf-enrolled-dialog',
-            prechoice: 'sf-prechoice-dialog'
+            prechoice: 'sf-prechoice-dialog',
+            ban: 'sf-ban-dialog'
         });
 
         function _sfDialog(id) {
@@ -3039,7 +3040,10 @@
             pollLock = true;
             try {
                 const ts = Date.now();
-                const pollBody = { action: CONFIG.apis.status, id: CONFIG.raffleId, nocache: ts };
+                const pollBody = {
+                    action: CONFIG.apis.status, id: CONFIG.raffleId, nocache: ts,
+                    fp: _sfDeviceFingerprint(), did: _sfDeviceId()
+                };
                 if (mainAnimPlayed && !animFinishedSent) { pollBody.anim_finished = true; animFinishedSent = true; }
                 let raw = firstLoad ? await _sfTakeBootStatus() : null;
                 if (!raw) {
@@ -3074,9 +3078,9 @@
                 // RETIRO EN VIVO: si el polling detecta que fui expulsado de este
                 // sorteo o baneado de la plataforma, lanzo el modal bloqueante.
                 if (data.my_banned) {
-                    _sfShowExpelledModal('banned');
+                    _sfShowBanModal(data.my_ban || { type: 'permanent' });
                 } else if (data.my_review_status === 'expelled') {
-                    _sfShowExpelledModal('expelled');
+                    _sfShowExpelledModal();
                 }
 
                 // Sincronizar Configuración Global
@@ -3919,7 +3923,7 @@
                         } else {
                             btn.classList.add('join-button--expelled');
                         }
-                        btn.innerHTML = 'EXPULSADO';
+                        btn.innerHTML = data.my_banned ? 'BANEADO' : 'EXPULSADO';
                     } else if (state.status === 'open') {
                         document.body.classList.remove('game-active');
                         const myId = CONFIG.me && CONFIG.me.userId ? parseInt(CONFIG.me.userId, 10) : 0;
@@ -3975,8 +3979,7 @@
             document.getElementById('partCountMob').innerText = data.participants;
         }
 
-        // Usuario actual retirado de este sorteo (ticket expulsado en revisión,
-        // presente en expelled_list) o baneado de la plataforma.
+        // Usuario actual retirado de este sorteo o baneado de Sorteo Flash.
         function _sfIsExpelledFromRaffle(data) {
             if (!data || !data.is_logged_in) return false;
             if (data.my_banned) return true;
@@ -6938,7 +6941,7 @@
             }
         }
 
-        // ── Diálogo BLOQUEANTE de retiro (expulsado / suspendido) vía polling ──
+        // ── Diálogo bloqueante de expulsión vía polling ──
         // Se dispara una sola vez cuando el polling detecta el cambio de estado.
         // No se cierra con Escape ni con clic fuera: sólo con el CTA.
         const SF_REMOVAL_COPY = Object.freeze({
@@ -6948,22 +6951,15 @@
                 badge: 'Sorteo en revisi\u00F3n',
                 title: 'Te retiramos del sorteo',
                 desc: 'Tu entrada a este sorteo se retir\u00F3 durante la revisi\u00F3n.'
-            },
-            banned: {
-                tone: 'danger',
-                icon: 'ban',
-                badge: 'Cuenta suspendida',
-                title: 'Tu cuenta est\u00E1 suspendida',
-                desc: 'Tu cuenta ya no puede participar en los sorteos.'
             }
         });
 
         let _sfRetiroShown = false;
-        function _sfShowExpelledModal(kind) {
+        function _sfShowExpelledModal() {
             if (_sfRetiroShown) return;
             _sfRetiroShown = true;
 
-            const state = kind === 'banned' ? 'banned' : 'expelled';
+            const state = 'expelled';
             const copy = SF_REMOVAL_COPY[state];
             const dialog = _sfDialog(SF_DIALOG_ID.removed);
             if (!dialog) return;
@@ -6980,6 +6976,12 @@
             _sfSetSlotText(dialog, 'desc', copy.desc);
 
             SfDialog.open(dialog, { dismissible: false });
+        }
+
+        function _sfShowBanModal(ban) {
+            if (window.SfBanModal && typeof window.SfBanModal.render === 'function') {
+                window.SfBanModal.render(ban);
+            }
         }
 
         // ── Diálogo "Ya participas": estado del sorteo + acceso a los premios ──
@@ -7004,7 +7006,11 @@
             });
         }
 
-        function _sfHandleJoinError(msg, code) {
+        function _sfHandleJoinError(msg, code, ban) {
+            if (code === 'raffle_banned') {
+                _sfShowBanModal(ban || { type: 'permanent' });
+                return;
+            }
             const m = (msg || '').toLowerCase();
             if (code === 'private_not_invited' || m.includes('privado y exclusivo')) {
                 Swal.fire({
@@ -7084,9 +7090,7 @@
             }
         }
 
-        // Huella de dispositivo ligera (no usa librerías de tracking): combina
-        // señales estables del navegador en un hash corto. Sirve para reforzar
-        // el límite anti-multicuenta sin frustrar a usuarios reales.
+        // Huella local de dispositivo; se usa junto con señales de cuenta y red.
         function _sfDeviceFingerprint() {
             try {
                 const n = navigator || {};
@@ -7103,17 +7107,61 @@
                     n.hardwareConcurrency || '',
                     n.deviceMemory || '',
                     (n.maxTouchPoints || 0)
-                ].join('|');
-                // Hash FNV-1a de 32 bits -> hex (ligero, sin dependencias).
-                let h = 0x811c9dc5;
-                for (let i = 0; i < parts.length; i++) {
-                    h ^= parts.charCodeAt(i);
-                    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
-                }
-                return ('00000000' + h.toString(16)).slice(-8);
+                ];
+                try {
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    if (context) {
+                        context.textBaseline = 'top';
+                        context.font = '14px Arial';
+                        context.fillStyle = '#3a7';
+                        context.fillRect(2, 2, 80, 18);
+                        context.fillStyle = '#135';
+                        context.fillText('Sorteo Flash · ñЖ', 4, 4);
+                        parts.push(canvas.toDataURL());
+                    }
+                } catch (_) {}
+                try {
+                    const canvas = document.createElement('canvas');
+                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    const ext = gl && gl.getExtension('WEBGL_debug_renderer_info');
+                    if (ext) {
+                        parts.push(gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) || '');
+                        parts.push(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || '');
+                    }
+                } catch (_) {}
+                const text = parts.join('|');
+                const hash = (seed) => {
+                    let h = seed >>> 0;
+                    for (let i = 0; i < text.length; i++) {
+                        h ^= text.charCodeAt(i);
+                        h = Math.imul(h, 0x01000193) >>> 0;
+                    }
+                    return ('00000000' + h.toString(16)).slice(-8);
+                };
+                return hash(0x811c9dc5) + hash(0x12345678);
             } catch (e) {
                 return '';
             }
+        }
+
+        function _sfDeviceId() {
+            let did = '';
+            try { did = localStorage.getItem('sf_did') || ''; } catch (_) {}
+            if (!/^[a-f0-9]{32}$/i.test(did)) {
+                try {
+                    const bytes = new Uint8Array(16);
+                    crypto.getRandomValues(bytes);
+                    did = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+                } catch (_) {
+                    did = '';
+                }
+            }
+            if (did) {
+                try { localStorage.setItem('sf_did', did); } catch (_) {}
+                document.cookie = 'sf_did=' + encodeURIComponent(did) + '; Max-Age=31536000; Path=/; SameSite=Lax';
+            }
+            return did;
         }
 
         let _sfJoinInFlight = false;
@@ -7128,6 +7176,7 @@
                 fd.append('action', CONFIG.apis.join);
                 fd.append('raffle_id', CONFIG.raffleId);
                 fd.append('fp', _sfDeviceFingerprint());
+                fd.append('did', _sfDeviceId());
                 if (opts.declared) fd.append('declared', '1');
                 if (opts.useWelcomeTicket) fd.append('use_welcome_ticket', '1');
                 const res = await fetch(CONFIG.apis.url, { method: 'POST', body: fd });
@@ -7150,7 +7199,7 @@
                     launchJoinConfetti();
                     _sfOpenEnrolledDialog(data, btn);
                 } else {
-                    _sfHandleJoinError(data.message, data.code);
+                    _sfHandleJoinError(data.message, data.code, data.ban);
                 }
             } catch (e) {
                 _sfShowRestrictionModal('Error de Conexi\u00F3n', '\u{1F4E1}',
@@ -7281,6 +7330,8 @@
                 fd.append('action', CONFIG.apis.prechoice);
                 fd.append('raffle_id', CONFIG.raffleId);
                 fd.append('choice', choice);
+                fd.append('fp', _sfDeviceFingerprint());
+                fd.append('did', _sfDeviceId());
                 if (extra.animation_mode) fd.append('animation_mode', extra.animation_mode);
                 if (extra.coin_choice) fd.append('coin_choice', extra.coin_choice);
                 if (extra.pool_choices) fd.append('pool_choices', JSON.stringify(extra.pool_choices));
@@ -7295,6 +7346,7 @@
                     }
                     return true;
                 }
+                if (data && data.code === 'raffle_banned') _sfShowBanModal(data.ban || { type: 'permanent' });
                 return false;
             } catch (e) {
                 return false;
@@ -7897,6 +7949,8 @@
                 fd.append('action', CONFIG.apis.prechoice);
                 fd.append('sub', 'cancel_auto');
                 fd.append('raffle_id', CONFIG.raffleId);
+                fd.append('fp', _sfDeviceFingerprint());
+                fd.append('did', _sfDeviceId());
                 await fetch(CONFIG.apis.url, { method: 'POST', body: fd });
             } catch (_) { /* best-effort: el cliente ya frenó su auto-submit */ }
             // Refresco inmediato: espectadores y HUD ven la cancelación sin

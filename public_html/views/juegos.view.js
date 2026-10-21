@@ -357,6 +357,8 @@ function normalizeFlash(raw) {
     serverTimeUtc,
     loggedIn: raw.is_logged_in === true,
     banned: raw.my_banned === true,
+    banTitle: raw.my_banned === true ? 'Baneado de Sorteo Flash' : '',
+    banMessage: raw.my_banned === true ? 'Tienes un baneo activo en Sorteo Flash.' : '',
     next: next && next.id > 0 ? next : null,
     raffle: null,
   };
@@ -792,11 +794,11 @@ const FLASH_COPY = Object.freeze({
     note: 'Tu participación fue retirada de este sorteo.',
   },
   banned: {
-    badge: ['Cuenta suspendida', TONE.danger],
-    desc: 'Tu cuenta no puede participar en sorteos.',
+    badge: ['Baneado de Sorteo Flash', TONE.danger],
+    desc: 'Tienes un baneo activo en Sorteo Flash.',
     cardCta: ['Ver detalles', 'secondary', 'open-flash'],
     modalCta: ['Participación no disponible', 'secondary', null],
-    note: 'Tu cuenta está suspendida para sorteos.',
+    note: 'Tienes un baneo activo en Sorteo Flash.',
   },
   resolving: {
     badge: ['Sorteando…', TONE.info],
