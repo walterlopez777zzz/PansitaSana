@@ -23,7 +23,8 @@
         statusBusy: false,
         redirecting: false,
         voteCelebration: 0,
-        chartsRevealed: false,
+        historyLoaded: false,
+        historyLoading: false,
     };
     const countFormat = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 });
     const moneyFormat = new Intl.NumberFormat('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -31,6 +32,9 @@
     const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const VBUCK_ICON = 'https://fortnite-api.com/images/vbuck.png';
     const SVG_NS = 'http://www.w3.org/2000/svg';
+    const hasIntersectionObserver = 'IntersectionObserver' in window;
+    const observedReveals = new WeakSet();
+    let revealObserver = null;
 
     // API y descifrado
     let _sfSyncKey = null;
@@ -198,6 +202,31 @@
         return wrap;
     }
 
+    function makePrizeThumb(source, className = '') {
+        const thumb = el('span', `hub-prize-thumb${className ? ` ${className}` : ''}`);
+        thumb.append(el('span', 'hub-prize-thumb__fallback', '🎁'));
+        const url = safeUrl(source);
+        if (url) {
+            const image = el('img');
+            image.src = url;
+            image.alt = '';
+            image.loading = 'lazy';
+            image.decoding = 'async';
+            image.onerror = () => image.remove();
+            thumb.append(image);
+        }
+        return thumb;
+    }
+
+    function winnerDelivery(winner) {
+        if (winner.choice === 'double_lost') {
+            return el('span', 'hub-delivery hub-delivery--pending', 'El doble no salió 🍀');
+        }
+        const delivered = winner.delivery_status === 'delivered';
+        return el('span', `hub-delivery hub-delivery--${delivered ? 'done' : 'pending'}`,
+            delivered ? 'Entregado ✅' : 'En camino 🚚');
+    }
+
     function makeVerified(user) {
         if (!user || !user.is_verified) return null;
         const mark = el('span', 'hub-verified', '✓');
@@ -226,6 +255,64 @@
             if (progress < 1) requestAnimationFrame(draw);
         };
         requestAnimationFrame(draw);
+    }
+
+    function finalCount(node) {
+        if (!node) return;
+        const value = Number(node.dataset.countUp) || 0;
+        const decimals = Number(node.dataset.decimals) || 0;
+        const formatter = decimals
+            ? new Intl.NumberFormat('es-PE', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+            : countFormat;
+        node.textContent = `${formatter.format(value)}${node.dataset.suffix || ''}`;
+        node.dataset.counted = 'true';
+    }
+
+    function revealElement(node) {
+        node.classList.add('is-revealed');
+        const counters = [];
+        if (node.matches('[data-count-up]')) counters.push(node);
+        counters.push(...$$('[data-count-up]', node));
+        counters.forEach(counter => {
+            if (reducedMotion || !hasIntersectionObserver) finalCount(counter);
+            else animateCount(counter, counter.dataset.countUp, Number(counter.dataset.decimals) || 0, counter.dataset.suffix || '');
+        });
+    }
+
+    function observeReveals(scope = root) {
+        const candidates = [];
+        if (scope.matches && scope.matches('.hub-reveal')) candidates.push(scope);
+        candidates.push(...$$('.hub-reveal', scope));
+        let index = 0;
+        candidates.forEach(node => {
+            if (observedReveals.has(node)) return;
+            observedReveals.add(node);
+            node.style.setProperty('--reveal-delay', `${Math.min(index * 70, 350)}ms`);
+            index += 1;
+            if (reducedMotion || !hasIntersectionObserver || node.classList.contains('is-revealed')) {
+                revealElement(node);
+            } else if (revealObserver) {
+                revealObserver.observe(node);
+            } else {
+                revealElement(node);
+            }
+        });
+    }
+
+    function setupRevealObserver() {
+        if (!hasIntersectionObserver) {
+            observeReveals();
+            return;
+        }
+        document.documentElement.classList.add('hub-js');
+        revealObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                revealElement(entry.target);
+                revealObserver.unobserve(entry.target);
+            });
+        }, { threshold: 0.14 });
+        observeReveals();
     }
 
     // Encabezado y cuenta atrás de Lima
@@ -284,9 +371,10 @@
         const hours = Math.floor((totalSeconds % 86400) / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
-        countdown.textContent = days > 0
-            ? `${days} d ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-            : `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        $('#hero-days').textContent = String(days).padStart(2, '0');
+        $('#hero-hours').textContent = String(hours).padStart(2, '0');
+        $('#hero-min').textContent = String(minutes).padStart(2, '0');
+        $('#hero-sec').textContent = String(seconds).padStart(2, '0');
     }
 
     // Bóveda y último sorteo
@@ -316,7 +404,9 @@
         const totals = summary || {};
         const bananas = Number(totals.bananos_entregados) || 0;
         renderOdometer($('#summary-bananas'), bananas);
-        animateCount($('#summary-raffles'), totals.sorteos_realizados || 0);
+        const rafflesCount = $('#summary-raffles');
+        rafflesCount.dataset.countUp = String(Number(totals.sorteos_realizados) || 0);
+        rafflesCount.textContent = formatCount(totals.sorteos_realizados || 0);
         const soles = Number(totals.valor_soles) || 0;
         const solesLine = $('#summary-soles');
         solesLine.hidden = soles <= 0;
@@ -338,38 +428,41 @@
             return;
         }
         section.hidden = false;
-        $('#last-raffle-meta').textContent = `Sorteo #${formatCount(data.raffle_id)} · ${data.end_time ? new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium' }).format(new Date(data.end_time)) : ''}`;
+        const edition = data.edicion ?? data.raffle_id;
+        const dateLabel = data.end_time
+            ? new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium', timeZone: 'America/Lima' }).format(new Date(data.end_time))
+            : '';
+        $('#last-raffle-meta').textContent = `Sorteo #${formatCount(edition)} · ${dateLabel}`;
         const results = $('#last-results-link');
         const raffleId = Number(data.raffle_id);
         results.href = raffleId > 0 ? `/juegos/sorteo_flash/?id=${encodeURIComponent(String(Math.floor(raffleId)))}` : '/juegos/sorteo_flash/';
         const winners = data.ganadores;
         const first = winners[0];
-        const featured = el('article', 'hub-winner-card');
+        const featured = el('article', 'hub-winner-feature');
         const avatar = makeAvatar(first, 'hub-avatar hub-avatar--large');
         const main = el('div', 'hub-winner-card__main');
+        const identity = el('div', 'hub-winner-feature__identity');
         const nameRow = el('div', 'hub-winner-card__name');
         nameRow.append(el('strong', '', first.name || 'Ganador de la comunidad'));
         const verified = makeVerified(first);
         if (verified) nameRow.append(verified);
+        identity.append(avatar, nameRow);
         const prize = el('p', 'hub-winner-card__prize', first.prize_name || 'Premio del sorteo');
-        main.append(nameRow, prize);
-        if (first.choice === 'double_lost') {
-            main.append(el('span', 'hub-delivery hub-delivery--pending', 'El doble no salió 🍀'));
-        } else {
-            main.append(el('span', `hub-delivery hub-delivery--${first.delivery_status === 'delivered' ? 'done' : 'pending'}`,
-                first.delivery_status === 'delivered' ? 'Entregado ✅' : 'En camino 🚚'));
-        }
-        featured.append(avatar, main);
+        main.append(identity, prize, winnerDelivery(first));
+        featured.append(makePrizeThumb(first.prize_image), main);
         content.append(featured);
         if (winners.length > 1) {
             const others = el('div', 'hub-winner-chips');
             winners.slice(1).forEach(winner => {
-                const chip = el('span', 'hub-winner-chip');
+                const chip = el('article', 'hub-winner-chip');
                 chip.append(el('span', 'hub-winner-chip__position', `#${winner.position}`));
                 chip.append(makeAvatar(winner, 'hub-avatar hub-avatar--small'));
                 const label = el('span', 'hub-winner-chip__label');
-                label.append(el('strong', '', winner.name || 'Ganador'), el('small', '', winner.prize_name || 'Premio'));
-                chip.append(label);
+                const name = el('strong', '', winner.name || 'Ganador');
+                const verified = makeVerified(winner);
+                if (verified) name.append(verified);
+                label.append(name, el('small', '', winner.prize_name || 'Premio'));
+                chip.append(label, makePrizeThumb(winner.prize_image), winnerDelivery(winner));
                 others.append(chip);
             });
             content.append(others);
@@ -385,6 +478,89 @@
                 fomo.append(el('span', '', `Tu ticket #${formatCount(my.mi_ticket)} vs. ticket ganador #${my.ticket_ganador ?? '—'}. ¡Te quedaste a ${gap} de ganar!`));
             }
         }
+    }
+
+    function historyWinnerRow(winner) {
+        const row = el('div', 'hub-history-winner');
+        row.append(el('span', 'hub-history-winner__position', `#${formatCount(winner.position)}`));
+        row.append(makeAvatar(winner, 'hub-avatar hub-avatar--small'));
+        const name = el('span', 'hub-history-winner__name');
+        name.append(document.createTextNode(winner.name || 'Ganador'));
+        const verified = makeVerified(winner);
+        if (verified) name.append(verified);
+        const prize = el('span', 'hub-history-winner__prize');
+        prize.append(makePrizeThumb(winner.prize_image), el('span', '', winner.prize_name || 'Premio del sorteo'));
+        row.append(name, prize, winnerDelivery(winner));
+        return row;
+    }
+
+    function renderHistory(history) {
+        const content = $('#history-content');
+        content.replaceChildren();
+        if (!Array.isArray(history) || history.length === 0) {
+            const empty = el('div', 'hub-history-empty');
+            empty.append(el('p', '', 'Todavía no hay sorteos pasados para mostrar.'));
+            content.append(empty);
+            return;
+        }
+        const list = el('div', 'hub-history-list');
+        history.forEach(entry => {
+            const card = el('article', 'hub-history-entry hub-reveal');
+            const header = el('header', 'hub-history-entry__header');
+            const edition = entry.edicion ?? entry.raffle_id;
+            header.append(el('h3', '', `Edición #${formatCount(edition)}`));
+            const meta = el('div', 'hub-history-entry__meta');
+            const timestamp = Date.parse(entry.end_time || '');
+            const date = Number.isFinite(timestamp)
+                ? new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium', timeZone: 'America/Lima' }).format(new Date(timestamp))
+                : 'Fecha no disponible';
+            meta.append(el('span', '', date), el('span', '', `${formatCount(entry.participantes)} participantes`));
+            header.append(meta);
+            card.append(header);
+            const winners = el('div', 'hub-history-winners');
+            (Array.isArray(entry.ganadores) ? entry.ganadores : []).forEach(winner => winners.append(historyWinnerRow(winner)));
+            if (!winners.childNodes.length) winners.append(el('p', 'hub-empty-state hub-empty-state--small', 'No hay ganadores disponibles para esta edición.'));
+            card.append(winners);
+            const raffleId = Number(entry.raffle_id);
+            if (raffleId > 0) {
+                const footer = el('div', 'hub-history-entry__footer');
+                const link = el('a', 'hub-results-link', 'Ver resultados');
+                link.href = `/juegos/sorteo_flash/?id=${encodeURIComponent(String(Math.floor(raffleId)))}`;
+                footer.append(link);
+                card.append(footer);
+            }
+            list.append(card);
+        });
+        content.append(list);
+        observeReveals(content);
+    }
+
+    async function loadHistory() {
+        if (state.historyLoading || state.historyLoaded) return;
+        state.historyLoading = true;
+        const content = $('#history-content');
+        content.replaceChildren(el('div', 'hub-skeleton hub-skeleton--proposal'));
+        try {
+            const payload = await postForm({ action: 'v7s', sub: 'historial' });
+            renderHistory(payload.historial);
+            state.historyLoaded = true;
+        } catch (error) {
+            const errorBox = el('div', 'hub-history-error');
+            errorBox.append(el('p', '', 'No pudimos cargar el historial. Revisa tu conexión e inténtalo de nuevo.'));
+            const retry = el('button', 'hub-button hub-button--soft', 'Reintentar');
+            retry.type = 'button';
+            retry.dataset.action = 'retry-history';
+            errorBox.append(retry);
+            content.replaceChildren(errorBox);
+        } finally {
+            state.historyLoading = false;
+        }
+    }
+
+    function openHistory() {
+        const dialog = $('#history-dialog');
+        if (!dialog.open) dialog.showModal();
+        loadHistory();
     }
 
     // Creador de combos y catálogo
@@ -630,6 +806,7 @@
     // Votación y tarjetas de propuestas
     function renderCreatorCallout(data) {
         const callout = $('#creator-callout');
+        if (!callout) return;
         const spots = Math.max(0, Number(data.cupos_restantes) || 0);
         const my = data.my || {};
         let message = '';
@@ -681,6 +858,7 @@
 
     function renderProposals(data) {
         const list = $('#proposal-list');
+        if (!list) return;
         list.replaceChildren();
         const proposals = Array.isArray(data.propuestas) ? data.propuestas : [];
         const my = data.my || {};
@@ -817,6 +995,19 @@
         return payload;
     }
 
+    function mountProposals(data) {
+        const slot = $('#proposals-slot');
+        const template = $('#proposals-template');
+        if (!slot || !template) return;
+        if (data.votacion_abierta === true) {
+            if (!slot.querySelector('.hub-proposals')) {
+                slot.replaceChildren(template.content.cloneNode(true));
+            }
+            return;
+        }
+        if (slot.childNodes.length) slot.replaceChildren();
+    }
+
     // Trofeos, podios y estadísticas
     function rankingRow(user, rank, metric, viewerId) {
         const userId = Number(user.user_id) || 0;
@@ -846,29 +1037,67 @@
     }
 
     function podiumPerson(user, rank, viewerId) {
-        const place = el('div', `hub-podium-place hub-podium-place--${rank}`);
-        const medal = el('span', 'hub-podium-place__medal');
-        medal.append(icon('medal'));
-        place.append(medal, makeAvatar(user || {}, 'hub-avatar'));
+        const variant = rank === 1 ? 'first' : (rank === 2 ? 'second' : 'third');
+        const place = el('div', `hub-podium-place hub-podium-place--${variant}`);
+        place.append(el('span', 'hub-podium-place__rank', `#${rank}`));
+        const avatarWrap = el('span', 'hub-podium-avatar-wrap');
+        if (rank === 1) {
+            const crown = document.createElementNS(SVG_NS, 'svg');
+            crown.setAttribute('class', 'hub-podium-crown');
+            crown.setAttribute('viewBox', '0 0 32 32');
+            crown.setAttribute('aria-hidden', 'true');
+            const crownPath = document.createElementNS(SVG_NS, 'path');
+            crownPath.setAttribute('d', 'M4 23 2 8l8 6 6-10 6 10 8-6-2 15H4Zm1 3h22v3H5Z');
+            crownPath.setAttribute('fill', '#f2bd35');
+            crownPath.setAttribute('stroke', '#a8791a');
+            crownPath.setAttribute('stroke-width', '1.5');
+            crown.append(crownPath);
+            avatarWrap.append(crown);
+        }
+        avatarWrap.append(makeAvatar(user || {}, 'hub-avatar'));
+        place.append(avatarWrap);
         if (user) {
             const name = el('span', 'hub-podium-place__name', user.name || 'Banano');
             const verified = makeVerified(user);
             if (verified) name.append(verified);
             place.append(name, el('span', 'hub-podium-place__wins', `${formatCount(user.wins)} ${Number(user.wins) === 1 ? 'victoria' : 'victorias'}`));
         } else {
-            place.append(el('span', 'hub-podium-place__name', 'Por descubrir'), el('span', 'hub-podium-place__wins', 'El próximo puedes ser tú'));
+            place.append(el('span', 'hub-podium-place__name', 'Por descubrir'), el('span', 'hub-podium-place__wins', 'Aún sin ganador'));
         }
-        place.append(el('span', 'hub-podium-place__rank', `#${rank}`));
+        const pedestal = el('span', 'hub-podium-place__pedestal');
+        const svg = document.createElementNS(SVG_NS, 'svg');
+        svg.setAttribute('viewBox', '0 0 120 120');
+        svg.setAttribute('aria-hidden', 'true');
+        const defs = document.createElementNS(SVG_NS, 'defs');
+        const gradient = document.createElementNS(SVG_NS, 'linearGradient');
+        const gradientId = `hub-podium-${variant}`;
+        gradient.setAttribute('id', gradientId);
+        gradient.setAttribute('x1', '0'); gradient.setAttribute('y1', '0');
+        gradient.setAttribute('x2', '0'); gradient.setAttribute('y2', '1');
+        const colors = rank === 1 ? ['#ffe991', '#d69b2e'] : (rank === 2 ? ['#f4f6f8', '#9ea9b5'] : ['#f2c39f', '#a86645']);
+        colors.forEach((color, index) => {
+            const stop = document.createElementNS(SVG_NS, 'stop');
+            stop.setAttribute('offset', index ? '100%' : '0%');
+            stop.setAttribute('stop-color', color);
+            gradient.append(stop);
+        });
+        defs.append(gradient);
+        const side = document.createElementNS(SVG_NS, 'path');
+        side.setAttribute('d', 'M100 27 117 40v78h-17Z');
+        side.setAttribute('fill', rank === 1 ? '#b87d1e' : (rank === 2 ? '#85919c' : '#8c5338'));
+        const face = document.createElementNS(SVG_NS, 'path');
+        face.setAttribute('d', 'M8 40h92v78H8z');
+        face.setAttribute('fill', `url(#${gradientId})`);
+        const top = document.createElementNS(SVG_NS, 'path');
+        top.setAttribute('d', 'M8 40 25 24h92l-17 16Z');
+        top.setAttribute('fill', rank === 1 ? '#fff1ae' : (rank === 2 ? '#fff' : '#ffdcc0'));
+        top.setAttribute('stroke', colors[1]);
+        top.setAttribute('stroke-width', '2');
+        svg.append(defs, side, face, top);
+        pedestal.append(svg);
+        place.append(pedestal);
         if (user && Number(user.user_id) === Number(viewerId) && Number(viewerId) > 0) place.classList.add('is-you');
         return place;
-    }
-
-    function openCategoryModal(title, eyebrow, entries, metric) {
-        $('#category-title').textContent = title;
-        $('#category-eyebrow').textContent = eyebrow;
-        const content = $('#category-dialog-content');
-        content.replaceChildren(rankingList(entries, metric, CONFIG.userId || 0));
-        $('#category-dialog').showModal();
     }
 
     function trophyCard(title, iconName, user, detail, category, entries, metric, modifier = '') {
@@ -903,77 +1132,76 @@
 
     function makeChoicePanel(stats) {
         const choices = stats.elecciones || {};
-        const panel = el('section', 'hub-choice-panel');
-        const heading = el('h3');
-        heading.append(icon('dice'), document.createTextNode('Termómetro del Doble o Nada'));
+        const percentFormat = new Intl.NumberFormat('es-PE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+        const panel = el('section', 'hub-choice-panel hub-reveal');
+        const heading = el('h2');
+        heading.append(document.createTextNode('📊 Métricas y Elecciones'));
         panel.append(heading);
         const body = el('div', 'hub-choice-panel__body');
-        const donutWrap = el('div', 'hub-donut-wrap');
-        const svg = document.createElementNS(SVG_NS, 'svg');
-        svg.setAttribute('class', 'hub-donut hub-chart');
-        svg.setAttribute('viewBox', '0 0 120 120');
-        svg.setAttribute('role', 'img');
-        svg.setAttribute('aria-label', 'Distribución de elecciones entre premio original, cashback y doble o nada');
-        const track = document.createElementNS(SVG_NS, 'circle');
-        track.setAttribute('class', 'hub-donut__track');
-        track.setAttribute('cx', '60'); track.setAttribute('cy', '60'); track.setAttribute('r', '45');
-        track.setAttribute('pathLength', '100');
-        svg.append(track);
         const parts = [
             ['original', 'Original', 'original'],
             ['cashback', 'Cashback', 'cashback'],
             ['doble', 'Doble o Nada', 'double'],
         ];
-        let offset = 0;
+        const triple = el('section', 'hub-triple-metric');
+        triple.append(el('h3', '', 'El Triple'));
+        const segmentBar = el('div', 'hub-choice-segments');
+        segmentBar.setAttribute('role', 'img');
+        segmentBar.setAttribute('aria-label', 'Distribución porcentual de las elecciones');
+        const choicePills = el('div', 'hub-choice-pills');
         parts.forEach(([key, label, color]) => {
             const pct = choicePercent(choices, key);
-            const circle = document.createElementNS(SVG_NS, 'circle');
-            circle.setAttribute('class', `hub-donut__segment hub-donut__segment--${color}`);
-            circle.setAttribute('cx', '60'); circle.setAttribute('cy', '60'); circle.setAttribute('r', '45');
-            circle.setAttribute('pathLength', '100');
-            circle.style.setProperty('--donut-pct', String(pct));
-            circle.style.setProperty('--donut-offset', String(-offset));
-            circle.setAttribute('aria-label', `${label}: ${pct.toFixed(1)} por ciento`);
-            svg.append(circle);
-            offset += pct;
+            const fill = el('span', `hub-choice-segments__fill hub-choice-segments__fill--${color}`);
+            fill.style.setProperty('--choice-pct', `${pct}%`);
+            fill.setAttribute('aria-hidden', 'true');
+            segmentBar.append(fill);
+
+            const pill = el('div', 'hub-choice-pill');
+            const labelRow = el('span', 'hub-choice-pill__label');
+            labelRow.append(el('span', `hub-choice-pill__swatch hub-choice-legend__swatch--${color}`), document.createTextNode(label));
+            const valueRow = el('strong', 'hub-choice-pill__value');
+            valueRow.append(document.createTextNode(formatCount(choices[key])));
+            const percentage = el('small', '', `${percentFormat.format(pct)}%`);
+            percentage.dataset.countUp = String(pct);
+            percentage.dataset.decimals = '1';
+            percentage.dataset.suffix = '%';
+            valueRow.append(percentage);
+            pill.append(labelRow, valueRow);
+            choicePills.append(pill);
         });
-        const centerText = document.createElementNS(SVG_NS, 'text');
-        centerText.setAttribute('class', 'hub-donut__center');
-        centerText.setAttribute('x', '60'); centerText.setAttribute('y', '63');
-        centerText.textContent = 'Elecciones';
-        svg.append(centerText);
-        donutWrap.append(svg);
-        const legend = el('div', 'hub-choice-legend');
-        parts.forEach(([key, label, color]) => {
-            const item = el('div', 'hub-choice-legend__item');
-            item.append(el('span', `hub-choice-legend__swatch hub-choice-legend__swatch--${color}`));
-            item.append(el('span', '', label));
-            const pct = choicePercent(choices, key);
-            const value = el('strong', 'hub-choice-legend__pct', '0%');
-            value.dataset.countUp = String(pct);
-            value.dataset.decimals = '1';
-            value.dataset.suffix = '%';
-            item.append(value);
-            legend.append(item);
-        });
-        donutWrap.append(legend);
-        body.append(donutWrap);
+        triple.append(segmentBar, choicePills);
+        body.append(triple);
         const rate = Math.max(0, Math.min(100, Number(choices.doble_win_rate) || 0));
-        const rateBox = el('div', 'hub-double-rate hub-chart');
-        const rateHeading = el('div', 'hub-double-rate__heading');
-        rateHeading.append(el('span', '', 'Victorias al elegir Doble o Nada'));
-        const rateValue = el('strong', '', '0%');
-        rateValue.dataset.countUp = String(rate);
-        rateValue.dataset.decimals = '1';
-        rateValue.dataset.suffix = '%';
-        rateHeading.append(rateValue);
-        const trackBar = el('div', 'hub-double-rate__track');
-        const fill = el('span', 'hub-double-rate__fill');
-        fill.style.setProperty('--rate', `${rate}%`);
-        trackBar.append(fill);
-        rateBox.append(rateHeading, trackBar, el('p', 'hub-results-note', `${formatCount(choices.doble_ganados)} ganados · ${formatCount(choices.doble_perdidos)} perdidos`));
+        const rateBox = el('section', 'hub-double-metric');
+        rateBox.append(el('h3', '', '% de Victorias en Doble o Nada'));
+        const svg = document.createElementNS(SVG_NS, 'svg');
+        svg.setAttribute('class', 'hub-double-ring');
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.setAttribute('role', 'img');
+        svg.setAttribute('aria-label', `Victorias en Doble o Nada: ${percentFormat.format(rate)} por ciento`);
+        const track = document.createElementNS(SVG_NS, 'circle');
+        track.setAttribute('class', 'hub-double-ring__track');
+        track.setAttribute('cx', '50'); track.setAttribute('cy', '50'); track.setAttribute('r', '42');
+        track.setAttribute('pathLength', '100');
+        const ring = document.createElementNS(SVG_NS, 'circle');
+        ring.setAttribute('class', 'hub-double-ring__fill');
+        ring.setAttribute('cx', '50'); ring.setAttribute('cy', '50'); ring.setAttribute('r', '42');
+        ring.setAttribute('pathLength', '100');
+        ring.style.setProperty('--ring-value', String(rate));
+        const ringText = document.createElementNS(SVG_NS, 'text');
+        ringText.setAttribute('class', 'hub-double-ring__value');
+        ringText.setAttribute('x', '50'); ringText.setAttribute('y', '50');
+        ringText.textContent = `${percentFormat.format(rate)}%`;
+        ringText.dataset.countUp = String(rate);
+        ringText.dataset.decimals = '1';
+        ringText.dataset.suffix = '%';
+        svg.append(track, ring, ringText);
+        const rateValue = el('strong', '', `${formatCount(choices.doble_ganados)} ganados`);
+        const totals = el('div', 'hub-double-metric__totals');
+        totals.append(rateValue, el('span', '', `${formatCount(choices.doble_perdidos)} perdidos`));
+        rateBox.append(svg, totals);
         body.append(rateBox);
-        panel.append(body);
+        panel.append(body, makeLatestChoices(stats));
         return panel;
     }
 
@@ -1000,10 +1228,11 @@
                 const verified = makeVerified(entry);
                 if (verified) nameLine.append(verified);
                 copy.append(el('strong', '', label), nameLine);
+                const edition = entry.edicion ?? entry.raffle_id;
                 const result = entry.resultado === 'perdio'
-                    ? 'El doble se perdió'
-                    : (entry.resultado === 'gano' ? '¡Ganó el doble!' : `Sorteo #${formatCount(entry.raffle_id)}`);
-                copy.append(el('small', '', result));
+                    ? ' · El doble se perdió'
+                    : (entry.resultado === 'gano' ? ' · ¡Ganó el doble!' : '');
+                copy.append(el('small', '', `Edición #${formatCount(edition)}${result}`));
             } else {
                 copy.append(el('strong', '', label), el('small', '', 'Aún sin registros'));
             }
@@ -1017,82 +1246,54 @@
     function makeStatsDetail(stats, viewerId) {
         const detail = el('div', 'hub-hall-detail');
         const winners = Array.isArray(stats.top_ganadores) ? stats.top_ganadores : [];
-        const podium = el('section', 'hub-podium-card');
-        const heading = el('h3');
-        heading.append(icon('trophy'), document.createTextNode('Podio de ganadores'));
-        podium.append(heading);
+        detail.append(el('h3', '', 'Los tres primeros'));
         const podiumRows = el('div', 'hub-podium');
         podiumRows.append(podiumPerson(winners[1], 2, viewerId), podiumPerson(winners[0], 1, viewerId), podiumPerson(winners[2], 3, viewerId));
-        podium.append(podiumRows);
-        const places = el('section', 'hub-ranking-section');
-        places.append(el('h4', '', 'Lugares 4 al 10'));
-        places.append(rankingList(winners.slice(3, 10), user => `${formatCount(user.wins)} ${Number(user.wins) === 1 ? 'victoria' : 'victorias'}`, viewerId, 4));
-        podium.append(places);
+        detail.append(podiumRows);
+        detail.append(el('h3', '', 'Lugares #4–#10'));
+        const leaderboard = el('div', 'hub-leaderboard');
+        winners.slice(3, 10).forEach((user, index) => {
+            const rank = Number(user.rank) || index + 4;
+            const row = el('div', 'hub-leaderboard-row');
+            row.append(el('span', 'hub-leaderboard-row__rank', `#${rank}`));
+            row.append(makeAvatar(user, 'hub-avatar hub-avatar--small'));
+            const identity = el('span', 'hub-leaderboard-row__identity');
+            identity.append(document.createTextNode(user.name || 'Banano'));
+            const verified = makeVerified(user);
+            if (verified) identity.append(verified);
+            row.append(identity, el('span', 'hub-leaderboard-row__wins', `${formatCount(user.wins)} victorias`));
+            leaderboard.append(row);
+        });
+        if (winners.length < 4) leaderboard.append(el('p', 'hub-empty-state hub-empty-state--small', 'Pronto habrá más leyendas en el ranking.'));
+        detail.append(leaderboard);
         const fullRanking = el('button', 'hub-button hub-button--soft', 'Ver ranking completo');
         fullRanking.type = 'button';
         fullRanking.dataset.action = 'open-ranking';
-        const more = el('div', 'hub-podium__more');
-        more.append(fullRanking);
-        podium.append(more);
-        detail.append(podium);
-
-        const streaks = Array.isArray(stats.top_rachas) ? stats.top_rachas : [];
-        const streakMetric = user => `Récord ${formatCount(user.best_streak)} · actual ${formatCount(user.current_streak)}`;
-        const streakCard = trophyCard('Racha Imparable', 'fire', streaks[0], user => `Mejor racha: ${formatCount(user.best_streak)} · racha actual: ${formatCount(user.current_streak)}`, 'streak', streaks, streakMetric);
-        const worst = Array.isArray(stats.peor_suerte) ? stats.peor_suerte : [];
-        const worstMetric = user => `${formatCount(user.participations)} sorteos`;
-        const worstCard = trophyCard('Peor Suerte', 'heart-broken', worst[0], user => `${formatCount(user.participations)} participaciones sin victoria. ¡La próxima puede ser la buena!`, 'worst', worst, worstMetric, 'hub-trophy-card--luck');
-        const trophyGrid = el('div', 'hub-trophy-grid');
-        trophyGrid.append(streakCard, worstCard, makeChoicePanel(stats));
-        detail.append(trophyGrid, makeLatestChoices(stats));
+        detail.append(fullRanking);
         return detail;
-    }
-
-    function observeCharts(scope) {
-        const charts = $$('.hub-chart', scope);
-        const reveal = chart => {
-            chart.classList.add('is-visible');
-            $$('[data-count-up]', chart).forEach(node => {
-                const value = Number(node.dataset.countUp) || 0;
-                const decimals = Number(node.dataset.decimals) || 0;
-                const formatter = decimals
-                    ? new Intl.NumberFormat('es-PE', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
-                    : countFormat;
-                if (state.chartsRevealed) {
-                    node.textContent = `${formatter.format(value)}${node.dataset.suffix || ''}`;
-                    node.dataset.counted = 'true';
-                } else {
-                    animateCount(node, value, decimals, node.dataset.suffix || '');
-                }
-            });
-        };
-        if (state.chartsRevealed) {
-            charts.forEach(reveal);
-            return;
-        }
-        if (!('IntersectionObserver' in window)) {
-            charts.forEach(reveal);
-            state.chartsRevealed = true;
-            return;
-        }
-        const observer = new IntersectionObserver(entries => {
-            if (!entries.some(entry => entry.isIntersecting)) return;
-            charts.forEach(reveal);
-            state.chartsRevealed = true;
-            observer.disconnect();
-        }, { threshold: 0.25 });
-        charts.forEach(chart => observer.observe(chart));
     }
 
     function renderHall(stats) {
         const payload = stats || {};
         const target = $('#hall-full');
         target.replaceChildren(makeStatsDetail(payload, CONFIG.userId || 0));
-        observeCharts(target);
+        const streaks = Array.isArray(payload.top_rachas) ? payload.top_rachas : [];
+        const streakMetric = user => `Récord ${formatCount(user.best_streak)} · actual ${formatCount(user.current_streak)}`;
+        const streakCard = trophyCard('🔥 Racha Imparable', 'fire', streaks[0],
+            user => `Mejor racha: ${formatCount(user.best_streak)} · racha actual: ${formatCount(user.current_streak)}`,
+            'streak', streaks, streakMetric);
+        const worst = Array.isArray(payload.peor_suerte) ? payload.peor_suerte : [];
+        const worstMetric = user => `${formatCount(user.participations)} participaciones`;
+        const worstCard = trophyCard('💔 Peor Suerte', 'heart-broken', worst[0],
+            user => `${formatCount(user.participations)} participaciones sin victoria. ¡La próxima puede ser la buena!`,
+            'worst', worst, worstMetric, 'hub-trophy-card--luck');
+        $('#trophy-cards').replaceChildren(streakCard, worstCard);
+        $('#choice-panel').replaceChildren(makeChoicePanel(payload));
         const generated = Date.parse(payload.generated_at || '');
         $('#stats-updated').textContent = Number.isFinite(generated)
             ? `Se actualiza cada 5 minutos · actualizado ${new Intl.DateTimeFormat('es-PE', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(generated))}`
             : 'Se actualiza cada 5 minutos';
+        observeReveals(root);
     }
 
     function renderMeme(url) {
@@ -1100,7 +1301,7 @@
         slot.replaceChildren();
         const imageUrl = safeUrl(url);
         if (!imageUrl) return;
-        const section = el('section', 'hub-card hub-basement');
+        const section = el('section', 'hub-card hub-basement hub-reveal');
         const eyebrow = el('p', 'hub-eyebrow');
         eyebrow.append(icon('sparkle'), document.createTextNode('EL SÓTANO'));
         section.append(eyebrow, el('h2', '', 'La esquina secreta de la comunidad'));
@@ -1116,16 +1317,20 @@
 
     function renderState(data) {
         state.vote = data;
+        mountProposals(data);
         const spots = $('#proposal-spots');
-        spots.replaceChildren(icon('ticket'), document.createTextNode(`Quedan ${formatCount(data.cupos_restantes)} de ${formatCount(data.max_propuestas)} cupos para proponer`));
+        if (spots) spots.replaceChildren(icon('ticket'), document.createTextNode(`Quedan ${formatCount(data.cupos_restantes)} de ${formatCount(data.max_propuestas)} cupos para proponer`));
         const reward = $('#proposal-reward');
-        reward.replaceChildren(icon('coin'), document.createTextNode(`Gana ${formatCoins(data.recompensa_bananos)} Bananos por proponer`));
+        if (reward) reward.replaceChildren(icon('coin'), document.createTextNode(`Gana ${formatCoins(data.recompensa_bananos)} Bananos por proponer`));
         renderSummary(data.resumen || (data.stats && data.stats.resumen));
         renderLastWinner(data.ultimo_sorteo, data.my && data.my.ultimo_sorteo);
-        renderCreatorCallout(data);
-        renderProposals(data);
+        if (data.votacion_abierta === true) {
+            renderCreatorCallout(data);
+            renderProposals(data);
+        }
         renderHall(data.stats || {});
         renderMeme(data.meme_url);
+        observeReveals(root);
     }
 
     // Modales accesibles para el ranking, Top 10 y confirmaciones
@@ -1165,7 +1370,7 @@
     }
 
     function openCategory(category) {
-        const card = $$('.hub-trophy-card', $('#hall-full')).find(node => node.dataset.category === category);
+        const card = $$('.hub-trophy-card', $('#trophy-cards')).find(node => node.dataset.category === category);
         if (!card) return;
         const title = category === 'streak' ? 'Racha Imparable · Top 10' : 'Peor Suerte · Top 10';
         $('#category-title').textContent = title;
@@ -1178,8 +1383,10 @@
     }
 
     function renderLoadingError(message) {
-        $('#proposal-list').replaceChildren(el('div', 'hub-empty-state', message));
-        renderCreatorCallout({ votacion_abierta: false, cupos_restantes: 0, my: {} });
+        const list = $('#proposal-list');
+        if (list) list.replaceChildren(el('div', 'hub-empty-state', message));
+        const callout = $('#creator-callout');
+        if (callout) renderCreatorCallout({ votacion_abierta: false, cupos_restantes: 0, my: {} });
     }
 
     function onClick(event) {
@@ -1226,6 +1433,21 @@
             case 'close-ranking':
                 $('#ranking-dialog').close();
                 break;
+            case 'open-history':
+                openHistory();
+                break;
+            case 'close-history':
+                $('#history-dialog').close();
+                break;
+            case 'retry-history':
+                loadHistory();
+                break;
+            case 'open-sponsor':
+                $('#sponsor-dialog').showModal();
+                break;
+            case 'close-sponsor':
+                $('#sponsor-dialog').close();
+                break;
             case 'open-category':
                 openCategory(button.dataset.category);
                 break;
@@ -1271,6 +1493,8 @@
         if (event.target === $('#ranking-dialog')) $('#ranking-dialog').close();
         if (event.target === $('#category-dialog')) $('#category-dialog').close();
         if (event.target === $('#confirm-dialog')) $('#confirm-dialog').close();
+        if (event.target === $('#history-dialog')) $('#history-dialog').close();
+        if (event.target === $('#sponsor-dialog')) $('#sponsor-dialog').close();
     }
 
     // Polling de sala y arranque
@@ -1284,10 +1508,14 @@
     }
 
     async function init() {
+        setupRevealObserver();
+        const sponsorLink = $('#sponsor-whatsapp-link');
+        if (sponsorLink) sponsorLink.href = safeUrl(CONFIG.sponsorUrl, sponsorLink.href);
         root.addEventListener('click', onClick);
         root.addEventListener('input', onInput);
         $('#combo-dialog').addEventListener('cancel', onDialogCancel);
-        [$('#combo-dialog'), $('#ranking-dialog'), $('#category-dialog'), $('#confirm-dialog')]
+        [$('#history-dialog'), $('#sponsor-dialog')].forEach(dialog => dialog.addEventListener('cancel', onDialogCancel));
+        [$('#combo-dialog'), $('#ranking-dialog'), $('#category-dialog'), $('#confirm-dialog'), $('#history-dialog'), $('#sponsor-dialog')]
             .forEach(dialog => dialog.addEventListener('click', onDialogBackdrop));
         window.setInterval(updateCountdown, 1000);
         const results = await Promise.allSettled([loadVoteState(), getRaffleStatus()]);
