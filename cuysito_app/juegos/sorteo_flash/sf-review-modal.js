@@ -124,7 +124,10 @@
         const dialog = document.getElementById('sf-review-dialog');
         if (!dialog || !window.SfDialog) return Promise.resolve('dismiss');
         render(requirement, minDate);
-        return window.SfDialog.open(dialog);
+        const result = window.SfDialog.open(dialog);
+        const view = dialog.querySelector('[data-slot="view"]');
+        if (view) view.scrollTop = 0;
+        return result;
     }
 
     window.SfReviewModal = Object.freeze({ open });
