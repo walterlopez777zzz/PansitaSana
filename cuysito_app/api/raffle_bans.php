@@ -236,7 +236,6 @@ function rb_ban_payload(mysqli $conn, array $ban): array
         'raffles_total' => isset($ban['raffles_total']) ? (int)$ban['raffles_total'] : (isset($ban['raffles_remaining']) ? (int)$ban['raffles_remaining'] : null),
         'raffles_remaining' => isset($ban['raffles_remaining']) ? (int)$ban['raffles_remaining'] : null,
         'strikes' => $strikes,
-        'whatsapp' => '51924989167',
     ];
 }
 

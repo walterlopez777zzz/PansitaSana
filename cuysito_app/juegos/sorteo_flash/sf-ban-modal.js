@@ -96,9 +96,7 @@
 
         html = '<dl class="sf-summary">' + rows.map(([term, detail]) => (
             '<div class="sf-summary__row"><dt>' + term + '</dt><dd>' + detail + '</dd></div>'
-        )).join('') + '</dl>'
-            + '<div class="sf-notice" data-tone="warning"><svg class="sf-notice__icon" aria-hidden="true"><use href="#sf-icon-warning"></use></svg>'
-            + '<p class="sf-notice__text">Si crees que es un error, escríbenos por WhatsApp con tu código de usuario.</p></div>';
+        )).join('') + '</dl>';
         if (view) view.insertAdjacentHTML('beforeend', html);
         if (!dialog.open) window.SfDialog.open(dialog, { dismissible: false });
     }

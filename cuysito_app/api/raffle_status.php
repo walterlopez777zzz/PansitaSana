@@ -823,7 +823,6 @@ try {
             'raffles_total' => null,
             'raffles_remaining' => null,
             'strikes' => 0,
-            'whatsapp' => '51924989167',
         ] : null),
         'my_welcome_ticket' => $myWelcomeTicket, // {available, applies_here, used_here, reason}
         'winners' => []

@@ -1945,7 +1945,8 @@
             removed: 'sf-removed-dialog',
             enrolled: 'sf-enrolled-dialog',
             prechoice: 'sf-prechoice-dialog',
-            ban: 'sf-ban-dialog'
+            ban: 'sf-ban-dialog',
+            review: 'sf-review-dialog'
         });
 
         function _sfDialog(id) {
@@ -6859,33 +6860,9 @@
             });
         }
 
-        // ── Bajo Revisión: modal amigable para quien compró por chat ──
-        // El sistema no detectó compras web. En vez de bloquear, ofrecemos
-        // entrar "bajo revisión": si confirma, entra y el admin lo audita en
-        // vivo. Tono amigable pero firme (sin lenguaje de "declaración jurada").
-        async function _sfShowDeclarationModal(minDate) {
-            const desde = minDate ? minDate : 'el inicio del periodo';
-            const result = await Swal.fire({
-                title: '\u00BFCompraste por chat?',
-                html: '<div class="sf-chat-body">' +
-                      '<p class="sf-chat-p">No detectamos compras web tuyas desde el <b>' + desde + '</b>.</p>' +
-                      '<p class="sf-chat-p">Si compraste por <b>WhatsApp</b> o <b>Messenger</b>, puedes entrar al sorteo.</p>' +
-                      '<div class="sf-chat-warn">' +
-                      '\u26A0\uFE0F Si no hiciste ninguna compra, por favor no entres: podr\u00EDas ser <b>expulsado de la sala</b>. ' +
-                      'Si reincides varias veces, podr\u00EDas ser <b>baneado de los sorteos</b>.' +
-                      '</div>' +
-                      '<p class="sf-chat-ok">Si est\u00E1s seguro de que tienes compras, \u00A1adelante!</p>' +
-                      '</div>',
-                showCloseButton: false,
-                showCancelButton: true,
-                confirmButtonText: 'Entrar',
-                cancelButtonText: 'Salir',
-                reverseButtons: true,
-                buttonsStyling: false,
-                customClass: { popup: 'sf-modal-chat', confirmButton: 'sf-chat-confirm', cancelButton: 'sf-chat-cancel' },
-                allowOutsideClick: true
-            });
-            if (result.isConfirmed) {
+        async function _sfShowDeclarationModal(minDate, requirement) {
+            const action = await window.SfReviewModal.open(requirement, minDate);
+            if (action === 'confirm') {
                 await _sfExecuteJoin({ declared: true });
             }
         }
@@ -7192,7 +7169,7 @@
                 if (data.status === 'needs_declaration' || data.needs_declaration === true) {
                     if (btn) { btn.disabled = false; }
                     _sfJoinInFlight = false;
-                    await _sfShowDeclarationModal(data.min_date || '');
+                    await _sfShowDeclarationModal(data.min_date || '', data.requirement);
                     return;
                 }
                 if (data.status === 'success') {

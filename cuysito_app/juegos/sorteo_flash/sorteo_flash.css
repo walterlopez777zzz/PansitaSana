@@ -8195,12 +8195,6 @@ font-family: var(--sf-font-gamer);
 }
 .sf-chat-warn b { color: #9a3412; font-weight: 800; }
 
-.sf-chat-ok {
-  margin: 0 !important;
-  font-weight: 700;
-  color: #0f172a;
-}
-
 /* Botones modernos */
 .sf-modal-chat .swal2-actions {
   gap: 12px !important;

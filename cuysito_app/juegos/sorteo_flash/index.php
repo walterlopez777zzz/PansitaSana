@@ -3331,7 +3331,29 @@ if ($meUserId > 0) {
             <section class="sf-dialog__body sf-dialog__body--scroll" data-slot="view" aria-labelledby="sf-ban-title"></section>
             <footer class="sf-dialog__footer">
                 <a class="sf-cta" href="/juegos">Salir de la sala</a>
-                <a class="sf-cta sf-cta--secondary" href="https://wa.me/51924989167" target="_blank" rel="noopener noreferrer">Escribir por WhatsApp</a>
+            </footer>
+        </article>
+    </dialog>
+
+    <dialog class="sf-dialog sf-dialog--flow sf-dialog--review" id="sf-review-dialog"
+            aria-labelledby="sf-review-title" aria-describedby="sf-review-desc">
+        <article class="sf-dialog__panel">
+            <header class="sf-dialog__header sf-dialog__header--bar">
+                <span class="sf-dialog__glyph sf-dialog__glyph--sm" data-tone="warning" aria-hidden="true">
+                    <svg><use href="#sf-icon-warning"></use></svg>
+                </span>
+                <div class="sf-dialog__heading" aria-live="polite">
+                    <h2 id="sf-review-title" class="sf-dialog__title" data-slot="title">Entrar bajo revisión</h2>
+                    <p id="sf-review-desc" class="sf-dialog__summary" data-slot="desc">No alcanzamos a ver las compras que pide este sorteo.</p>
+                </div>
+                <button type="button" class="sf-dialog__close" data-dialog-action="dismiss" aria-label="Cerrar">
+                    <svg aria-hidden="true" focusable="false"><use href="#sf-icon-close"></use></svg>
+                </button>
+            </header>
+            <section class="sf-dialog__body sf-dialog__body--scroll" data-slot="view" aria-labelledby="sf-review-title"></section>
+            <footer class="sf-dialog__footer">
+                <button type="button" class="sf-cta" data-dialog-action="confirm">Ingresar bajo revisión</button>
+                <button type="button" class="sf-cta sf-cta--secondary" data-dialog-action="dismiss">Cancelar</button>
             </footer>
         </article>
     </dialog>
@@ -3388,6 +3410,7 @@ if ($meUserId > 0) {
 <script src="sf-dialog.js?v=<?php echo filemtime(__DIR__ . '/sf-dialog.js'); ?>"></script>
 <script src="sf-prechoice.js?v=<?php echo filemtime(__DIR__ . '/sf-prechoice.js'); ?>"></script>
 <script src="sf-ban-modal.js?v=<?php echo filemtime(__DIR__ . '/sf-ban-modal.js'); ?>"></script>
+<script src="sf-review-modal.js?v=<?php echo filemtime(__DIR__ . '/sf-review-modal.js'); ?>"></script>
 <script src="sorteo_flash.js?v=<?php echo time(); ?>"></script>
 <script src="skip_controller.js?v=<?php echo time(); ?>"></script>
 <script type="module" src="/cuenta/onboarding_check.js"></script>
