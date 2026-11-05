@@ -1528,6 +1528,10 @@
     line-height: 1;
 }
 
+.sf-dialog--review .sf-option {
+    border-color: color-mix(in srgb, var(--sfd-tone-warning) 45%, var(--sfd-line));
+}
+
 .sf-dialog--review .sf-tile__value--requirement {
     color: var(--sfd-tone-accent);
 }

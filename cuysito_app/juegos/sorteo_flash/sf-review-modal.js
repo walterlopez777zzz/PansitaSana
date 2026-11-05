@@ -24,7 +24,7 @@
         const parsed = numeric(value);
         return parsed === null
             ? UNKNOWN
-            : parsed.toLocaleString('es-PE', { maximumFractionDigits: 2 });
+            : parsed.toLocaleString('es-PE', { minimumFractionDigits: Number.isInteger(parsed) ? 0 : 2, maximumFractionDigits: 2 });
     }
 
     function formatDate(value) {
@@ -116,7 +116,8 @@
             + '<div class="sf-notice"><svg class="sf-notice__icon" aria-hidden="true"><use href="#sf-icon-chat"></use></svg>'
             + '<p class="sf-notice__text"><strong>¿Compraste por WhatsApp o Messenger?</strong> Si realmente cumples los requisitos, puedes continuar e ingresar a la sala. Revisaremos tus compras.</p></div>'
             + '<div class="sf-notice" data-tone="warning"><svg class="sf-notice__icon" aria-hidden="true"><use href="#sf-icon-warning"></use></svg>'
-            + '<p class="sf-notice__text"><strong>Si ingresas sin cumplirlos</strong>, serás expulsado de la sala o el premio no será entregado. Acumular expulsiones reiteradas conlleva sanciones.</p></div>';
+            + '<p class="sf-notice__text"><strong>Si ingresas sin cumplirlos</strong>Serás expulsado de la sala o el premio no será entregado. Acumular expulsiones reiteradas conlleva sanciones.</p></div>';
+        view.scrollTop = 0;
     }
 
     function open(requirement, minDate) {
