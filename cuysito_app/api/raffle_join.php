@@ -194,6 +194,17 @@ try {
     if (!$bypassRequirements) {
         $failReason  = '';
         $minDateInfo = '';
+        $minDateRule = null;
+        $minDate = null;
+        $minCount = null;
+        $webOrders = null;
+        $manual = ['count' => null, 'sum' => null];
+        $effOrders = null;
+        $minSpent = null;
+        $webSpent = null;
+        $manualSp = ['count' => null, 'sum' => null];
+        $effSpent = null;
+        $requirementKind = null;
         // Regla de fecha vigente del sorteo: las compras manuales solo cuentan si
         // su purchase_date >= minDate. Así un cambio de regla las re-filtra solo.
         $minDateRule = !empty($reqs['min_orders_date']) ? $reqs['min_orders_date'] : null;
@@ -224,6 +235,7 @@ try {
                     ? "Requisito: Mínimo $minCount compra(s) desde $minDate."
                     : "Requisito: Mínimo $minCount compra(s) completada(s).";
                 $minDateInfo = (string)$minDate;
+                $requirementKind = 'orders';
             }
         }
 
@@ -238,6 +250,7 @@ try {
             $effSpent = $webSpent + $manualSp['sum'];
             if ($effSpent < $minSpent) {
                 $failReason = "Requisito: Gasto histórico > S/ $minSpent.";
+                $requirementKind = 'spent';
             }
         }
 
@@ -267,11 +280,22 @@ try {
                 exit;
             } elseif (!$declared) {
                 // Sin compras detectadas: ofrecemos el modal de declaración.
+                $requirement = [
+                    'kind' => $requirementKind === 'spent' ? 'spent' : 'orders',
+                    'required_orders' => $requirementKind === 'orders' && $minCount !== null ? (int)$minCount : null,
+                    'detected_orders' => $requirementKind === 'orders' && $effOrders !== null ? (int)$effOrders : null,
+                    'web_orders' => $requirementKind === 'orders' && $webOrders !== null ? (int)$webOrders : null,
+                    'manual_orders' => $requirementKind === 'orders' && $manual['count'] !== null ? (int)$manual['count'] : null,
+                    'min_date' => $requirementKind === 'orders' ? $minDate : $minDateRule,
+                    'required_spent' => $requirementKind === 'spent' && $minSpent !== null ? (float)$minSpent : null,
+                    'detected_spent' => $requirementKind === 'spent' && $effSpent !== null ? (float)$effSpent : null,
+                ];
                 _outputJson([
                     'status'            => 'needs_declaration',
                     'needs_declaration' => true,
                     'message'           => $failReason,
                     'min_date'          => $minDateInfo,
+                    'requirement'       => $requirement,
                 ]);
                 exit;
             } else {
