@@ -31,6 +31,136 @@ function _outputJson($data) {
     }
 }
 
+function sf_status_truncate(string $value, int $length = 64): string
+{
+    return function_exists('mb_substr')
+        ? mb_substr($value, 0, $length, 'UTF-8')
+        : substr($value, 0, $length);
+}
+
+function sf_status_choice_catalog(mysqli $conn, array $raffle, string $cacheFile): ?array
+{
+    $raffleId = (int)($raffle['id'] ?? ($raffle['raffle_id'] ?? 0));
+    $prizeConfig = (string)($raffle['prize_config'] ?? '{}');
+    $cashbackPercent = (int)($raffle['cashback_percent'] ?? 0);
+    $winnersCount = max(1, (int)($raffle['winners_count'] ?? 1));
+    $hash = md5($prizeConfig . $cashbackPercent . $winnersCount);
+    $catalogPath = dirname(__DIR__) . '/cache/sf_choice_catalog_' . $raffleId . '_' . $hash . '.json';
+    $handle = @fopen($catalogPath, 'c+');
+    if (!$handle) return null;
+
+    if (!flock($handle, LOCK_EX)) {
+        fclose($handle);
+        return null;
+    }
+
+    try {
+        rewind($handle);
+        $cached = json_decode((string)stream_get_contents($handle), true);
+        if (is_array($cached)
+            && (int)($cached['cashback_percent'] ?? -1) === $cashbackPercent
+            && is_array($cached['positions'] ?? null)
+        ) {
+            foreach ($cached['positions'] as &$cachedPosition) {
+                if (is_array($cachedPosition) && is_array($cachedPosition['options'] ?? null)) {
+                    $cachedPosition['options'] = (object)$cachedPosition['options'];
+                }
+            }
+            unset($cachedPosition);
+            return $cached;
+        }
+
+        $normalized = rr_normalize_prizes($prizeConfig, $winnersCount);
+        $catalog = [
+            'cashback_percent' => $cashbackPercent,
+            'positions' => [],
+        ];
+
+        foreach (($normalized['positions'] ?? []) as $entry) {
+            $position = (int)($entry['position'] ?? 0);
+            if ($position <= 0) continue;
+
+            $positionPrize = rr_prize_for_position($prizeConfig, $position);
+            $publicPrize = rr_prize_public_view($positionPrize);
+            if (!is_array($publicPrize)) $publicPrize = [];
+            $positionData = [
+                'position' => $position,
+                'label' => $position . '°',
+                'fixed' => null,
+                'options' => null,
+            ];
+
+            if (!rr_prize_is_pool($positionPrize)) {
+                $name = (string)($publicPrize['name'] ?? ($publicPrize['label'] ?? 'Premio'));
+                $image = (string)($publicPrize['image_icon'] ?? '');
+                if ($image === '') $image = (string)($publicPrize['image'] ?? '');
+                $vbucks = isset($publicPrize['vbucks']) && is_numeric($publicPrize['vbucks'])
+                    ? (int)$publicPrize['vbucks']
+                    : null;
+
+                if (($publicPrize['type'] ?? '') === 'combo') {
+                    $name = (string)($publicPrize['label'] ?? 'Combo de premios');
+                    $firstItem = $publicPrize['items'][0] ?? [];
+                    if (is_array($firstItem)) {
+                        $image = (string)($firstItem['image_icon'] ?? '');
+                        if ($image === '') $image = (string)($firstItem['image'] ?? '');
+                    }
+                    $vbucks = null;
+                }
+
+                $positionData['fixed'] = [
+                    'name' => $name,
+                    'image' => $image,
+                    'vbucks' => $vbucks,
+                    'value_coins' => round((float)rr_prize_value_coins($conn, $positionPrize, $cacheFile), 2),
+                ];
+            }
+
+            $poolPrize = rr_position_pool($positionPrize);
+            if ($poolPrize !== null) {
+                $publicPool = rr_prize_public_view($poolPrize);
+                $rawOptions = [];
+                foreach (($poolPrize['options'] ?? []) as $rawOption) {
+                    if (!is_array($rawOption)) continue;
+                    $rawKey = sf_status_truncate(trim((string)($rawOption['option_key'] ?? '')));
+                    if ($rawKey !== '') $rawOptions[$rawKey] = $rawOption;
+                }
+                $options = [];
+                foreach (($publicPool['options'] ?? []) as $publicOption) {
+                    if (!is_array($publicOption)) continue;
+                    $optionKey = sf_status_truncate(trim((string)($publicOption['option_key'] ?? '')));
+                    if ($optionKey === '') continue;
+                    $image = (string)($publicOption['image_icon'] ?? '');
+                    if ($image === '') $image = (string)($publicOption['image'] ?? '');
+                    $vbucks = isset($publicOption['vbucks']) && is_numeric($publicOption['vbucks'])
+                        ? (int)$publicOption['vbucks']
+                        : null;
+                    $optionConfig = rr_option_to_prize_config($rawOptions[(string)($publicOption['option_key'] ?? '')] ?? $publicOption);
+                    $options[$optionKey] = [
+                        'name' => (string)($publicOption['name'] ?? ($publicOption['label'] ?? 'Premio')),
+                        'image' => $image,
+                        'vbucks' => $vbucks,
+                        'value_coins' => round((float)rr_prize_value_coins($conn, $optionConfig, $cacheFile), 2),
+                    ];
+                }
+                if ($options) $positionData['options'] = (object)$options;
+            }
+
+            $catalog['positions'][] = $positionData;
+        }
+
+        $json = json_encode($catalog, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if (!is_string($json) || !ftruncate($handle, 0)) return null;
+        rewind($handle);
+        if (fwrite($handle, $json) !== strlen($json)) return null;
+        fflush($handle);
+        return $catalog;
+    } finally {
+        flock($handle, LOCK_UN);
+        fclose($handle);
+    }
+}
+
 require_once dirname(__DIR__) . '/config/shop_config.php';
 $cacheFile = ShopSourceConfig::activeSnapshotPath() ?? ShopSourceConfig::liveSnapshotPath();
 $rpcUrl = 'https://bsc-dataseed.binance.org/';
@@ -1294,6 +1424,7 @@ try {
 
 // 5. LISTA DE ÚLTIMOS INSCRITOS
     $partsSql = "SELECT rp.user_id, u.game_username, u.public_display_name, rp.ticket_index AS ticket_index_raw, rp.entry_fee_paid,
+                 rp.pre_chosen_prize, rp.pre_pool_choices,
                  a.filename as avatar_file -- <--- TRAEMOS EL ARCHIVO
                  FROM raffle_participants rp 
                  JOIN users u ON rp.user_id = u.id 
@@ -1307,19 +1438,49 @@ try {
     $partsRes = $partsStmt->get_result();
     
     $participantsList = [];
+    $choiceStats = ['original' => 0, 'cashback' => 0, 'gamble' => 0, 'none' => 0, 'total' => 0];
+    $cashbackEnabled = rr_raffle_cashback_enabled($raffle);
+    $gambleEnabled = rr_raffle_gamble_enabled($raffle);
     while($p = $partsRes->fetch_assoc()) {
         $pName = !empty($p['public_display_name']) ? $p['public_display_name'] : $p['game_username'];
+        $rawChoice = strtolower(trim((string)($p['pre_chosen_prize'] ?? '')));
+        $choice = $rawChoice === 'original'
+            ? 'original'
+            : (($rawChoice === 'cashback' && $cashbackEnabled)
+                ? 'cashback'
+                : (($rawChoice === 'gamble' && $gambleEnabled) ? 'gamble' : null));
+        $choiceStats[$choice ?? 'none']++;
+        $choiceStats['total']++;
+
+        $poolMap = [];
+        $poolRaw = json_decode((string)($p['pre_pool_choices'] ?? ''), true);
+        if (is_array($poolRaw)) {
+            foreach ($poolRaw as $positionKey => $optionKey) {
+                if (!is_scalar($positionKey) || !is_scalar($optionKey)) continue;
+                $positionKey = sf_status_truncate((string)$positionKey);
+                $optionKey = sf_status_truncate((string)$optionKey);
+                if ($positionKey !== '' && $optionKey !== '') $poolMap[$positionKey] = $optionKey;
+            }
+        }
         
         $participantsList[] = [
             'user_id' => (int)$p['user_id'],
             'username' => $pName,
             'avatar' => AvatarCatalog::filename($conn, $p['avatar_file'] ?? null), // Usamos el nombre del archivo real
             'ticket' => (int)$p['ticket_index_raw'],
-            'paid' => (float)$p['entry_fee_paid'] > 0 
+            'paid' => (float)$p['entry_fee_paid'] > 0,
+            'choice' => $choice,
+            'pool' => $poolMap ? (object)$poolMap : null,
         ];
     }
     
     $response['participants_list'] = $participantsList;
+    $response['choice_stats'] = $choiceStats;
+    try {
+        $response['choice_catalog'] = sf_status_choice_catalog($conn, $raffle, $cacheFile);
+    } catch (Throwable $choiceCatalogError) {
+        $response['choice_catalog'] = null;
+    }
 
     // Expulsados (transparencia): se muestran en gris en el sidebar / lista
     // final y como contador en la sala de bloqueo. Van aparte para no tocar la

@@ -1197,6 +1197,9 @@
 
         let decisionOptions = null;
         let lastParticipantsHash = '';
+        const participantChoiceById = new Map();
+        const participantChoicePulseTimers = new Map();
+        const participantListDelegates = new WeakSet();
 
         // --- POLLING ADAPTATIVO (cadencia estricta) -------------------------
         // Cadena de setTimeout cuyo retraso se recalcula tras cada poll según
@@ -5779,6 +5782,31 @@
             if (choice === 'gamble_pending' || choice === 'double_won' || choice === 'double_lost') document.getElementById('ghostGamble').classList.add('ghost-selected');
         }
         let _lastPartCount = 0;
+        function _sfBindParticipantInspection(container) {
+            if (!container || participantListDelegates.has(container)) return;
+            participantListDelegates.add(container);
+            const openFromCard = (target) => {
+                const card = target && target.closest ? target.closest('.participant-card[data-user-id]') : null;
+                if (!card || card.classList.contains('participant-card--expelled')) return;
+                const latest = state.lastData || _lastStatusData || {};
+                const list = Array.isArray(latest.participants_list) ? latest.participants_list : [];
+                const participant = list.find((item) => String(item && item.user_id) === card.dataset.userId);
+                if (participant && window.SfParticipants) {
+                    window.SfParticipants.openInspect(participant, latest.choice_catalog || null, {
+                        currentUserId: CONFIG.me && CONFIG.me.userId
+                    });
+                }
+            };
+            container.addEventListener('click', (event) => openFromCard(event.target));
+            container.addEventListener('keydown', (event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                const card = event.target && event.target.closest ? event.target.closest('.participant-card[data-user-id]') : null;
+                if (!card) return;
+                event.preventDefault();
+                openFromCard(card);
+            });
+        }
+
         function renderParticipants(list, expelledInput) {
             const participants = Array.isArray(list) ? list : [];
             // Expulsados: siguen en la lista (en gris) para que quede constancia,
@@ -5787,6 +5815,27 @@
             const desktopList = document.getElementById('participants-list');
             const mobileList = document.getElementById('participants-list-mobile');
             const legacyMobList = document.getElementById('participantsListMob');
+            const distribution = window.SfParticipants
+                ? window.SfParticipants.statsHtml(Object.assign({}, state.lastData && state.lastData.choice_stats || {}, {
+                    allow_cashback: Number(state.lastData && state.lastData.allow_cashback) === 1,
+                    allow_double_or_nothing: Number(state.lastData && state.lastData.allow_double_or_nothing) === 1
+                }))
+                : '';
+            ['participants-choice-distribution', 'participants-choice-distribution-mobile'].forEach((id) => {
+                const slot = document.getElementById(id);
+                if (slot) slot.innerHTML = distribution;
+            });
+            [desktopList, mobileList, legacyMobList].forEach(_sfBindParticipantInspection);
+            const changedChoiceIds = [];
+            participants.forEach((participant) => {
+                const userId = String(participant && participant.user_id || '');
+                if (!userId) return;
+                const choice = ['original', 'cashback', 'gamble'].includes(participant.choice) ? participant.choice : null;
+                if (participantChoiceById.has(userId) && participantChoiceById.get(userId) !== choice) {
+                    changedChoiceIds.push(userId);
+                }
+                participantChoiceById.set(userId, choice);
+            });
 
             const participantsCount = document.getElementById('participants-count');
             const partCountDesk = document.getElementById('partCountDesk');
@@ -5823,6 +5872,8 @@
                         userId: p.user_id ?? null,
                         username: p.username ?? p.public_display_name ?? null,
                         ticket: p.ticket ?? null,
+                        choice: p.choice ?? null,
+                        pool: p.pool ?? null,
                         out: p.expelled === true
                     };
                 }))
@@ -5856,12 +5907,13 @@
                 const avatarSrc = avatar
                     ? (avatar.startsWith('http') ? avatar : `../../assets/avatars/${avatar}`)
                     : '';
+                const avatarHtml = `<div class="participant-avatar">${avatar ? `<img src="${avatarSrc}" alt="${escapeHtml(username)}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">` : escapeHtml(initial)}</div>`;
+                const wrappedAvatar = window.SfParticipants ? window.SfParticipants.ringHtml(p.choice, avatarHtml) : avatarHtml;
+                const userId = escapeHtml(String(p.user_id || ''));
 
                 return `
-                <div class="participant-card ${isCurrentUser ? 'is-current-user' : ''}">
-                    <div class="participant-avatar">
-                        ${avatar ? `<img src="${avatarSrc}" alt="${escapeHtml(username)}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">` : escapeHtml(initial)}
-                    </div>
+                <div class="participant-card ${isCurrentUser ? 'is-current-user' : ''}" data-user-id="${userId}" role="button" tabindex="0" aria-label="Ver pre-elección de ${escapeHtml(username)}, ticket #${escapeHtml(String(ticketNumber ?? ''))}">
+                    ${wrappedAvatar}
                     <span class="participant-username">
                         ${escapeHtml(username)}${isCurrentUser ? ' <span style="font-size: 12px; font-weight: normal; opacity: 0.75;">(Tú)</span>' : ''}
                     </span>
@@ -5870,9 +5922,37 @@
             `;
             }).join('') + _sfExpelledCardsHtml(expelled);
 
+            [desktopList, mobileList, legacyMobList].forEach((container) => {
+                if (container && window.SfParticipants) window.SfParticipants.clearRings(container);
+            });
             if (desktopList) desktopList.innerHTML = cardsHTML;
             if (mobileList) mobileList.innerHTML = cardsHTML;
             if (legacyMobList) legacyMobList.innerHTML = cardsHTML;
+            [desktopList, mobileList, legacyMobList].forEach((container) => {
+                if (!container || !window.SfParticipants) return;
+                window.SfParticipants.observeRings(container);
+                if (changedChoiceIds.length) {
+                    container.querySelectorAll('.participant-card[data-user-id]').forEach((card) => {
+                        if (!changedChoiceIds.includes(card.dataset.userId)) return;
+                        const choice = card.querySelector('.sf-choice-ring')?.dataset.choice || 'none';
+                        card.style.setProperty('--choice-pulse-color', ({
+                            original: '#34d399', cashback: '#f59e0b', gamble: '#ef4444', none: '#94a3b8'
+                        })[choice] || '#94a3b8');
+                        card.classList.add('is-choice-changed');
+                    });
+                }
+            });
+            changedChoiceIds.forEach((userId) => {
+                if (participantChoicePulseTimers.has(userId)) clearTimeout(participantChoicePulseTimers.get(userId));
+                participantChoicePulseTimers.set(userId, setTimeout(() => {
+                    [desktopList, mobileList, legacyMobList].forEach((container) => {
+                        const card = container && Array.from(container.querySelectorAll('.participant-card[data-user-id]'))
+                            .find((node) => node.dataset.userId === userId);
+                        if (card) card.classList.remove('is-choice-changed');
+                    });
+                    participantChoicePulseTimers.delete(userId);
+                }, 900));
+            });
         }
 
         // Tarjetas de expulsados al final de la lista de participantes: sin

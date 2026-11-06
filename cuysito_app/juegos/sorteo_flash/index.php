@@ -2515,6 +2515,7 @@ if ($meUserId > 0) {
             <div id="participants-list" class="participants-list">
                 <!-- Populated by JavaScript -->
             </div>
+            <div id="participants-choice-distribution" class="participants-sidebar__distribution"></div>
         </aside>
     </div>
 
@@ -2534,6 +2535,7 @@ if ($meUserId > 0) {
             <div id="participants-list-mobile" class="participants-modal-content">
                 <!-- Populated by JavaScript -->
             </div>
+            <div id="participants-choice-distribution-mobile" class="participants-sidebar__distribution participants-sidebar__distribution--mobile"></div>
         </div>
     </div>
 
@@ -3101,6 +3103,24 @@ if ($meUserId > 0) {
          ══════════════════════════════════════════════════════════════════ -->
 
     <svg class="sf-sprite" aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+        <defs>
+            <linearGradient id="sf-fire-edge-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#f97316" />
+                <stop offset=".52" stop-color="#ef4444" />
+                <stop offset="1" stop-color="#b91c1c" />
+            </linearGradient>
+            <linearGradient id="sf-fire-core-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#fff7c2" />
+                <stop offset="1" stop-color="#fde047" />
+            </linearGradient>
+            <filter id="sf-fire-filter" x="-30%" y="-30%" width="160%" height="160%">
+                <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="3" result="sf-fire-noise">
+                    <animate attributeName="baseFrequency" values=".025;.055;.03;.025" dur="1.4s" repeatCount="indefinite" />
+                    <animate attributeName="seed" values="3;8;5;3" dur="1.8s" repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="sf-fire-noise" scale="3.5" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
         <symbol id="sf-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18" />
             <path d="m6 6 12 12" />
@@ -3111,6 +3131,10 @@ if ($meUserId > 0) {
             <path d="M12 22V7" />
             <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
             <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+        </symbol>
+        <symbol id="sf-icon-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22c4.4 0 7.5-3.2 7.5-7.3 0-2.7-1.5-5-4-7.4.1 2.3-.5 3.8-1.8 4.8.1-4-2.1-7.5-5.7-10.1.3 4-1 6.1-2.7 8.2C3.9 12 4 14 4 15c0 4.1 3.2 7 8 7Z" />
+            <path d="M12 18.5c1.4 0 2.4-1 2.4-2.4 0-.9-.5-1.7-1.3-2.5-.1 1-.8 1.5-1.4 1.8-.2-.8-.7-1.5-1.7-2.3.1 1.8-.6 2.5-.6 3.4 0 1.1 1.1 2 2.6 2Z" />
         </symbol>
         <symbol id="sf-icon-warning" viewBox="0 0 24 24">
             <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M13.7 3.45a2 2 0 0 0-3.4 0l-9 14.5A2 2 0 0 0 3 21h18a2 2 0 0 0 1.7-3.05l-9-14.5ZM11 9a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V9Zm1 7.25A1.25 1.25 0 1 0 12 18.75a1.25 1.25 0 0 0 0-2.5Z" />
@@ -3358,6 +3382,26 @@ if ($meUserId > 0) {
         </article>
     </dialog>
 
+    <dialog class="sf-dialog sf-dialog--flow sf-dialog--inspect" id="sf-participant-dialog"
+            aria-labelledby="sf-participant-title" aria-describedby="sf-participant-desc">
+        <article class="sf-dialog__panel">
+            <header class="sf-dialog__header sf-dialog__header--bar">
+                <span class="sf-inspect-header-avatar" data-slot="avatar" aria-hidden="true"></span>
+                <div class="sf-dialog__heading" aria-live="polite">
+                    <h2 id="sf-participant-title" class="sf-dialog__title" data-slot="title">Participante</h2>
+                    <p id="sf-participant-desc" class="sf-dialog__summary" data-slot="desc"></p>
+                </div>
+                <button type="button" class="sf-dialog__close" data-dialog-action="dismiss" aria-label="Cerrar">
+                    <svg aria-hidden="true" focusable="false"><use href="#sf-icon-close"></use></svg>
+                </button>
+            </header>
+            <section class="sf-dialog__body sf-dialog__body--scroll" data-slot="view" aria-labelledby="sf-participant-title"></section>
+            <footer class="sf-dialog__footer">
+                <button type="button" class="sf-cta" data-dialog-action="confirm" data-autofocus>Volver a la sala</button>
+            </footer>
+        </article>
+    </dialog>
+
     <!-- Premios en juego: vitrina por puesto (tabs) con tarjetas de tienda -->
     <dialog class="sf-dialog sf-dialog--showcase" id="sf-prizes-dialog"
             aria-labelledby="sf-prizes-title" aria-describedby="sf-prizes-desc">
@@ -3411,6 +3455,7 @@ if ($meUserId > 0) {
 <script src="sf-prechoice.js?v=<?php echo filemtime(__DIR__ . '/sf-prechoice.js'); ?>"></script>
 <script src="sf-ban-modal.js?v=<?php echo filemtime(__DIR__ . '/sf-ban-modal.js'); ?>"></script>
 <script src="sf-review-modal.js?v=<?php echo filemtime(__DIR__ . '/sf-review-modal.js'); ?>"></script>
+<script src="sf-participants.js?v=<?php echo filemtime(__DIR__ . '/sf-participants.js'); ?>"></script>
 <script src="sorteo_flash.js?v=<?php echo time(); ?>"></script>
 <script src="skip_controller.js?v=<?php echo time(); ?>"></script>
 <script type="module" src="/cuenta/onboarding_check.js"></script>

@@ -1499,7 +1499,8 @@
 }
 
 .sf-dialog--ban .sf-option,
-.sf-dialog--review .sf-option {
+.sf-dialog--review .sf-option,
+.sf-dialog--inspect .sf-option {
     grid-template-columns: 3.25rem minmax(0, 1fr);
     cursor: default;
     border-color: color-mix(in srgb, var(--sfd-tone-danger) 45%, var(--sfd-line));
@@ -1508,18 +1509,22 @@
 .sf-dialog--ban .sf-option:hover,
 .sf-dialog--ban .sf-option:active,
 .sf-dialog--review .sf-option:hover,
-.sf-dialog--review .sf-option:active {
+.sf-dialog--review .sf-option:active,
+.sf-dialog--inspect .sf-option:hover,
+.sf-dialog--inspect .sf-option:active {
     background-color: rgba(255, 255, 255, 0.05);
     filter: none;
 }
 
 .sf-dialog--ban .sf-tile,
-.sf-dialog--review .sf-tile {
+.sf-dialog--review .sf-tile,
+.sf-dialog--inspect .sf-tile {
     cursor: default;
 }
 
 .sf-dialog--ban .sf-tile__value,
-.sf-dialog--review .sf-tile__value {
+.sf-dialog--review .sf-tile__value,
+.sf-dialog--inspect .sf-tile__value {
     color: var(--sfd-tone-danger);
     font-family: var(--sfd-font-bold);
     font-variation-settings: var(--sfd-fvs-bold);
@@ -1540,6 +1545,162 @@
     color: var(--sfd-tone-danger);
 }
 
+.sf-dialog--inspect {
+    width: min(100% - 2rem, 34rem);
+}
+
+.sf-dialog--inspect .sf-dialog__body--scroll {
+    display: grid;
+    align-content: start;
+    gap: 0.875rem;
+}
+
+.sf-dialog--inspect .sf-option:not(.sf-option--risk) {
+    border-color: var(--sfd-line);
+}
+
+.sf-dialog--inspect .sf-option--risk {
+    border-color: color-mix(in srgb, var(--sfd-tone-danger) 58%, var(--sfd-line));
+    background-color: rgba(248, 113, 113, 0.07);
+}
+
+.sf-inspect-risk-flame {
+    display: inline-flex;
+    align-items: center;
+    color: #fb923c;
+}
+
+.sf-inspect-risk-flame svg {
+    width: 1rem;
+    height: 1rem;
+    filter: drop-shadow(0 0 5px rgba(249, 115, 22, 0.55));
+}
+
+.sf-dialog--inspect .sf-tile__value--accent {
+    color: var(--sfd-tone-accent);
+}
+
+.sf-dialog--inspect .sf-tile__value--cashback {
+    color: #fbbf24;
+}
+
+.sf-dialog--inspect .sf-tile__value--danger {
+    color: var(--sfd-tone-danger);
+}
+
+.sf-inspect-header-avatar {
+    display: inline-flex;
+    flex: 0 0 3.125rem;
+    align-items: center;
+    justify-content: center;
+    width: 3.125rem;
+    height: 3.125rem;
+}
+
+.sf-dialog--inspect .participant-avatar {
+    width: 2.375rem;
+    height: 2.375rem;
+    font-size: 1.125rem;
+}
+
+.sf-inspect-prize {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-width: 0;
+    padding: 0.75rem;
+    border: 1px solid var(--sfd-line);
+    border-radius: var(--sfd-radius-sm);
+    background: var(--sfd-surface-2);
+}
+
+.sf-inspect-prize--muted {
+    opacity: 0.58;
+}
+
+.sf-inspect-prize__image {
+    display: grid;
+    flex: 0 0 3.5rem;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    overflow: hidden;
+    border-radius: 0.625rem;
+    background: rgba(0, 0, 0, 0.28);
+    color: var(--sfd-text-2);
+}
+
+.sf-inspect-prize__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.sf-inspect-prize__image svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.sf-inspect-prize__body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.sf-inspect-prize__body strong {
+    overflow-wrap: anywhere;
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: 0.9rem;
+}
+
+.sf-inspect-prize__detail {
+    color: var(--sfd-text-2);
+    font-size: 0.75rem;
+}
+
+.sf-inspect-prize__value {
+    color: var(--sfd-tone-accent);
+    font-family: var(--sfd-font-bold);
+    font-variation-settings: var(--sfd-fvs-bold);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.sf-inspect-coin {
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-right: 0.25rem;
+    vertical-align: -0.2rem;
+    object-fit: contain;
+}
+
+.sf-dialog--inspect .sf-tiles {
+    gap: 0.625rem;
+}
+
+.sf-dialog--inspect .sf-tile__value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.sf-dialog--inspect .sf-tile__label {
+    font-size: 0.875rem;
+    line-height: 1.1;
+    text-align: center;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+}
+
+.sf-dialog--inspect .sf-notice {
+    margin: 0;
+}
+
 .sf-dialog--ban .sf-tile__value--countdown {
     font-size: 1.5rem;
     white-space: nowrap;
@@ -1548,5 +1709,9 @@
 @media (max-width: 40em) {
     .sf-dialog--ban .sf-tile__value--countdown {
         font-size: clamp(1rem, 4.5vw, 1.25rem);
+    }
+
+    .sf-dialog--inspect .sf-tile__value {
+        font-size: clamp(1.1rem, 5vw, 1.5rem);
     }
 }
