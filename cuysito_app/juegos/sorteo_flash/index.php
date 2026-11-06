@@ -3104,21 +3104,37 @@ if ($meUserId > 0) {
 
     <svg class="sf-sprite" aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
         <defs>
-            <linearGradient id="sf-fire-edge-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#f97316" />
-                <stop offset=".52" stop-color="#ef4444" />
-                <stop offset="1" stop-color="#b91c1c" />
+            <radialGradient id="sf-fire-radial" cx="50" cy="50" r="50" gradientUnits="userSpaceOnUse">
+                <stop offset=".44" stop-color="#fff7c2" stop-opacity="0" />
+                <stop offset=".47" stop-color="#fff7c2" />
+                <stop offset=".52" stop-color="#fde047" />
+                <stop offset=".58" stop-color="#f97316" stop-opacity=".95" />
+                <stop offset=".66" stop-color="#ef4444" stop-opacity=".55" />
+                <stop offset=".78" stop-color="#b91c1c" stop-opacity=".12" />
+                <stop offset="1" stop-color="#7f1d1d" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="sf-fire-tongue-core" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#fffbe6" />
+                <stop offset=".5" stop-color="#fde047" />
+                <stop offset="1" stop-color="#f97316" stop-opacity="0" />
             </linearGradient>
-            <linearGradient id="sf-fire-core-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#fff7c2" />
-                <stop offset="1" stop-color="#fde047" />
+            <linearGradient id="sf-fire-tongue" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#fff3a3" />
+                <stop offset=".25" stop-color="#fde047" />
+                <stop offset=".55" stop-color="#f97316" />
+                <stop offset=".85" stop-color="#dc2626" stop-opacity=".8" />
+                <stop offset="1" stop-color="#991b1b" stop-opacity="0" />
             </linearGradient>
-            <filter id="sf-fire-filter" x="-30%" y="-30%" width="160%" height="160%">
-                <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="3" result="sf-fire-noise">
-                    <animate attributeName="baseFrequency" values=".025;.055;.03;.025" dur="1.4s" repeatCount="indefinite" />
-                    <animate attributeName="seed" values="3;8;5;3" dur="1.8s" repeatCount="indefinite" />
+            <filter id="sf-fire-filter" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency=".09 .16" numOctaves="2" seed="4" result="sf-fire-noise">
+                    <animate attributeName="baseFrequency" values=".09 .16;.11 .2;.08 .14;.09 .16" dur="1.6s" repeatCount="indefinite" />
                 </feTurbulence>
-                <feDisplacementMap in="SourceGraphic" in2="sf-fire-noise" scale="3.5" xChannelSelector="R" yChannelSelector="G" />
+                <feDisplacementMap in="SourceGraphic" in2="sf-fire-noise" scale="6" xChannelSelector="R" yChannelSelector="G" result="sf-fire-displaced" />
+                <feGaussianBlur in="sf-fire-displaced" stdDeviation=".9" result="sf-fire-blur" />
+                <feMerge>
+                    <feMergeNode in="sf-fire-blur" />
+                    <feMergeNode in="sf-fire-displaced" />
+                </feMerge>
             </filter>
         </defs>
         <symbol id="sf-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

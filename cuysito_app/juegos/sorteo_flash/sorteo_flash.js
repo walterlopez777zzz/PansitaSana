@@ -5912,7 +5912,7 @@
                 const userId = escapeHtml(String(p.user_id || ''));
 
                 return `
-                <div class="participant-card ${isCurrentUser ? 'is-current-user' : ''}" data-user-id="${userId}" role="button" tabindex="0" aria-label="Ver pre-elección de ${escapeHtml(username)}, ticket #${escapeHtml(String(ticketNumber ?? ''))}">
+                <div class="participant-card ${isCurrentUser ? 'is-current-user' : ''} ${p.choice === 'gamble' ? 'participant-card--gamble' : ''}" data-user-id="${userId}" role="button" tabindex="0" aria-label="Ver pre-elección de ${escapeHtml(username)}, ticket #${escapeHtml(String(ticketNumber ?? ''))}">
                     ${wrappedAvatar}
                     <span class="participant-username">
                         ${escapeHtml(username)}${isCurrentUser ? ' <span style="font-size: 12px; font-weight: normal; opacity: 0.75;">(Tú)</span>' : ''}

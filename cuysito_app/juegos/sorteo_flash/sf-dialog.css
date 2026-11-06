@@ -1590,11 +1590,11 @@
 
 .sf-inspect-header-avatar {
     display: inline-flex;
-    flex: 0 0 3.125rem;
+    flex: 0 0 4.25rem;
     align-items: center;
     justify-content: center;
-    width: 3.125rem;
-    height: 3.125rem;
+    width: 4.25rem;
+    height: 4.25rem;
 }
 
 .sf-dialog--inspect .participant-avatar {

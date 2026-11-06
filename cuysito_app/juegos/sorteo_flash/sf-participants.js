@@ -7,6 +7,27 @@
         gamble: 'Doble o nada',
         none: 'Sin elegir'
     };
+    const FIRE_TONGUES = (() => {
+        let markup = '';
+        const count = 18;
+        for (let index = 0; index < count; index++) {
+            const angle = index * 360 / count + (index % 2 ? 6 : 0);
+            const length = index % 3 === 0 ? 15 : (index % 3 === 1 ? 10 : 12.5);
+            const width = index % 2 ? 5 : 6.5;
+            markup += '<g transform="rotate(' + angle + ' 50 50)">'
+                + '<path class="sf-choice-ring__tongue" style="animation-delay:-' + (index * 0.13).toFixed(2)
+                + 's;animation-duration:' + (0.7 + (index % 4) * 0.12).toFixed(2)
+                + 's" d="M' + (50 - width) + ' 26 Q50 ' + (26 - length) + ' ' + (50 + width)
+                + ' 26 Q50 30 ' + (50 - width) + ' 26Z" fill="url(#sf-fire-tongue)"/>'
+                + '<path class="sf-choice-ring__tongue" style="animation-delay:-' + (index * 0.21).toFixed(2)
+                + 's;animation-duration:' + (0.55 + (index % 3) * 0.1).toFixed(2)
+                + 's" d="M' + (50 - width * 0.5) + ' 27 Q50 ' + (27 - length * 0.55) + ' '
+                + (50 + width * 0.5) + ' 27 Q50 30 ' + (50 - width * 0.5)
+                + ' 27Z" fill="url(#sf-fire-tongue-core)"/>'
+                + '</g>';
+        }
+        return markup;
+    })();
 
     function esc(value) {
         return String(value == null ? '' : value)
@@ -28,16 +49,17 @@
         const avatar = String(avatarHtml || '');
         const options = opts || {};
         const sparks = normalized === 'gamble'
-            ? '<span class="sf-choice-ring__sparks" aria-hidden="true"><i></i><i></i><i></i><i></i></span>'
+            ? '<span class="sf-choice-ring__sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>'
             : '';
         const fire = normalized === 'gamble'
             ? '<span class="sf-choice-ring__fire-css" aria-hidden="true"></span>'
-                + '<svg class="sf-choice-ring__fire-svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">'
-                + '<circle class="sf-choice-ring__fire-edge" cx="32" cy="32" r="27" fill="none" stroke="url(#sf-fire-edge-gradient)" stroke-width="6"></circle>'
-                + '<circle class="sf-choice-ring__fire-core" cx="32" cy="32" r="27" fill="none" stroke="url(#sf-fire-core-gradient)" stroke-width="2.2"></circle></svg>'
+                + '<svg class="sf-choice-ring__fire-svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false">'
+                + '<g class="sf-choice-ring__fire-group" filter="url(#sf-fire-filter)"><circle cx="50" cy="50" r="50" fill="url(#sf-fire-radial)"/>'
+                + FIRE_TONGUES + '</g></svg>'
             : '';
         return '<span class="sf-choice-ring sf-choice-ring--' + normalized + (options.className ? ' ' + esc(options.className) : '') + '" data-choice="' + normalized + '">'
-            + fire + '<span class="sf-choice-ring__gap">' + avatar + '</span>' + sparks + '</span>';
+            + fire + (normalized === 'gamble' ? '<span class="sf-choice-ring__core" aria-hidden="true"></span>' : '')
+            + '<span class="sf-choice-ring__gap">' + avatar + '</span>' + sparks + '</span>';
     }
 
     function statsHtml(statsInput) {

@@ -336,10 +336,10 @@ $raffleId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
     .cc-choice-bar__segment--cashback { background: linear-gradient(90deg,#fde68a,#f59e0b,#b45309); }
     .cc-choice-bar__segment--gamble { background: linear-gradient(90deg,#fde047,#f97316,#ef4444); }
     .cc-choice-legend { display: flex; flex-wrap: wrap; gap: .35rem .65rem; margin-top: .5rem; }
-    .cc-choice-legend__item { display: inline-flex; align-items: center; gap: .28rem; color: var(--flash-text-muted); font-size: .62rem; white-space: nowrap; }
-    .cc-choice-legend__dot { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: var(--choice-dot); }
-    .cc-choice-legend__count { color: var(--flash-text); font-variant-numeric: tabular-nums; }
-    .cc-choice-none { margin: .35rem 0 0; color: var(--flash-text-muted); font-size: .62rem; }
+    .cc-choice-legend__item { display: inline-flex; align-items: center; gap: .35rem; color: var(--flash-text-muted); font-size: .75rem; white-space: nowrap; }
+    .cc-choice-legend__dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--choice-dot); }
+    .cc-choice-legend__count { color: var(--flash-text); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .cc-choice-none { margin: .35rem 0 0; color: var(--flash-text-muted); font-size: .75rem; }
     .cc-prow { display: flex; align-items: center; gap: .6rem; padding: .55rem .6rem; border-radius: 12px; border: 1px solid var(--flash-border); background: var(--flash-muted); }
     .cc-prow img { height: 34px; width: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--flash-surface); }
     .cc-prow__main { min-width: 0; flex: 1; }
