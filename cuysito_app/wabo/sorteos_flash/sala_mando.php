@@ -329,6 +329,17 @@ $raffleId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
     .cc-aside__head i { color: #f59e0b; }
     .cc-aside__search { padding: 0 1.25rem .8rem; }
     .cc-aside__list { flex: 1; overflow-y: auto; padding: 0 1.25rem 1.5rem; display: flex; flex-direction: column; gap: .45rem; }
+    .cc-choice-distribution { flex: 0 0 auto; padding: .75rem 1.25rem .9rem; border-top: 1px solid var(--flash-border); background: var(--flash-surface); }
+    .cc-choice-bar { display: flex; width: 100%; height: 6px; overflow: hidden; border-radius: 999px; background: rgba(148,163,184,.15); }
+    .cc-choice-bar__segment { height: 100%; transition: width .35s ease; }
+    .cc-choice-bar__segment--original { background: linear-gradient(90deg,#10b981,#a3e635); }
+    .cc-choice-bar__segment--cashback { background: linear-gradient(90deg,#fde68a,#f59e0b,#b45309); }
+    .cc-choice-bar__segment--gamble { background: linear-gradient(90deg,#fde047,#f97316,#ef4444); }
+    .cc-choice-legend { display: flex; flex-wrap: wrap; gap: .35rem .65rem; margin-top: .5rem; }
+    .cc-choice-legend__item { display: inline-flex; align-items: center; gap: .35rem; color: var(--flash-text-muted); font-size: .75rem; white-space: nowrap; }
+    .cc-choice-legend__dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--choice-dot); }
+    .cc-choice-legend__count { color: var(--flash-text); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .cc-choice-none { margin: .35rem 0 0; color: var(--flash-text-muted); font-size: .75rem; }
     .cc-prow { display: flex; align-items: center; gap: .6rem; padding: .55rem .6rem; border-radius: 12px; border: 1px solid var(--flash-border); background: var(--flash-muted); }
     .cc-prow img { height: 34px; width: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--flash-surface); }
     .cc-prow__main { min-width: 0; flex: 1; }
@@ -535,6 +546,7 @@ $raffleId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
             </div>
         </div>
         <div id="ccPartList" class="cc-aside__list"><div class="cc-empty">Cargando…</div></div>
+        <div id="ccChoiceDistribution" class="cc-choice-distribution"></div>
     </aside>
 </div>
 
@@ -892,6 +904,20 @@ function ccRenderParticipants(list) {
     const wtCount = list.filter(p => p.used_welcome_ticket).length;
     $('#ccWtCount').text(wtCount);
     $('#ccWtCountWrap').toggle(wtCount > 0);
+    const choiceStats = { original: 0, cashback: 0, gamble: 0, none: 0, total: 0 };
+    list.filter(p => (p.review_status || 'active') !== 'expelled').forEach(p => {
+        const choice = ['original', 'cashback', 'gamble'].includes(p.pre_chosen_prize) ? p.pre_chosen_prize : 'none';
+        choiceStats[choice]++;
+        choiceStats.total++;
+    });
+    const choicePercent = count => choiceStats.total ? Math.round(count * 1000 / choiceStats.total) / 10 : 0;
+    const choiceSegment = key => `<span class="cc-choice-bar__segment cc-choice-bar__segment--${key}" style="width:${choicePercent(choiceStats[key])}%"></span>`;
+    const choiceLegend = [
+        ['original', 'Original', '#34d399'],
+        ['cashback', 'Cashback', '#f59e0b'],
+        ['gamble', 'Doble o nada', '#f97316']
+    ].map(([key, label, color]) => `<span class="cc-choice-legend__item"><i class="cc-choice-legend__dot" style="--choice-dot:${color}"></i>${label}<span class="cc-choice-legend__count">${choiceStats[key]} · ${choicePercent(choiceStats[key])}%</span></span>`).join('');
+    $('#ccChoiceDistribution').html(`<div class="cc-choice-bar" role="img" aria-label="Distribución de pre-elecciones">${choiceSegment('original')}${choiceSegment('cashback')}${choiceSegment('gamble')}</div><div class="cc-choice-legend">${choiceLegend}</div>${choiceStats.none ? `<p class="cc-choice-none">${choiceStats.none} sin elegir</p>` : ''}`);
     // T_freeze: una vez que el sorteo arranca se bloquean Expulsar/Banear.
     const started = !['scheduled', 'open'].includes(String(ccState.raffleStatus || '').toLowerCase());
 
